@@ -31,9 +31,7 @@ jobs:
 
       - run: flutter test
 
-      # base-href tiene que coincidir con el nombre del repositorio: GitHub Pages
-      # publica el sitio en un subdirectorio, no en la raiz del dominio.
-      - run: flutter build web --release --base-href /ParqueInyeccion3.3/
+      - run: flutter build web --release --base-href /ParqueInyeccion33Front/
 
       - uses: actions/upload-pages-artifact@v3
         with:
