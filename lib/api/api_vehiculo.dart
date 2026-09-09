@@ -1,0 +1,68 @@
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+
+import '../modelos/vehiculo.dart';
+import 'api_base.dart';
+
+class ApiVehiculo {
+  static const String _ruta = '/api/vehiculos';
+
+  Future<List<Vehiculo>> listar({int? clienteId}) {
+    return ejecutar(() async {
+      final parametros = <String, String>{};
+      if (clienteId != null) {
+        parametros['clienteId'] = clienteId.toString();
+      }
+
+      final respuesta = await http.get(construirUri(_ruta, parametros));
+      final lista = decodificar(respuesta) as List<dynamic>;
+      return lista
+          .map((json) => Vehiculo.desdeJson(json as Map<String, dynamic>))
+          .toList();
+    });
+  }
+
+  Future<Vehiculo> obtener(int id) {
+    return ejecutar(() async {
+      final respuesta = await http.get(construirUri('$_ruta/$id'));
+      return Vehiculo.desdeJson(decodificar(respuesta) as Map<String, dynamic>);
+    });
+  }
+
+  Future<Vehiculo> porPatente(String patente) {
+    return ejecutar(() async {
+      final respuesta = await http.get(construirUri(_ruta, {'patente': patente}));
+      return Vehiculo.desdeJson(decodificar(respuesta) as Map<String, dynamic>);
+    });
+  }
+
+  Future<Vehiculo> crear(Vehiculo vehiculo) {
+    return ejecutar(() async {
+      final respuesta = await http.post(
+        construirUri(_ruta),
+        headers: cabecerasJson,
+        body: jsonEncode(vehiculo.aJson()),
+      );
+      return Vehiculo.desdeJson(decodificar(respuesta) as Map<String, dynamic>);
+    });
+  }
+
+  Future<Vehiculo> reemplazar(int id, Vehiculo vehiculo) {
+    return ejecutar(() async {
+      final respuesta = await http.put(
+        construirUri('$_ruta/$id'),
+        headers: cabecerasJson,
+        body: jsonEncode(vehiculo.aJson()),
+      );
+      return Vehiculo.desdeJson(decodificar(respuesta) as Map<String, dynamic>);
+    });
+  }
+
+  Future<void> eliminar(int id) {
+    return ejecutar(() async {
+      final respuesta = await http.delete(construirUri('$_ruta/$id'));
+      decodificar(respuesta);
+    });
+  }
+}
