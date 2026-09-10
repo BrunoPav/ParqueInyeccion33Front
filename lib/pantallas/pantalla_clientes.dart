@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../estado/proveedores.dart';
+import '../features/ajustes/presentacion/pantallas/pantalla_ajustes.dart';
 import '../modelos/cliente.dart';
 import '../widgets/vista_async.dart';
 import 'formulario_cliente.dart';
@@ -65,6 +66,13 @@ class _PantallaClientesState extends ConsumerState<PantallaClientes> {
             tooltip: 'Actualizar',
             icon: const Icon(Icons.refresh),
             onPressed: () => ref.invalidate(clientesProvider),
+          ),
+          IconButton(
+            tooltip: 'Ajustes',
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const PantallaAjustes()),
+            ),
           ),
         ],
       ),

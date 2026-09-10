@@ -115,13 +115,21 @@ class PantallaServicios extends ConsumerWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      '${lista.length} servicio${lista.length == 1 ? '' : 's'}',
-                      style: Theme.of(context).textTheme.titleSmall,
+                    Flexible(
+                      child: Text(
+                        '${lista.length} servicio${lista.length == 1 ? '' : 's'}',
+                        style: Theme.of(context).textTheme.titleSmall,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
-                    Text(
-                      'Total: ${_precio(total)}',
-                      style: Theme.of(context).textTheme.titleSmall,
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        'Total: ${_precio(total)}',
+                        style: Theme.of(context).textTheme.titleSmall,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.right,
+                      ),
                     ),
                   ],
                 ),
