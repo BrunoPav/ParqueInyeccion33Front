@@ -303,111 +303,111 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
 > y qué va en `ThemeExtension` (lo que Material no tiene dónde guardar).
 > **Depende de F1. Bloquea F3 y F4.**
 
-- [ ] **F2.1** 🔒 Mapear `PaletaPrecisionClara` → `ColorScheme` claro completo.
+- [x] **F2.1** 🔒 Mapear `PaletaPrecisionClara` → `ColorScheme` claro completo.
   **Toca:** `lib/core/design_system/temas/esquemas_color.dart` (nuevo).
   **Hecho:** los 30+ slots poblados; ninguno queda en el default de Flutter.
 
-- [ ] **F2.2** 🔒 Mapear `PaletaPrecisionOscura` → `ColorScheme` oscuro completo.
+- [x] **F2.2** 🔒 Mapear `PaletaPrecisionOscura` → `ColorScheme` oscuro completo.
   **Toca:** `lib/core/design_system/temas/esquemas_color.dart`.
   **Hecho:** ídem, con `brightness: Brightness.dark`.
 
-- [ ] **F2.3** 🔒 **`ColoresEstado extends ThemeExtension<ColoresEstado>`** — los 5 estados semánticos
+- [x] **F2.3** 🔒 **`ColoresEstado extends ThemeExtension<ColoresEstado>`** — los 5 estados semánticos
   (listo, enCurso, pendiente, critico, archivado), cada uno con `{fondo, borde, texto}`.
   `ColorScheme` no tiene slots para esto y son el corazón de la lectura rápida en el taller.
   **Toca:** `lib/core/design_system/extensiones/colores_estado.dart` (nuevo).
   **Hecho:** `copyWith` y `lerp` implementados (si no, la transición de tema parpadea); instancias clara y oscura.
 
-- [ ] **F2.4** 🔒 **`EspaciadoTema extends ThemeExtension<EspaciadoTema>`** — expone la escala vía tema,
+- [x] **F2.4** 🔒 **`EspaciadoTema extends ThemeExtension<EspaciadoTema>`** — expone la escala vía tema,
   para que un widget nunca importe el token directo.
   **Toca:** `lib/core/design_system/extensiones/espaciado_tema.dart` (nuevo).
   **Hecho:** `copyWith` y `lerp` implementados.
 
-- [ ] **F2.5** 🔒 **`ElevacionTema extends ThemeExtension<ElevacionTema>`** — los 3 niveles resueltos
+- [x] **F2.5** 🔒 **`ElevacionTema extends ThemeExtension<ElevacionTema>`** — los 3 niveles resueltos
   por brillo (las sombras y bordes del modo oscuro no son los del claro).
   **Toca:** `lib/core/design_system/extensiones/elevacion_tema.dart` (nuevo).
   **Hecho:** `copyWith` y `lerp` implementados; N1/N2/N3 distintos entre claro y oscuro.
 
-- [ ] **F2.6** 🔒 **`extension ContextoTema on BuildContext`** — `context.colores`, `context.textos`,
+- [x] **F2.6** 🔒 **`extension ContextoTema on BuildContext`** — `context.colores`, `context.textos`,
   `context.espaciado`, `context.estados`, `context.elevacion`.
   **Toca:** `lib/core/design_system/extensiones/contexto_tema.dart` (nuevo).
   **Hecho:** `context.espaciado.md` compila y devuelve 16. Es la API que van a usar las 6 pantallas.
 
-- [ ] **F2.7** 🔒 Construir el `TextTheme` completo desde la escala de F1.3.
+- [x] **F2.7** 🔒 Construir el `TextTheme` completo desde la escala de F1.3.
   **Toca:** `lib/core/design_system/temas/tema_precision.dart` (nuevo).
   **Hecho:** los 15 slots de `TextTheme` mapeados; `Theme.of(context).textTheme.titleMedium` da Inter.
 
-- [ ] **F2.8** 🔓 `FilledButtonThemeData` + `ElevatedButtonThemeData`: altura 52, radio 8, tipografía
+- [x] **F2.8** 🔓 `FilledButtonThemeData` + `ElevatedButtonThemeData`: altura 52, radio 8, tipografía
   `label-lg`, estado presionado atenuado.
   **Toca:** `lib/core/design_system/temas/componentes/tema_botones.dart` (nuevo).
   **Hecho:** un `FilledButton` sin envolver ya sale con el look correcto.
 
-- [ ] **F2.9** 🔓 `OutlinedButtonThemeData` + `TextButtonThemeData`: altura 48, borde 1px, radio 8.
+- [x] **F2.9** 🔓 `OutlinedButtonThemeData` + `TextButtonThemeData`: altura 48, borde 1px, radio 8.
   **Toca:** `lib/core/design_system/temas/componentes/tema_botones.dart`.
   **Hecho:** ídem para las variantes secundarias.
 
-- [ ] **F2.10** 🔓 `InputDecorationTheme`: altura 48, borde **1.5px**, radio 8, foco con borde primario +
+- [x] **F2.10** 🔓 `InputDecorationTheme`: altura 48, borde **1.5px**, radio 8, foco con borde primario +
   anillo concéntrico 2px, estilos de error y de `helperText`.
   **Toca:** `lib/core/design_system/temas/componentes/tema_entradas.dart` (nuevo).
   **Hecho:** los `TextFormField` actuales pierden su `OutlineInputBorder` literal y heredan el tema.
   *Este solo paso limpia 8 declaraciones repetidas de `border: OutlineInputBorder()` en los 3 formularios.*
 
-- [ ] **F2.11** 🔓 `CardThemeData`: superficie N1, borde 1px, radio 8, sombra del token, `margin` cero.
+- [x] **F2.11** 🔓 `CardThemeData`: superficie N1, borde 1px, radio 8, sombra del token, `margin` cero.
   **Toca:** `lib/core/design_system/temas/componentes/tema_superficies.dart` (nuevo).
   **Hecho:** un `Card` pelado se ve como la tarjeta del mockup.
 
-- [ ] **F2.12** 🔓 `ChipThemeData` + `FilterChipThemeData`: altura 28, padding `4px 10px`, radio 4,
+- [x] **F2.12** 🔓 `ChipThemeData` + `FilterChipThemeData`: altura 28, padding `4px 10px`, radio 4,
   `label-md` en mayúsculas.
   **Toca:** `lib/core/design_system/temas/componentes/tema_indicadores.dart` (nuevo).
   **Hecho:** los `FilterChip` de Activos/Inactivos en [pantalla_clientes.dart:100](lib/pantallas/pantalla_clientes.dart#L100)
   se ven correctos sin tocarlos.
 
-- [ ] **F2.13** 🔓 `AppBarTheme`: sin sombra, borde inferior 1px, título con la tipografía correcta,
+- [x] **F2.13** 🔓 `AppBarTheme`: sin sombra, borde inferior 1px, título con la tipografía correcta,
   altura acorde al mockup.
   **Toca:** `lib/core/design_system/temas/componentes/tema_navegacion.dart` (nuevo).
   **Hecho:** la barra superior no proyecta la sombra difusa de Material.
 
-- [ ] **F2.14** 🔓 `NavigationBarThemeData` + `NavigationRailThemeData` (los consume F7, se definen acá
+- [x] **F2.14** 🔓 `NavigationBarThemeData` + `NavigationRailThemeData` (los consume F7, se definen acá
   para no fragmentar el tema).
   **Toca:** `lib/core/design_system/temas/componentes/tema_navegacion.dart`.
   **Hecho:** ambos definidos y coherentes entre sí.
 
-- [ ] **F2.15** 🔓 `DividerThemeData`, `ListTileThemeData`, `SnackBarThemeData`, `DialogThemeData`,
+- [x] **F2.15** 🔓 `DividerThemeData`, `ListTileThemeData`, `SnackBarThemeData`, `DialogThemeData`,
   `PopupMenuThemeData`, `FloatingActionButtonThemeData`.
   **Toca:** `lib/core/design_system/temas/componentes/tema_varios.dart` (nuevo).
   **Hecho:** ningún widget Material queda con estilo de fábrica.
 
-- [ ] **F2.16** 🔒 Ensamblar `ThemeData temaPrecision(Brightness)` combinando esquema + `TextTheme` +
+- [x] **F2.16** 🔒 Ensamblar `ThemeData temaPrecision(Brightness)` combinando esquema + `TextTheme` +
   sub-temas + las 3 `ThemeExtension`.
   **Toca:** `lib/core/design_system/temas/tema_precision.dart`.
   **Hecho:** devuelve un `ThemeData` completo para cada brillo con `useMaterial3: true`.
 
-- [ ] **F2.17** 🔒 **Catálogo de temas.** `enum IdTema` + `typedef ConstructorTema = ThemeData Function(Brightness)`
+- [x] **F2.17** 🔒 **Catálogo de temas.** `enum IdTema` + `typedef ConstructorTema = ThemeData Function(Brightness)`
   + `const Map<IdTema, ConstructorTema> catalogoTemas`.
   **Toca:** `lib/core/design_system/temas/catalogo_temas.dart` (nuevo).
   **Hecho:** sumar un tema nuevo = agregar una paleta + una entrada al mapa. Nada más.
   *Esta es la pieza que cumple el objetivo de "múltiples temas intercambiables".*
 
-- [ ] **F2.18** 🔓 Barrel del design-system: un import para tokens + extensiones + temas.
+- [x] **F2.18** 🔓 Barrel del design-system: un import para tokens + extensiones + temas.
   **Toca:** `lib/core/design_system/design_system.dart` (nuevo).
   **Hecho:** `import 'core/design_system/design_system.dart'` alcanza.
 
-- [ ] **F2.19** 🔓 Test: `temaPrecision(Brightness.light)` y `(dark)` traen las 3 `ThemeExtension`
+- [x] **F2.19** 🔓 Test: `temaPrecision(Brightness.light)` y `(dark)` traen las 3 `ThemeExtension`
   y ninguna es `null`.
   **Toca:** `test/core/design_system/tema_test.dart` (nuevo).
   **Hecho:** verde. Atrapa la extensión que alguien agrega y se olvida de registrar.
 
-- [ ] **F2.20** 🔓 Test: `lerp` al 50% entre el tema claro y el oscuro no lanza ni devuelve `null`
+- [x] **F2.20** 🔓 Test: `lerp` al 50% entre el tema claro y el oscuro no lanza ni devuelve `null`
   en ninguna extensión.
   **Toca:** `test/core/design_system/tema_test.dart`.
   **Hecho:** verde — garantiza que la transición de tema no parpadea.
 
-- [ ] **F2.21** 🔓 Crear una galería de tokens: pantalla de debug que renderiza la escala tipográfica,
+- [x] **F2.21** 🔓 Crear una galería de tokens: pantalla de debug que renderiza la escala tipográfica,
   la paleta, los espaciados, los radios y los 3 niveles de elevación.
   **Toca:** `lib/core/design_system/galeria_tokens.dart` (nuevo, solo debug).
   **Hecho:** se puede abrir y comparar contra los mockups lado a lado.
   *Vale muchísimo en F9: es la referencia visual sin salir de la app.*
 
-- [ ] **F2.22** ✅ **Cierre de fase:** analyze + test verdes; la app **sigue viéndose igual**
+- [x] **F2.22** ✅ **Cierre de fase:** analyze + test verdes; la app **sigue viéndose igual**
   (nadie consume el tema todavía).
 
 ---
