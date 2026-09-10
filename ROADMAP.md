@@ -198,7 +198,7 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
 > Los valores crudos, en un solo lugar, sin dependencia de Flutter salvo `dart:ui`.
 > **Ninguna pantalla se toca en esta fase.** Al terminar, la app se ve exactamente igual.
 
-- [ ] **F1.1** 🔒 **Paleta.** Definir `abstract class Paleta` con los slots del design-system e
+- [x] **F1.1** 🔒 **Paleta.** Definir `abstract class Paleta` con los slots del design-system e
   implementar `PaletaPrecisionClara` con los valores derivados de `mockups/*.png`:
 
   | Slot | Hex aprox. | Leído en |
@@ -213,68 +213,68 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
   | `textoPrincipal` | `#1C1512` | Títulos, nombres |
   | `textoSecundario` | `#6B5B54` | Subtítulos, metadatos |
   | `estadoExitoFondo` / `Texto` | `#DCFCE7` / `#15803D` | Chip "Service al día" |
-  | `estadoAlertaFondo` / `Texto` | `#FDE4D5` / `#C2410C` | Chip "Distribución pendiente" |
+  | `estadoAlertaFondo` / `Texto` | `#FDE4D5` / `#A8350D` (recalibrado, ver nota) | Chip "Distribución pendiente" |
 
   **Toca:** `lib/core/design_system/tokens/paleta.dart` (nuevo).
   **Hecho:** todos los slots del design-system poblados (no solo los leídos arriba — el resto se deriva
   manteniendo la misma temperatura cálida). Valores marcados `///` como **aproximados de mockup**, no
   muestreados a pixel; se recalibran si al implementar algún contraste no cierra.
 
-- [ ] **F1.2** 🔒 **Tipografía — familias y features.** Constantes de familia (`Inter`, `JetBrains Mono`)
+- [x] **F1.2** 🔒 **Tipografía — familias y features.** Constantes de familia (`Inter`, `JetBrains Mono`)
   y el `FontFeature.tabularFigures()` que el design-system exige para odómetros, horas y montos.
   **Toca:** `lib/core/design_system/tokens/tipografia.dart` (nuevo).
   **Hecho:** las constantes resuelven a las fuentes declaradas en F0.4.
   *Depende de F0.4.*
 
-- [ ] **F1.3** 🔒 **Tipografía — escala.** La escala completa como `TextStyle` sin color
+- [x] **F1.3** 🔒 **Tipografía — escala.** La escala completa como `TextStyle` sin color
   (el color lo pone el tema). Único valor especificado en DESIGN.md: `headline-lg` = Inter 32/40, w700, -0.02em.
   El resto (`title-lg`, `title-md`, `body-lg`, `body-md`, `body-sm`, `label-lg`, `label-md`, `label-sm`)
   **se deriva** y se marca como derivado en un `///` sobre la clase.
   **Toca:** `lib/core/design_system/tokens/tipografia.dart`.
   **Hecho:** `headline-lg` coincide exacto con DESIGN.md; los derivados quedan anotados para revisión.
 
-- [ ] **F1.4** 🔓 **Tipografía — mono.** `labelMono`: JetBrains Mono, mayúsculas, tracking abierto,
+- [x] **F1.4** 🔓 **Tipografía — mono.** `labelMono`: JetBrains Mono, mayúsculas, tracking abierto,
   para patentes y VIN. El design-system lo pide explícitamente para eliminar la ambigüedad `0`/`O`, `1`/`I`.
   **Toca:** `lib/core/design_system/tokens/tipografia.dart`.
   **Hecho:** una patente renderizada con `labelMono` distingue visualmente `0` de `O`.
 
-- [ ] **F1.5** 🔒 **Espaciado.** Los 12 valores del frontmatter, sin reinterpretar:
+- [x] **F1.5** 🔒 **Espaciado.** Los 12 valores del frontmatter, sin reinterpretar:
   `xxs 4 · xs 8 · sm 12 · md 16 · lg 20 · xl 24 · xxl 32`, `bordePantallaMovil 16`,
   `bordePantallaTablet 24`, `separacionLista 12`, `objetivoTactil 48`, `objetivoTactilAmplio 56`.
   **Toca:** `lib/core/design_system/tokens/espaciado.dart` (nuevo).
   **Hecho:** cada constante coincide 1:1 con el frontmatter de DESIGN.md.
 
-- [ ] **F1.6** 🔓 **Espaciado — helpers.** `EdgeInsets` predefinidos de uso frecuente
+- [x] **F1.6** 🔓 **Espaciado — helpers.** `EdgeInsets` predefinidos de uso frecuente
   (padding de tarjeta 16, borde de pantalla por breakpoint, padding de chip `4px 10px`).
   **Toca:** `lib/core/design_system/tokens/espaciado.dart`.
   **Hecho:** cubren los casos que hoy aparecen literales en las 6 pantallas.
 
-- [ ] **F1.7** 🔒 **Radios.** `xs 2 · sm 4 · md 6 · lg 8 · xl 12 · completo 9999`, más los alias semánticos
+- [x] **F1.7** 🔒 **Radios.** `xs 2 · sm 4 · md 6 · lg 8 · xl 12 · completo 9999`, más los alias semánticos
   que fija la prosa: `chip = sm (4)`, `tarjeta = lg (8)`, `boton = lg (8)`, `entrada = lg (8)`,
   `contenedor = xl (12)`.
   **Toca:** `lib/core/design_system/tokens/radios.dart` (nuevo).
   **Hecho:** los alias existen; las pantallas usarán los alias, nunca los números.
 
-- [ ] **F1.8** 🔒 **Elevación.** Los 3 niveles como estructura `(colorBorde, anchoBorde, List<BoxShadow>)`,
+- [x] **F1.8** 🔒 **Elevación.** Los 3 niveles como estructura `(colorBorde, anchoBorde, List<BoxShadow>)`,
   **no** como `elevation:` numérico de Material: el design-system pide capa tonal + borde 1px crisp,
   y rechaza explícitamente la sombra difusa.
   **Toca:** `lib/core/design_system/tokens/elevacion.dart` (nuevo).
   **Hecho:** N1 (tarjetas), N2 (activo/modales) y N3 (barra inferior, sombra hacia arriba) definidos.
 
-- [ ] **F1.9** 🔓 **Duraciones y curvas.** Tokens de animación para transiciones de ruta y cambios de estado.
+- [x] **F1.9** 🔓 **Duraciones y curvas.** Tokens de animación para transiciones de ruta y cambios de estado.
   **Toca:** `lib/core/design_system/tokens/duraciones.dart` (nuevo).
   **Hecho:** `rapida` / `normal` / `lenta` + curvas estándar definidas.
 
-- [ ] **F1.10** 🔓 **Tamaños de componente.** Las alturas que fija la prosa:
+- [x] **F1.10** 🔓 **Tamaños de componente.** Las alturas que fija la prosa:
   `botonPrimario 52`, `botonSecundario 48`, `entrada 48`, `chip 28`, `filaLista 56`, `anchoBordeEntrada 1.5`.
   **Toca:** `lib/core/design_system/tokens/dimensiones.dart` (nuevo).
   **Hecho:** ningún widget de `/shared` tendrá que escribir una altura a mano.
 
-- [ ] **F1.11** 🔒 **Barrel de tokens.** Un solo import para toda la capa.
+- [x] **F1.11** 🔒 **Barrel de tokens.** Un solo import para toda la capa.
   **Toca:** `lib/core/design_system/tokens/tokens.dart` (nuevo).
   **Hecho:** `import 'tokens/tokens.dart'` alcanza para acceder a todos.
 
-- [ ] **F1.12** 🔒 **Paleta oscura.** Ningún mockup trae versión oscura — se deriva de
+- [x] **F1.12** 🔒 **Paleta oscura.** Ningún mockup trae versión oscura — se deriva de
   `PaletaPrecisionClara`: invertir las capas tonales conservando la jerarquía de superficies, mantener el
   terracota como acento de alerta (es el color que no puede perder saliencia en un taller a oscuras), y
   verificar contraste.
@@ -282,17 +282,17 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
   **Hecho:** **presentada al usuario para aprobación** antes de cablearla (no se asume); todos los pares
   texto/fondo pasan WCAG AA (4.5:1 texto normal, 3:1 texto grande).
 
-- [ ] **F1.13** 🔓 Test de tokens: verificar que la escala de espaciado es monótona creciente y que los
+- [x] **F1.13** 🔓 Test de tokens: verificar que la escala de espaciado es monótona creciente y que los
   radios semánticos apuntan a los valores esperados.
   **Toca:** `test/core/design_system/tokens_test.dart` (nuevo).
   **Hecho:** `flutter test` verde. Barato, pero atrapa el typo que después cuesta media hora.
 
-- [ ] **F1.14** 🔓 Test de contraste: recorrer los pares (fondo, textoEncima) de ambas paletas y afirmar
+- [x] **F1.14** 🔓 Test de contraste: recorrer los pares (fondo, textoEncima) de ambas paletas y afirmar
   el ratio mínimo.
   **Toca:** `test/core/design_system/contraste_test.dart` (nuevo).
   **Hecho:** ambas paletas pasan; el test falla ruidosamente si alguien mete un color sin chequear.
 
-- [ ] **F1.15** ✅ **Cierre de fase:** `flutter analyze` + `flutter test` verdes. **La app se ve idéntica**
+- [x] **F1.15** ✅ **Cierre de fase:** `flutter analyze` + `flutter test` verdes. **La app se ve idéntica**
   — nada consume los tokens todavía. Es la señal de que la fase se hizo bien.
 
 ---
