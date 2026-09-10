@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
-import '../config.dart';
+import '../core/config/entorno.dart';
 import 'excepciones.dart';
 
 const Map<String, String> cabecerasJson = {

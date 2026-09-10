@@ -417,63 +417,70 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
 > Enchufar el tema y hacerlo conmutable. Sin esta fase, el modo oscuro no se puede probar de verdad.
 > **Depende de F2.**
 
-- [ ] **F3.1** 🔒 Crear `lib/app/aplicacion.dart` y mover ahí `AplicacionTaller` desde `main.dart`.
+- [x] **F3.1** 🔒 Crear `lib/app/aplicacion.dart` y mover ahí `AplicacionTaller` desde `main.dart`.
   **Toca:** `lib/app/aplicacion.dart` (nuevo), `lib/main.dart`.
   **Hecho:** `main.dart` queda solo con `runApp`.
 
-- [ ] **F3.2** 🔒 `AplicacionTaller` pasa a `ConsumerWidget` y recibe `theme`, `darkTheme` y `themeMode`
+- [x] **F3.2** 🔒 `AplicacionTaller` pasa a `ConsumerWidget` y recibe `theme`, `darkTheme` y `themeMode`
   desde providers.
   **Toca:** `lib/app/aplicacion.dart`.
   **Hecho:** el `seedColor` azul de [main.dart:19](lib/main.dart#L19) desaparece del código.
 
-- [ ] **F3.3** 🔒 `preferenciasProvider`: `shared_preferences` expuesto por Riverpod, inicializado
+- [x] **F3.3** 🔒 `preferenciasProvider`: `shared_preferences` expuesto por Riverpod, inicializado
   con `overrideWithValue` en `main.dart` tras el `await`.
   **Toca:** `lib/features/ajustes/datos/preferencias.dart` (nuevo), `lib/main.dart`.
   **Hecho:** se lee sin `await` desde los widgets.
 
-- [ ] **F3.4** 🔒 `modoTemaProvider` — `Notifier<ThemeMode>` que lee y escribe la preferencia.
+- [x] **F3.4** 🔒 `modoTemaProvider` — `Notifier<ThemeMode>` que lee y escribe la preferencia.
   **Toca:** `lib/features/ajustes/presentacion/proveedores/tema_proveedores.dart` (nuevo).
   **Hecho:** cambiar el modo persiste y sobrevive al reinicio.
 
-- [ ] **F3.5** 🔓 `temaSeleccionadoProvider` — `Notifier<IdTema>` contra el catálogo de F2.17.
+- [x] **F3.5** 🔓 `temaSeleccionadoProvider` — `Notifier<IdTema>` contra el catálogo de F2.17.
   **Toca:** `lib/features/ajustes/presentacion/proveedores/tema_proveedores.dart`.
   **Hecho:** cambiar el id reconstruye la app con el tema nuevo.
 
-- [ ] **F3.6** 🔓 Pantalla de ajustes con selector de modo (claro / oscuro / sistema).
+- [x] **F3.6** 🔓 Pantalla de ajustes con selector de modo (claro / oscuro / sistema).
   **Toca:** `lib/features/ajustes/presentacion/pantallas/pantalla_ajustes.dart` (nuevo).
   **Hecho:** los tres modos funcionan y se ven correctos.
 
-- [ ] **F3.7** 🔓 Agregar el selector de tema a la misma pantalla (aunque el catálogo tenga un solo tema:
+- [x] **F3.7** 🔓 Agregar el selector de tema a la misma pantalla (aunque el catálogo tenga un solo tema:
   deja el camino probado).
   **Toca:** `lib/features/ajustes/presentacion/pantallas/pantalla_ajustes.dart`.
   **Hecho:** el selector lista el catálogo y aplicar uno funciona.
 
-- [ ] **F3.8** 🔓 Acceso temporal a ajustes desde el `AppBar` de clientes (en F7 se mueve a la navegación).
+- [x] **F3.8** 🔓 Acceso temporal a ajustes desde el `AppBar` de clientes (en F7 se mueve a la navegación).
   **Toca:** `lib/pantallas/pantalla_clientes.dart`.
   **Hecho:** se llega a ajustes desde la app corriendo.
 
-- [ ] **F3.9** 🔓 Mover `lib/config.dart` → `lib/core/config/entorno.dart`.
+- [x] **F3.9** 🔓 Mover `lib/config.dart` → `lib/core/config/entorno.dart`.
   **Toca:** `lib/config.dart` (borrar), `lib/core/config/entorno.dart` (nuevo), `lib/api/api_base.dart`.
   **Hecho:** `--dart-define=API_URL` sigue funcionando.
 
-- [ ] **F3.10** 🔓 Test: alternar `modoTemaProvider` cambia el brillo del `MaterialApp`.
+- [x] **F3.10** 🔓 Test: alternar `modoTemaProvider` cambia el brillo del `MaterialApp`.
   **Toca:** `test/features/ajustes/tema_proveedores_test.dart` (nuevo).
   **Hecho:** verde.
 
-- [ ] **F3.11** 🔓 Test: la preferencia persiste — escribir, reconstruir el scope, leer.
+- [x] **F3.11** 🔓 Test: la preferencia persiste — escribir, reconstruir el scope, leer.
   **Toca:** `test/features/ajustes/tema_proveedores_test.dart`.
   **Hecho:** verde con el mock de `shared_preferences`.
 
-- [ ] **F3.12** ✅ **Cierre de fase.** Acá la app **cambia de aspecto por primera vez**: las 6 pantallas
+- [x] **F3.12** ✅ **Cierre de fase.** Acá la app **cambia de aspecto por primera vez**: las 6 pantallas
   heredan el tema nuevo sin haber sido tocadas. Recorrerlas en claro y en oscuro y anotar lo que quede feo
   — esa lista alimenta F9.
+  **Verificado con capturas reales** (golden test descartable, con las fuentes cargadas a mano — `flutter
+  test` no carga fuentes custom por defecto) en las 6 pantallas, ambos temas. Confirmado a nivel de pixel
+  (no a ojo) que `ColorScheme.primary` invierte correctamente entre claro/oscuro (FAB `#191512` → `#F3E9E4`).
+  **Encontrado y arreglado:** overflow real de 109px en el header de resumen de
+  [pantalla_servicios.dart:115](lib/pantallas/pantalla_servicios.dart#L115) — la tipografía nueva es más
+  ancha que el `titleSmall` de Material por defecto y desbordaba el `Row`; se envolvió en `Flexible` +
+  ellipsis. **Para F9:** ojo con esta pantalla en particular, la fila de resumen queda apretada en 360-390px.
 
-- [ ] **F3.13** 🔓 Revisar Android: barra de estado y de navegación acompañando el tema
+- [x] **F3.13** 🔓 Revisar Android: barra de estado y de navegación acompañando el tema
   (`SystemUiOverlayStyle`).
   **Toca:** `lib/app/aplicacion.dart`.
   **Hecho:** en oscuro, las barras del sistema no quedan blancas.
 
-- [ ] **F3.14** 🔓 Revisar web: `<meta name="theme-color">` y color de fondo del loader coherentes.
+- [x] **F3.14** 🔓 Revisar web: `<meta name="theme-color">` y color de fondo del loader coherentes.
   **Toca:** `web/index.html`, `web/manifest.json`.
   **Hecho:** no hay flash blanco al cargar en modo oscuro.
 

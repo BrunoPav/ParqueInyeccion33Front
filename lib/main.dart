@@ -1,24 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'pantallas/pantalla_clientes.dart';
+import 'app/aplicacion.dart';
+import 'features/ajustes/datos/preferencias.dart';
 
-void main() {
-  runApp(const ProviderScope(child: AplicacionTaller()));
-}
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final preferencias = await SharedPreferences.getInstance();
 
-class AplicacionTaller extends StatelessWidget {
-  const AplicacionTaller({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Taller Mecanico',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1565C0)),
-      ),
-      home: const PantallaClientes(),
-    );
-  }
+  runApp(
+    ProviderScope(
+      overrides: [preferenciasProvider.overrideWithValue(preferencias)],
+      child: const AplicacionTaller(),
+    ),
+  );
 }
