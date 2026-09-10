@@ -25,15 +25,10 @@ física en vehículos y servicios, igual que la API).
 
 ## Estructura
 
-```
-lib/
-├── config.dart        URL del backend
-├── modelos/           Cliente, Vehiculo, Servicio
-├── api/               Un cliente HTTP por entidad, mas el manejo de errores
-├── estado/            Proveedores de Riverpod
-├── pantallas/         Listados y formularios
-└── widgets/           Vistas compartidas de carga, error y vacio
-```
+El proyecto está en medio de una migración a design-system + arquitectura por feature
+(`dominio/datos/presentacion`), documentada paso a paso en [ROADMAP.md](ROADMAP.md). La estructura
+detallada de este README se actualiza en la fase de pulido (F10) del roadmap, cuando la migración
+termina; hasta entonces, ROADMAP.md es la referencia viva de qué existe y qué está en camino.
 
 ## Correr el proyecto
 
