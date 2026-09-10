@@ -1,11 +1,11 @@
 {
-    "name": "taller_mecanico_frontend",
-    "short_name": "taller_mecanico_frontend",
+    "name": "Taller Mecanico",
+    "short_name": "Taller Mecanico",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Interfaz para la API de historial de un taller mecanico.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
