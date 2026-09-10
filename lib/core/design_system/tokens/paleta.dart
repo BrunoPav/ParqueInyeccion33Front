@@ -8,6 +8,14 @@ class TonoEstado {
   final Color texto;
 
   const TonoEstado({required this.fondo, required this.borde, required this.texto});
+
+  static TonoEstado lerp(TonoEstado a, TonoEstado b, double t) {
+    return TonoEstado(
+      fondo: Color.lerp(a.fondo, b.fondo, t)!,
+      borde: Color.lerp(a.borde, b.borde, t)!,
+      texto: Color.lerp(a.texto, b.texto, t)!,
+    );
+  }
 }
 
 /// Conjunto completo de colores del design-system "Precision Workshop".
