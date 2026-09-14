@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:taller_mecanico_frontend/estado/proveedores.dart';
-import 'package:taller_mecanico_frontend/pantallas/pantalla_clientes.dart';
+import 'package:taller_mecanico_frontend/features/clientes/presentacion/pantallas/pantalla_clientes.dart';
+import 'package:taller_mecanico_frontend/features/clientes/presentacion/proveedores/clientes_proveedores.dart';
 
 import '../../ayudas/bombear_pantalla.dart';
 import '../../ayudas/dobles.dart';
@@ -12,7 +12,7 @@ void main() {
     await bombearPantalla(
       tester,
       const PantallaClientes(),
-      overrides: [apiClienteProvider.overrideWithValue(ApiClienteFalso())],
+      overrides: [repositorioClientesProvider.overrideWithValue(RepositorioClientesFalso())],
     );
 
     await tester.pump();
@@ -27,7 +27,7 @@ void main() {
     await bombearPantalla(
       tester,
       const PantallaClientes(),
-      overrides: [apiClienteProvider.overrideWithValue(ApiClienteVacia())],
+      overrides: [repositorioClientesProvider.overrideWithValue(RepositorioClientesVacio())],
     );
 
     await tester.pump();

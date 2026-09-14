@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../estado/proveedores.dart';
-import '../modelos/cliente.dart';
-import '../modelos/vehiculo.dart';
-import '../shared/shared.dart';
+import '../../../../shared/shared.dart';
+import '../../../clientes/dominio/cliente.dart';
+import '../../../servicios/presentacion/pantallas/pantalla_servicios.dart';
+import '../../dominio/vehiculo.dart';
+import '../proveedores/vehiculos_proveedores.dart';
+import '../widgets/tarjeta_vehiculo.dart';
 import 'formulario_vehiculo.dart';
-import 'pantalla_servicios.dart';
 
 class PantallaVehiculos extends ConsumerWidget {
   final Cliente cliente;
@@ -60,7 +61,7 @@ class PantallaVehiculos extends ConsumerWidget {
     if (confirmado != true) return;
 
     try {
-      await ref.read(apiVehiculoProvider).eliminar(vehiculo.id!);
+      await ref.read(repositorioVehiculosProvider).eliminar(vehiculo.id!);
       ref.invalidate(vehiculosPorClienteProvider(cliente.id!));
     } catch (error) {
       if (!context.mounted) return;
@@ -104,31 +105,15 @@ class PantallaVehiculos extends ConsumerWidget {
             separatorBuilder: (_, _) => const Divider(height: 1),
             itemBuilder: (_, indice) {
               final vehiculo = lista[indice];
-              return ListTile(
-                leading: const CircleAvatar(child: Icon(Icons.directions_car)),
-                title: Text(vehiculo.descripcionCorta),
-                subtitle: Text(
-                  '${vehiculo.patente}  -  ${vehiculo.kilometraje} km',
-                ),
-                onTap: () => Navigator.of(context).push(
+              return TarjetaVehiculo(
+                vehiculo: vehiculo,
+                alTocar: () => Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (_) => PantallaServicios(vehiculo: vehiculo),
                   ),
                 ),
-                trailing: PopupMenuButton<String>(
-                  onSelected: (opcion) {
-                    if (opcion == 'editar') {
-                      _abrirFormulario(context, ref, vehiculo: vehiculo);
-                    }
-                    if (opcion == 'eliminar') {
-                      _eliminar(context, ref, vehiculo);
-                    }
-                  },
-                  itemBuilder: (_) => const [
-                    PopupMenuItem(value: 'editar', child: Text('Editar')),
-                    PopupMenuItem(value: 'eliminar', child: Text('Eliminar')),
-                  ],
-                ),
+                alEditar: () => _abrirFormulario(context, ref, vehiculo: vehiculo),
+                alEliminar: () => _eliminar(context, ref, vehiculo),
               );
             },
           );

@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/design_system/design_system.dart';
 import '../features/ajustes/presentacion/proveedores/tema_proveedores.dart';
-import '../pantallas/pantalla_clientes.dart';
+import '../features/clientes/presentacion/pantallas/pantalla_clientes.dart';
 
 class AplicacionTaller extends ConsumerWidget {
   const AplicacionTaller({super.key});

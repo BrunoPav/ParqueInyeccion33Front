@@ -1,21 +1,30 @@
-class Cliente {
+import '../dominio/cliente.dart';
+
+class ClienteDto {
   final int? id;
   final String nombre;
   final String? contacto;
   final bool activo;
 
-  const Cliente({
+  const ClienteDto({
     this.id,
     required this.nombre,
     this.contacto,
     this.activo = true,
   });
 
-  factory Cliente.desdeJson(Map<String, dynamic> json) => Cliente(
+  factory ClienteDto.desdeJson(Map<String, dynamic> json) => ClienteDto(
         id: json['id'] as int?,
         nombre: json['nombre'] as String,
         contacto: json['contacto'] as String?,
         activo: json['activo'] as bool? ?? true,
+      );
+
+  factory ClienteDto.desdeDominio(Cliente cliente) => ClienteDto(
+        id: cliente.id,
+        nombre: cliente.nombre,
+        contacto: cliente.contacto,
+        activo: cliente.activo,
       );
 
   Map<String, dynamic> aJson() => {
@@ -23,10 +32,5 @@ class Cliente {
         'contacto': contacto,
       };
 
-  Cliente copiarCon({String? nombre, String? contacto, bool? activo}) => Cliente(
-        id: id,
-        nombre: nombre ?? this.nombre,
-        contacto: contacto ?? this.contacto,
-        activo: activo ?? this.activo,
-      );
+  Cliente aDominio() => Cliente(id: id, nombre: nombre, contacto: contacto, activo: activo);
 }

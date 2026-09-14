@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
-import '../estado/proveedores.dart';
-import '../modelos/servicio.dart';
-import '../modelos/vehiculo.dart';
-import '../shared/shared.dart';
+import '../../../../shared/shared.dart';
+import '../../../vehiculos/dominio/vehiculo.dart';
+import '../../dominio/servicio.dart';
+import '../proveedores/servicios_proveedores.dart';
+import '../widgets/resumen_servicios.dart';
+import '../widgets/tarjeta_servicio.dart';
 import 'formulario_servicio.dart';
 
 class PantallaServicios extends ConsumerWidget {
   final Vehiculo vehiculo;
 
-  PantallaServicios({super.key, required this.vehiculo});
-
-  final _formatoFecha = DateFormat('dd/MM/yyyy');
-
-  String _precio(double valor) => '\$ ${valor.toStringAsFixed(2)}';
+  const PantallaServicios({super.key, required this.vehiculo});
 
   Future<void> _abrirFormulario(
     BuildContext context,
@@ -64,7 +61,7 @@ class PantallaServicios extends ConsumerWidget {
     if (confirmado != true) return;
 
     try {
-      await ref.read(apiServicioProvider).eliminar(servicio.id!);
+      await ref.read(repositorioServiciosProvider).eliminar(servicio.id!);
       ref.invalidate(serviciosPorVehiculoProvider(vehiculo.id!));
     } catch (error) {
       if (!context.mounted) return;
@@ -104,73 +101,19 @@ class PantallaServicios extends ConsumerWidget {
             );
           }
 
-          final total = lista.fold<double>(0, (suma, s) => suma + s.precio);
-
           return Column(
             children: [
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        '${lista.length} servicio${lista.length == 1 ? '' : 's'}',
-                        style: Theme.of(context).textTheme.titleSmall,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: Text(
-                        'Total: ${_precio(total)}',
-                        style: Theme.of(context).textTheme.titleSmall,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.right,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              ResumenServicios(servicios: lista),
               Expanded(
                 child: ListView.separated(
                   itemCount: lista.length,
                   separatorBuilder: (_, _) => const Divider(height: 1),
                   itemBuilder: (_, indice) {
                     final servicio = lista[indice];
-                    return ListTile(
-                      isThreeLine: true,
-                      leading: const CircleAvatar(child: Icon(Icons.build)),
-                      title: Text(_formatoFecha.format(servicio.fecha)),
-                      subtitle: Text(servicio.descripcion),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            _precio(servicio.precio),
-                            style: Theme.of(context).textTheme.titleSmall,
-                          ),
-                          PopupMenuButton<String>(
-                            onSelected: (opcion) {
-                              if (opcion == 'editar') {
-                                _abrirFormulario(context, ref,
-                                    servicio: servicio);
-                              }
-                              if (opcion == 'eliminar') {
-                                _eliminar(context, ref, servicio);
-                              }
-                            },
-                            itemBuilder: (_) => const [
-                              PopupMenuItem(
-                                  value: 'editar', child: Text('Editar')),
-                              PopupMenuItem(
-                                  value: 'eliminar', child: Text('Eliminar')),
-                            ],
-                          ),
-                        ],
-                      ),
+                    return TarjetaServicio(
+                      servicio: servicio,
+                      alEditar: () => _abrirFormulario(context, ref, servicio: servicio),
+                      alEliminar: () => _eliminar(context, ref, servicio),
                     );
                   },
                 ),

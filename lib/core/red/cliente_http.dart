@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
-import '../core/config/entorno.dart';
+import '../config/entorno.dart';
 import 'excepciones.dart';
 
 const Map<String, String> cabecerasJson = {
@@ -13,7 +13,7 @@ const Map<String, String> cabecerasJson = {
 Uri construirUri(String ruta, [Map<String, String>? parametros]) {
   final base = Uri.parse(urlBaseApi);
   return base.replace(
-    path: ruta,
+    path: '${base.path}$ruta',
     queryParameters: (parametros == null || parametros.isEmpty) ? null : parametros,
   );
 }
