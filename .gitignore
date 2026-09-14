@@ -36,6 +36,9 @@ migrate_working_dir/
 /build/
 /coverage/
 
+# Diffs que escribe flutter test cuando un golden falla
+test/**/failures/
+
 # Symbolication related
 app.*.symbols
 

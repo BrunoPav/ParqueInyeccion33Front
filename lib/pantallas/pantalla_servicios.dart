@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import '../estado/proveedores.dart';
 import '../modelos/servicio.dart';
 import '../modelos/vehiculo.dart';
-import '../widgets/vista_async.dart';
+import '../shared/shared.dart';
 import 'formulario_servicio.dart';
 
 class PantallaServicios extends ConsumerWidget {
@@ -100,7 +100,7 @@ class PantallaServicios extends ConsumerWidget {
           if (lista.isEmpty) {
             return const VistaVacia(
               icono: Icons.build_outlined,
-              mensaje: 'Este vehiculo no tiene servicios registrados',
+              titulo: 'Este vehiculo no tiene servicios registrados',
             );
           }
 

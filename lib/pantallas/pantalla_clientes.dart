@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../estado/proveedores.dart';
 import '../features/ajustes/presentacion/pantallas/pantalla_ajustes.dart';
 import '../modelos/cliente.dart';
-import '../widgets/vista_async.dart';
+import '../shared/shared.dart';
 import 'formulario_cliente.dart';
 import 'pantalla_vehiculos.dart';
 
@@ -128,7 +128,7 @@ class _PantallaClientesState extends ConsumerState<PantallaClientes> {
                 if (lista.isEmpty) {
                   return VistaVacia(
                     icono: Icons.people_outline,
-                    mensaje: _mostrarActivos
+                    titulo: _mostrarActivos
                         ? 'No hay clientes activos'
                         : 'No hay clientes inactivos',
                   );

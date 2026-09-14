@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../estado/proveedores.dart';
 import '../modelos/cliente.dart';
 import '../modelos/vehiculo.dart';
-import '../widgets/vista_async.dart';
+import '../shared/shared.dart';
 import 'formulario_vehiculo.dart';
 import 'pantalla_servicios.dart';
 
@@ -96,7 +96,7 @@ class PantallaVehiculos extends ConsumerWidget {
           if (lista.isEmpty) {
             return const VistaVacia(
               icono: Icons.directions_car_outlined,
-              mensaje: 'Este cliente no tiene vehiculos',
+              titulo: 'Este cliente no tiene vehiculos',
             );
           }
           return ListView.separated(

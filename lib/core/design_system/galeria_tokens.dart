@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../shared/shared.dart';
 import 'extensiones/contexto_tema.dart';
 import 'extensiones/elevacion_tema.dart';
 import 'tokens/tokens.dart';
@@ -92,6 +93,93 @@ const _Seccion(
                 _MuestraElevacion('N2', context.elevacion.n2),
                 const SizedBox(width: Espaciado.md),
                 _MuestraElevacion('N3', context.elevacion.n3),
+              ],
+            ),
+          ),
+          _Seccion(
+            titulo: 'Botones',
+            child: Column(
+              children: [
+                BotonPrimario(etiqueta: 'Guardar', icono: Icons.save, onPressed: () {}),
+                SizedBox(height: context.espaciado.sm),
+                const BotonPrimario(etiqueta: 'Guardando...', cargando: true, onPressed: null),
+                SizedBox(height: context.espaciado.sm),
+                BotonSecundario(etiqueta: 'Añadir repuesto', onPressed: () {}),
+                SizedBox(height: context.espaciado.sm),
+                BotonPeligro(etiqueta: 'Eliminar', onPressed: () {}),
+                SizedBox(height: context.espaciado.sm),
+                BotonIcono(icono: Icons.settings, onPressed: () {}, tooltip: 'Ajustes'),
+              ],
+            ),
+          ),
+          _Seccion(
+            titulo: 'Entradas',
+            child: Column(
+              children: [
+                const CampoTexto(etiqueta: 'Nombre'),
+                SizedBox(height: context.espaciado.sm),
+                const CampoNumerico(etiqueta: 'Kilometraje', minimo: 0, maximo: 999999),
+                SizedBox(height: context.espaciado.sm),
+                const CampoMoneda(),
+                SizedBox(height: context.espaciado.sm),
+                const CampoPatente(),
+                SizedBox(height: context.espaciado.sm),
+                BarraBusqueda(onBuscar: (_) {}),
+              ],
+            ),
+          ),
+          _Seccion(
+            titulo: 'Superficies',
+            child: Column(
+              children: [
+                FilaLista(
+                  filaSuperior: const InsigniaPatente(patente: 'AF320OK'),
+                  titulo: 'Toyota Hilux (2020)',
+                  descripcion: 'Pick-up cabina doble, motor 1GD-FTV turbo diesel',
+                  filaInferior: const Text('124.500 km'),
+                  onTap: () {},
+                ),
+              ],
+            ),
+          ),
+          _Seccion(
+            titulo: 'Indicadores',
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Wrap(
+                  spacing: context.espaciado.xs,
+                  runSpacing: context.espaciado.xs,
+                  children: const [
+                    ChipEstado(estado: EstadoTaller.exito, etiqueta: 'Listo'),
+                    ChipEstado(estado: EstadoTaller.enCurso, etiqueta: 'En curso'),
+                    ChipEstado(estado: EstadoTaller.pendiente, etiqueta: 'Pendiente'),
+                    ChipEstado(estado: EstadoTaller.critico, etiqueta: 'Crítico'),
+                    ChipEstado(estado: EstadoTaller.archivado, etiqueta: 'Archivado'),
+                  ],
+                ),
+                SizedBox(height: context.espaciado.md),
+                const FilaInspeccion(titulo: 'Sin marcar', estado: EstadoInspeccion.sinMarcar),
+                const FilaInspeccion(titulo: 'Aprobado', estado: EstadoInspeccion.aprobado),
+                const FilaInspeccion(titulo: 'Atención', estado: EstadoInspeccion.atencion),
+                const FilaInspeccion(titulo: 'Falla', estado: EstadoInspeccion.falla),
+              ],
+            ),
+          ),
+          _Seccion(
+            titulo: 'Retroalimentación',
+            child: Column(
+              children: [
+                VistaVacia(
+                  icono: Icons.people_outline,
+                  titulo: 'No hay clientes activos',
+                  etiquetaAccion: 'Crear el primero',
+                  onAccion: () {},
+                ),
+                SizedBox(height: context.espaciado.md),
+                VistaError(mensaje: 'No se pudo conectar con el servidor', alReintentar: () {}),
+                SizedBox(height: context.espaciado.md),
+                const EsqueletoFilaLista(),
               ],
             ),
           ),
