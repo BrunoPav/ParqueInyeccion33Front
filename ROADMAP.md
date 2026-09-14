@@ -493,7 +493,7 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
 
 ### Botones
 
-- [ ] **F4.1** 🔒 `BotonPrimario` — altura 52, ancho completo por defecto, con `cargando` interno que
+- [x] **F4.1** 🔒 `BotonPrimario` — altura 52, ancho completo por defecto, con `cargando` interno que
   intercambia el ícono por un spinner y deshabilita el `onPressed`.
   **Toca:** `lib/shared/widgets/botones/boton_primario.dart` (nuevo).
   **Hecho:** reemplaza las **3 copias idénticas** del botón Guardar
@@ -501,131 +501,131 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
   [formulario_vehiculo.dart:185](lib/pantallas/formulario_vehiculo.dart#L185),
   [formulario_servicio.dart:160](lib/pantallas/formulario_servicio.dart#L160)).
 
-- [ ] **F4.2** 🔓 `BotonSecundario` — altura 48, fondo tenue, borde 1px.
+- [x] **F4.2** 🔓 `BotonSecundario` — altura 48, fondo tenue, borde 1px.
   **Toca:** `lib/shared/widgets/botones/boton_secundario.dart` (nuevo).
   **Hecho:** coincide con la spec de "Secondary Action" del design-system.
 
-- [ ] **F4.3** 🔓 `BotonPeligro` — altura 48, fondo y borde de la rampa de error, para acciones destructivas.
+- [x] **F4.3** 🔓 `BotonPeligro` — altura 48, fondo y borde de la rampa de error, para acciones destructivas.
   **Toca:** `lib/shared/widgets/botones/boton_peligro.dart` (nuevo).
   **Hecho:** coincide con la spec de "Danger / Stop Action".
 
-- [ ] **F4.4** 🔓 `BotonIcono` — botón de ícono con área táctil garantizada de 48×48.
+- [x] **F4.4** 🔓 `BotonIcono` — botón de ícono con área táctil garantizada de 48×48.
   **Toca:** `lib/shared/widgets/botones/boton_icono.dart` (nuevo).
   **Hecho:** el área táctil mide 48 aunque el ícono mida 20.
 
-- [ ] **F4.5** 🔓 Goldens de los 4 botones en claro y oscuro, en reposo / presionado / deshabilitado / cargando.
+- [x] **F4.5** 🔓 Goldens de los 4 botones en claro y oscuro, en reposo / presionado / deshabilitado / cargando.
   **Toca:** `test/shared/botones_golden_test.dart` (nuevo).
   **Hecho:** 32 goldens generados y versionados.
 
 ### Entradas
 
-- [ ] **F4.6** 🔒 `CampoTexto` — envuelve `TextFormField` heredando `InputDecorationTheme`, con
+- [x] **F4.6** 🔒 `CampoTexto` — envuelve `TextFormField` heredando `InputDecorationTheme`, con
   `etiqueta`, `validador`, `maxLineas`, `capitalizacion`.
   **Toca:** `lib/shared/widgets/entradas/campo_texto.dart` (nuevo).
   **Hecho:** ningún formulario vuelve a escribir `border: OutlineInputBorder()`.
 
-- [ ] **F4.7** 🔓 `CampoNumerico` — teclado numérico forzado (el design-system lo exige para odómetro,
+- [x] **F4.7** 🔓 `CampoNumerico` — teclado numérico forzado (el design-system lo exige para odómetro,
   SKU y cantidades), cifras tabulares, validación de rango.
   **Toca:** `lib/shared/widgets/entradas/campo_numerico.dart` (nuevo).
   **Hecho:** reemplaza a `_validarEntero` de
   [formulario_vehiculo.dart:53](lib/pantallas/formulario_vehiculo.dart#L53), que hoy vive dentro de la pantalla.
 
-- [ ] **F4.8** 🔓 `CampoMoneda` — prefijo de moneda, decimales, acepta coma y punto.
+- [x] **F4.8** 🔓 `CampoMoneda` — prefijo de moneda, decimales, acepta coma y punto.
   **Toca:** `lib/shared/widgets/entradas/campo_moneda.dart` (nuevo).
   **Hecho:** conserva la normalización `replaceAll(',', '.')` de
   [formulario_servicio.dart:70](lib/pantallas/formulario_servicio.dart#L70).
 
-- [ ] **F4.9** 🔓 `CampoFecha` — el patrón `InkWell` + `InputDecorator` + `showDatePicker`, como componente.
+- [x] **F4.9** 🔓 `CampoFecha` — el patrón `InkWell` + `InputDecorator` + `showDatePicker`, como componente.
   **Toca:** `lib/shared/widgets/entradas/campo_fecha.dart` (nuevo).
   **Hecho:** reemplaza el bloque de [formulario_servicio.dart:105](lib/pantallas/formulario_servicio.dart#L105).
 
-- [ ] **F4.10** 🔓 `BarraBusqueda` — altura 48, ícono de lupa, botón de limpiar automático, debounce.
+- [x] **F4.10** 🔓 `BarraBusqueda` — altura 48, ícono de lupa, botón de limpiar automático, debounce.
   **Toca:** `lib/shared/widgets/entradas/barra_busqueda.dart` (nuevo).
   **Hecho:** reemplaza el `TextField` inline de
   [pantalla_clientes.dart:75](lib/pantallas/pantalla_clientes.dart#L75), incluida su lógica de `suffixIcon`
   condicional. El debounce es una mejora: hoy solo busca con `onSubmitted`.
 
-- [ ] **F4.11** 🔓 `CampoPatente` — mayúsculas forzadas, tipografía mono, largo máximo.
+- [x] **F4.11** 🔓 `CampoPatente` — mayúsculas forzadas, tipografía mono, largo máximo.
   **Toca:** `lib/shared/widgets/entradas/campo_patente.dart` (nuevo).
   **Hecho:** aplica la regla de desambiguación `0`/`O` del design-system en la entrada, no solo en la lectura.
 
-- [ ] **F4.12** 🔓 Goldens de las entradas en claro y oscuro: reposo / foco / error / deshabilitado.
+- [x] **F4.12** 🔓 Goldens de las entradas en claro y oscuro: reposo / foco / error / deshabilitado.
   **Toca:** `test/shared/entradas_golden_test.dart` (nuevo).
   **Hecho:** generados y versionados. El estado de foco (borde primario + anillo 2px) se verifica acá.
 
 ### Superficies
 
-- [ ] **F4.13** 🔒 `TarjetaTaller` — los 3 niveles de elevación por parámetro, padding 16, radio 8,
+- [x] **F4.13** 🔒 `TarjetaTaller` — los 3 niveles de elevación por parámetro, padding 16, radio 8,
   con `onTap` opcional y feedback de presión instantáneo.
   **Toca:** `lib/shared/widgets/superficies/tarjeta_taller.dart` (nuevo).
   **Hecho:** los 3 niveles son visualmente distinguibles en claro y oscuro.
 
-- [ ] **F4.14** 🔓 `FilaLista` — la anatomía del mockup: fila superior (badge + chip), fila media
+- [x] **F4.14** 🔓 `FilaLista` — la anatomía del mockup: fila superior (badge + chip), fila media
   (título + descripción con `line-clamp-2`), fila inferior (metadatos). Toda la tarjeta es un solo target.
   **Toca:** `lib/shared/widgets/superficies/fila_lista.dart` (nuevo).
   **Hecho:** reemplaza el patrón `ListTile` + `Divider` de las 3 pantallas de listado.
 
-- [ ] **F4.15** 🔓 `SeccionFormulario` — agrupa campos con encabezado y el espaciado vertical correcto.
+- [x] **F4.15** 🔓 `SeccionFormulario` — agrupa campos con encabezado y el espaciado vertical correcto.
   **Toca:** `lib/shared/widgets/superficies/seccion_formulario.dart` (nuevo).
   **Hecho:** elimina los `SizedBox(height: 16)` sueltos de los 3 formularios.
 
-- [ ] **F4.16** 🔓 `BarraInferiorAcciones` — la "Sticky Bottom Utility Bar": anclada abajo, con
+- [x] **F4.16** 🔓 `BarraInferiorAcciones` — la "Sticky Bottom Utility Bar": anclada abajo, con
   `SafeArea`, borde superior y sombra hacia arriba.
   **Toca:** `lib/shared/widgets/navegacion/barra_inferior_acciones.dart` (nuevo).
   **Hecho:** respeta el inset inferior en Android con gestos.
 
-- [ ] **F4.17** 🔓 Goldens de superficies en claro y oscuro.
+- [x] **F4.17** 🔓 Goldens de superficies en claro y oscuro.
   **Toca:** `test/shared/superficies_golden_test.dart` (nuevo).
   **Hecho:** generados y versionados.
 
 ### Indicadores
 
-- [ ] **F4.18** 🔓 `ChipEstado` — los 5 estados vía `ColoresEstado`, altura 28, padding `4px 10px`,
+- [x] **F4.18** 🔓 `ChipEstado` — los 5 estados vía `ColoresEstado`, altura 28, padding `4px 10px`,
   radio 4, `label-md` en mayúsculas.
   **Toca:** `lib/shared/widgets/indicadores/chip_estado.dart` (nuevo).
   **Hecho:** los 5 estados renderizan con su terna fondo/borde/texto.
   *Sin consumidor hasta que el backend tenga un campo de estado — decisión de alcance tomada.*
 
-- [ ] **F4.19** 🔓 `InsigniaPatente` — badge mono, mayúsculas, radio 4, borde 1px.
+- [x] **F4.19** 🔓 `InsigniaPatente` — badge mono, mayúsculas, radio 4, borde 1px.
   **Toca:** `lib/shared/widgets/indicadores/insignia_patente.dart` (nuevo).
   **Hecho:** reemplaza el `Text` crudo de la patente en
   [pantalla_vehiculos.dart:111](lib/pantallas/pantalla_vehiculos.dart#L111).
 
-- [ ] **F4.20** 🔓 `EtiquetaMetadato` — ícono + texto para las filas de pie de tarjeta.
+- [x] **F4.20** 🔓 `EtiquetaMetadato` — ícono + texto para las filas de pie de tarjeta.
   **Toca:** `lib/shared/widgets/indicadores/etiqueta_metadato.dart` (nuevo).
   **Hecho:** usa cifras tabulares cuando el contenido es numérico.
 
-- [ ] **F4.21** 🔓 `FilaInspeccion` — la fila de checklist MPI: altura mínima 56, control 28×28 en el
+- [x] **F4.21** 🔓 `FilaInspeccion` — la fila de checklist MPI: altura mínima 56, control 28×28 en el
   extremo, 4 estados (sin marcar / aprobado / atención / falla).
   **Toca:** `lib/shared/widgets/indicadores/fila_inspeccion.dart` (nuevo).
   **Hecho:** los 4 estados renderizan. *Pieza lista sin consumidor, igual que F4.18.*
 
-- [ ] **F4.22** 🔓 `Avatar` — inicial o ícono, tamaño por token.
+- [x] **F4.22** 🔓 `Avatar` — inicial o ícono, tamaño por token.
   **Toca:** `lib/shared/widgets/indicadores/avatar.dart` (nuevo).
   **Hecho:** reemplaza los 3 `CircleAvatar` de las pantallas de listado.
 
-- [ ] **F4.23** 🔓 Goldens de indicadores: los 5 estados de chip y los 4 de inspección, en ambos temas.
+- [x] **F4.23** 🔓 Goldens de indicadores: los 5 estados de chip y los 4 de inspección, en ambos temas.
   **Toca:** `test/shared/indicadores_golden_test.dart` (nuevo).
   **Hecho:** generados y versionados.
 
 ### Retroalimentación
 
-- [ ] **F4.24** 🔒 Mover `VistaAsync` a `shared/` y quitarle los literales
+- [x] **F4.24** 🔒 Mover `VistaAsync` a `shared/` y quitarle los literales
   (`EdgeInsets.all(24)`, `size: 48`, `SizedBox(height: 16)`).
   **Toca:** `lib/widgets/vista_async.dart` → `lib/shared/widgets/retroalimentacion/vista_async.dart`.
   **Hecho:** cero valores literales; comportamiento idéntico.
 
-- [ ] **F4.25** 🔓 Extraer `VistaError` a su propio archivo (hoy es la clase privada `_VistaError`)
+- [x] **F4.25** 🔓 Extraer `VistaError` a su propio archivo (hoy es la clase privada `_VistaError`)
   y agregarle un modo compacto para usar dentro de un panel de master-detail.
   **Toca:** `lib/shared/widgets/retroalimentacion/vista_error.dart` (nuevo).
   **Hecho:** utilizable fuera de `VistaAsync`.
 
-- [ ] **F4.26** 🔓 Rehacer `VistaVacia` con la anatomía del mockup: ícono, título, texto de apoyo y
+- [x] **F4.26** 🔓 Rehacer `VistaVacia` con la anatomía del mockup: ícono, título, texto de apoyo y
   acción primaria opcional.
   **Toca:** `lib/shared/widgets/retroalimentacion/vista_vacia.dart` (nuevo).
   **Hecho:** los 3 usos actuales siguen funcionando; ahora puede ofrecer "Crear el primero".
 
-- [ ] **F4.27** 🔒 `Notificador` — **un solo punto** para los mensajes de error y éxito.
+- [x] **F4.27** 🔒 `Notificador` — **un solo punto** para los mensajes de error y éxito.
   **Toca:** `lib/shared/widgets/retroalimentacion/notificador.dart` (nuevo).
   **Hecho:** reemplaza las **6 copias textuales** del `SnackBar` de error
   ([pantalla_clientes.dart:47](lib/pantallas/pantalla_clientes.dart#L47),
@@ -636,17 +636,17 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
   [formulario_servicio.dart:85](lib/pantallas/formulario_servicio.dart#L85)).
   *La mayor reducción de duplicación de todo el roadmap.*
 
-- [ ] **F4.28** 🔓 `EsqueletoCarga` — placeholders con shimmer para listas y tarjetas.
+- [x] **F4.28** 🔓 `EsqueletoCarga` — placeholders con shimmer para listas y tarjetas.
   **Toca:** `lib/shared/widgets/retroalimentacion/esqueleto_carga.dart` (nuevo).
   **Hecho:** se ve mejor que el `CircularProgressIndicator` centrado actual; queda disponible para F9.
 
-- [ ] **F4.29** 🔓 Goldens de retroalimentación: vacío, error y carga, en ambos temas.
+- [x] **F4.29** 🔓 Goldens de retroalimentación: vacío, error y carga, en ambos temas.
   **Toca:** `test/shared/retroalimentacion_golden_test.dart` (nuevo).
   **Hecho:** generados y versionados.
 
 ### Diálogos y navegación
 
-- [ ] **F4.30** 🔒 `dialogoConfirmacion()` — título, cuerpo, etiquetas configurables y variante destructiva.
+- [x] **F4.30** 🔒 `dialogoConfirmacion()` — título, cuerpo, etiquetas configurables y variante destructiva.
   **Toca:** `lib/shared/dialogos/dialogo_confirmacion.dart` (nuevo).
   **Hecho:** reemplaza las **2 copias** del `AlertDialog` de borrado
   ([pantalla_vehiculos.dart:39](lib/pantallas/pantalla_vehiculos.dart#L39),
@@ -654,11 +654,11 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
   Corrige de paso un detalle: hoy el botón "Eliminar" usa `FilledButton` con el color primario,
   cuando una acción destructiva debe leerse como destructiva.
 
-- [ ] **F4.31** 🔓 `MenuAcciones<T>` — el `PopupMenuButton` de editar/eliminar, parametrizado.
+- [x] **F4.31** 🔓 `MenuAcciones<T>` — el `PopupMenuButton` de editar/eliminar, parametrizado.
   **Toca:** `lib/shared/widgets/navegacion/menu_acciones.dart` (nuevo).
   **Hecho:** reemplaza las **3 copias** del `PopupMenuButton` de las pantallas de listado.
 
-- [ ] **F4.32** 🔓 `BarraSuperior` — `AppBar` con la variante de subtítulo que hoy se resuelve con un
+- [x] **F4.32** 🔓 `BarraSuperior` — `AppBar` con la variante de subtítulo que hoy se resuelve con un
   `PreferredSize` + `Padding` a mano en dos pantallas
   ([pantalla_vehiculos.dart:83](lib/pantallas/pantalla_vehiculos.dart#L83),
   [pantalla_servicios.dart:87](lib/pantallas/pantalla_servicios.dart#L87)).
@@ -667,28 +667,35 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
 
 ### Utilidades y cierre
 
-- [ ] **F4.33** 🔓 `Formatos` — fecha, moneda y kilometraje centralizados con cifras tabulares.
+- [x] **F4.33** 🔓 `Formatos` — fecha, moneda y kilometraje centralizados con cifras tabulares.
   **Toca:** `lib/core/utilidades/formatos.dart` (nuevo).
   **Hecho:** reemplaza los `DateFormat('dd/MM/yyyy')` duplicados en
   [pantalla_servicios.dart:16](lib/pantallas/pantalla_servicios.dart#L16) y
   [formulario_servicio.dart:24](lib/pantallas/formulario_servicio.dart#L24), y el `_precio()` privado.
 
-- [ ] **F4.34** 🔓 `Validadores` — reglas de formulario reutilizables (obligatorio, largo máximo,
+- [x] **F4.34** 🔓 `Validadores` — reglas de formulario reutilizables (obligatorio, largo máximo,
   rango entero, decimal positivo).
   **Toca:** `lib/core/utilidades/validadores.dart` (nuevo).
   **Hecho:** los 3 formularios podrán componer validadores en vez de escribir closures.
   Se respeta la regla del proyecto: **no se replican las reglas de negocio del backend**, solo formato.
 
-- [ ] **F4.35** 🔓 Barrel de `shared`.
+- [x] **F4.35** 🔓 Barrel de `shared`.
   **Toca:** `lib/shared/shared.dart` (nuevo).
   **Hecho:** un import alcanza para toda la capa.
 
-- [ ] **F4.36** 🔓 Extender la galería de F2.21 con todos los componentes nuevos.
+- [x] **F4.36** 🔓 Extender la galería de F2.21 con todos los componentes nuevos.
   **Toca:** `lib/core/design_system/galeria_tokens.dart`.
   **Hecho:** la galería muestra cada componente en cada estado, en ambos temas.
 
-- [ ] **F4.37** ✅ **Cierre de fase:** analyze + test verdes, todos los goldens generados.
+- [x] **F4.37** ✅ **Cierre de fase:** analyze + test verdes, todos los goldens generados.
   Las pantallas **todavía no consumen** los componentes — eso es F9.
+  **Excepción explícita:** `VistaAsync`/`VistaVacia` sí se movieron (F4.24/F4.26 lo dicen literalmente:
+  "mover", no "crear") y las 3 pantallas de listado actualizaron su import y el parámetro
+  `mensaje`→`titulo` de `VistaVacia` para seguir compilando — cero cambio visual, ninguna pantalla
+  ganó un componente nuevo. `bombearPantalla` (test helper) también pasó a dar el tema real por
+  defecto en vez de `null`, porque `VistaVacia` ahora depende de `context.espaciado`.
+  Conteo real de goldens (el roadmap estimaba números redondos antes de ver qué estados aplican a
+  cada componente): botones 26, entradas 34, superficies 12, indicadores 28, retroalimentación 10 = **110**.
 
 ---
 
