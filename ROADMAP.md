@@ -63,7 +63,13 @@ Cada paso es un `[ ]` con **qué hace**, **qué toca** y **criterio de hecho**. 
 3. **Cada fase cierra con `flutter analyze` y `flutter test` en verde.** El CI
    ([desplegar.yml](.github/workflows/desplegar.yml)) corre ambos y **despliega a GitHub Pages en cada
    push a `main`** — un árbol roto es un despliegue roto.
-4. **Cada componente de `/shared` nace con golden test** en claro y oscuro.
+4. ~~Cada componente de `/shared` nace con golden test en claro y oscuro.~~ **Revertido**: los 110
+   goldens de F4 rompieron el CI 3 pushes seguidos por diferencias de renderizado entre el Windows
+   donde se generaron y el Linux donde corre GitHub Actions — no son portables entre plataformas sin
+   una imagen de referencia por SO, que este proyecto no tiene. Se eliminaron por completo (código y
+   `.png`); no se generan más. La verificación de un componente nuevo es `flutter analyze` + un test
+   de widget que lo monta y confirma que renderiza sin excepción (sin comparar contra una imagen) —
+   sirvió para encontrar el bug real de `bombearPantalla` en F3, y ese valor se conserva sin el pixel-diff.
 5. **Una rama por fase.** Merge a `main` solo con el build web verificado.
 
 ---
@@ -696,6 +702,12 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
   defecto en vez de `null`, porque `VistaVacia` ahora depende de `context.espaciado`.
   Conteo real de goldens (el roadmap estimaba números redondos antes de ver qué estados aplican a
   cada componente): botones 26, entradas 34, superficies 12, indicadores 28, retroalimentación 10 = **110**.
+  **Actualización posterior:** estos 110 goldens y `test/ayudas/capturas_doradas.dart` se **eliminaron
+  por completo** — rompían el CI (Windows local vs. Linux en GitHub Actions no renderizan igual, y el
+  proyecto no tenía imagen de referencia por plataforma). Ver la convención 4 al principio del documento.
+  F4.5/F4.12/F4.17/F4.23/F4.29 quedan tildados porque el trabajo de construir cada componente se hizo y
+  se verificó en su momento — lo que se revirtió es específicamente el mecanismo de golden test, no los
+  componentes ni su verificación visual manual.
 
 ---
 
