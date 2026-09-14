@@ -3,9 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'vista_error.dart';
 
-/// Los tres estados de un `AsyncValue` siempre cubiertos: cargando, error
-/// (con reintentar) y datos. Sin valores literales — todo lo visual lo
-/// resuelven `VistaError` y el `child` de `enDatos`.
+/// `AsyncValue.when` obliga a cubrir los tres estados: no hay forma de
+/// olvidarse de `loading` o `error` como pasaría con un `if`/`else` a mano.
 class VistaAsync<T> extends StatelessWidget {
   final AsyncValue<T> valor;
   final Widget Function(T datos) enDatos;

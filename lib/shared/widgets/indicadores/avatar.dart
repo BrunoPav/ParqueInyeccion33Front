@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../core/design_system/design_system.dart';
 
-/// Inicial o ícono, tamaño por token. Reemplaza los `CircleAvatar` sueltos
-/// de las 3 pantallas de listado.
 class Avatar extends StatelessWidget {
   final String? inicial;
   final IconData? icono;

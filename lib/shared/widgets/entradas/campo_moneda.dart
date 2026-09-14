@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/design_system/tokens/tipografia.dart';
 import '../../../core/utilidades/validadores.dart';
 
-/// Prefijo de moneda, decimales, acepta coma y punto — conserva la
-/// normalización `replaceAll(',', '.')` que hoy vive en el formulario de
-/// servicio.
+/// Acepta coma o punto como separador decimal.
 class CampoMoneda extends StatelessWidget {
   final TextEditingController? controller;
   final String etiqueta;

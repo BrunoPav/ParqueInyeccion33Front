@@ -18,9 +18,6 @@ abstract final class Espaciado {
   static const double objetivoTactilAmplio = 56;
 }
 
-/// [EdgeInsets] de uso frecuente construidos sobre [Espaciado], para no
-/// repetir `EdgeInsets.all(...)`/`EdgeInsets.symmetric(...)` con números
-/// sueltos en cada pantalla.
 abstract final class PaddingTaller {
   static const EdgeInsets tarjeta = EdgeInsets.all(Espaciado.md);
 

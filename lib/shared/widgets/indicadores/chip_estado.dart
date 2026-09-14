@@ -4,9 +4,8 @@ import '../../../core/design_system/design_system.dart';
 
 enum EstadoTaller { exito, enCurso, pendiente, critico, archivado }
 
-/// Los 5 estados semánticos vía [ColoresEstado]: altura 28, padding
-/// `4px 10px`, radio 4, `label-md` en mayúsculas. Sin consumidor hasta que
-/// el backend tenga un campo de estado — pieza lista para cuando lo tenga.
+/// Sin consumidor hasta que el backend tenga un campo de estado — pieza
+/// lista para cuando lo tenga.
 class ChipEstado extends StatelessWidget {
   final EstadoTaller estado;
   final String etiqueta;

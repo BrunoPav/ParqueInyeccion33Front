@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Envuelve `TextFormField` heredando el `InputDecorationTheme` del tema
-/// activo: ningún formulario vuelve a escribir `border: OutlineInputBorder()`.
 class CampoTexto extends StatelessWidget {
   final TextEditingController? controller;
   final String etiqueta;

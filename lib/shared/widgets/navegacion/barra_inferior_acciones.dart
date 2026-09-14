@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../core/design_system/design_system.dart';
 
-/// La "Sticky Bottom Utility Bar" del design-system: anclada abajo, borde
-/// superior, sombra hacia arriba y el inset inferior de `SafeArea`
-/// respetado en Android con gestos.
+/// `SafeArea` solo abajo: el borde y la sombra ya delimitan la barra por
+/// arriba, y el inset inferior es el que hace falta respetar en Android
+/// con gestos.
 class BarraInferiorAcciones extends StatelessWidget {
   final Widget child;
 

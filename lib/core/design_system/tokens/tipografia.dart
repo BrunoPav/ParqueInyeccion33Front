@@ -89,9 +89,8 @@ abstract final class Tipografia {
   );
 }
 
-/// Aplica cifras tabulares a cualquier [TextStyle] de la escala, para
-/// odómetros, horas de mano de obra, montos y demás valores numéricos que no
-/// deben "bailar" al alinearse en columna.
+/// Cifras tabulares: los dígitos no deben "bailar" al alinearse en columna
+/// (odómetro, montos, horas de mano de obra).
 extension CifrasTabulares on TextStyle {
   TextStyle get conCifrasTabulares {
     return copyWith(fontFeatures: const [FontFeature.tabularFigures()]);

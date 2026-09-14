@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../core/design_system/design_system.dart';
 
-/// Ícono + texto para las filas de pie de tarjeta (mecánico asignado,
-/// tiempo transcurrido, etc). Usa cifras tabulares cuando el contenido es
-/// numérico.
 class EtiquetaMetadato extends StatelessWidget {
   final IconData icono;
   final String texto;

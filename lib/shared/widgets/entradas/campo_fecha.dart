@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../core/utilidades/formatos.dart';
 
-/// El patrón `InkWell` + `InputDecorator` + `showDatePicker`, como
-/// componente: hoy vive a mano en el formulario de servicio.
 class CampoFecha extends StatelessWidget {
   final String etiqueta;
   final DateTime valor;

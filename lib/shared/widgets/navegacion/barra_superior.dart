@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../core/design_system/design_system.dart';
 
-/// `AppBar` con subtítulo como parámetro, en vez del `PreferredSize` +
-/// `Padding` a mano que hoy se repite en dos pantallas.
 class BarraSuperior extends StatelessWidget implements PreferredSizeWidget {
   final String titulo;
   final String? subtitulo;
