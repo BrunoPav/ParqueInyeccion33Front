@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../core/design_system/design_system.dart';
 
-/// La "Secondary Action" del design-system: altura 48, fondo tenue, borde
-/// 1px. Para acciones como "Añadir Repuesto" o "Pausar" — no compite con
-/// [BotonPrimario] por atención.
+/// Fondo tenue en vez de transparente (a diferencia de `OutlinedButton`
+/// por defecto) para no competir con [BotonPrimario] por atención.
 class BotonSecundario extends StatelessWidget {
   final String etiqueta;
   final VoidCallback? onPressed;

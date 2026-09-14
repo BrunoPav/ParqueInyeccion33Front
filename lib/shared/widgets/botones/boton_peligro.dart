@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../core/design_system/design_system.dart';
 
-/// La "Danger / Stop Action" del design-system: altura 48, fondo y borde
-/// de la rampa de crítico, para acciones destructivas ("Rechazar
-/// Presupuesto", eliminar). Toma el color de [ColoresEstado.critico], la
-/// misma terna que usan los chips de estado crítico.
+/// Toma el color de [ColoresEstado.critico], la misma terna que usan los
+/// chips de estado crítico.
 class BotonPeligro extends StatelessWidget {
   final String etiqueta;
   final VoidCallback? onPressed;

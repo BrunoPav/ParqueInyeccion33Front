@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../core/design_system/tokens/tipografia.dart';
 import '../../../core/utilidades/validadores.dart';
 
-/// Teclado numérico forzado y cifras tabulares, como exige el
-/// design-system para odómetro, SKU y cantidades. Reemplaza a
-/// `_validarEntero`, que hoy vive dentro de cada pantalla.
 class CampoNumerico extends StatelessWidget {
   final TextEditingController? controller;
   final String etiqueta;

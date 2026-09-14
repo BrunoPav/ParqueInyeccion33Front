@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/design_system/design_system.dart';
 
-/// La "Primary Action" del design-system: altura 52, ancho completo por
-/// defecto. `cargando` intercambia el ícono por un spinner y deshabilita
+/// `cargando` intercambia el ícono por un spinner y deshabilita
 /// `onPressed`, sin que el llamador tenga que manejar ese estado a mano.
 class BotonPrimario extends StatelessWidget {
   final String etiqueta;

@@ -4,9 +4,8 @@ import '../../../core/design_system/design_system.dart';
 
 enum EstadoInspeccion { sinMarcar, aprobado, atencion, falla }
 
-/// La fila de checklist MPI: altura mínima 56, control 28×28 en el
-/// extremo, 4 estados. Sin consumidor hasta que el backend tenga
-/// checklists de inspección — pieza lista para cuando los tenga.
+/// Sin consumidor hasta que el backend tenga checklists de inspección —
+/// pieza lista para cuando los tenga.
 class FilaInspeccion extends StatelessWidget {
   final String titulo;
   final EstadoInspeccion estado;

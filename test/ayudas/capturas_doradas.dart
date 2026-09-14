@@ -74,8 +74,6 @@ Future<void> _cargarIconosMaterial() async {
   }
 }
 
-/// Monta [widget] bajo [tema] y compara contra `test/shared/goldens/nombre.png`.
-/// Pensado para un componente aislado, no una pantalla completa.
 Future<void> montarYCapturar(
   WidgetTester tester,
   String nombre,
@@ -109,9 +107,6 @@ Future<void> montarYCapturar(
   await expectLater(find.byType(MaterialApp), matchesGoldenFile('goldens/$nombre.png'));
 }
 
-/// Registra un `testWidgets` por cada entrada de [estados] (reposo,
-/// deshabilitado, etc.) y, si se pasa [conPresionado], uno más que simula
-/// el dedo abajo sin soltar para capturar el estado presionado.
 void goldenDeEstados(
   String nombre, {
   required ThemeData tema,

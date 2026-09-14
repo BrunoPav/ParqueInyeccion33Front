@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../core/design_system/design_system.dart';
 
-/// Un bloque con shimmer, para listas y tarjetas en `loading`. Se ve mejor
-/// que el `CircularProgressIndicator` centrado que usan hoy las 3 pantallas
-/// de listado.
 class EsqueletoCarga extends StatefulWidget {
   final double? ancho;
   final double alto;
@@ -53,8 +50,6 @@ class _EsqueletoCargaState extends State<EsqueletoCarga> with SingleTickerProvid
   }
 }
 
-/// Placeholder compuesto con la silueta de una fila de lista: avatar,
-/// dos líneas de texto de distinto ancho.
 class EsqueletoFilaLista extends StatelessWidget {
   const EsqueletoFilaLista({super.key});
 

@@ -10,8 +10,6 @@ class AccionMenu<T> {
   const AccionMenu({required this.valor, required this.etiqueta, this.icono});
 }
 
-/// El `PopupMenuButton` de editar/eliminar, parametrizado — reemplaza las
-/// 3 copias de las pantallas de listado.
 class MenuAcciones<T> extends StatelessWidget {
   final List<AccionMenu<T>> acciones;
   final ValueChanged<T> onSeleccionar;

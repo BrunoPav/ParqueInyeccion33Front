@@ -4,9 +4,6 @@ import '../../../core/design_system/design_system.dart';
 
 enum NivelTarjeta { n1, n2, n3 }
 
-/// Los 3 niveles de elevación del design-system como parámetro, padding
-/// 16, radio 8. `onTap` agrega feedback de presión instantáneo (`InkWell`)
-/// sin perder el borde ni la sombra del nivel elegido.
 class TarjetaTaller extends StatelessWidget {
   final Widget child;
   final NivelTarjeta nivel;
@@ -34,6 +31,10 @@ class TarjetaTaller extends StatelessWidget {
     final resuelto = _resolver(context);
     final interior = Padding(padding: padding ?? PaddingTaller.tarjeta, child: child);
 
+    // El color de fondo va en el Material, no en esta decoración: así el
+    // ripple del InkWell se ve (pintar el fondo acá lo taparía) y
+    // clipBehavior lo recorta al radio sin afectar la sombra, que
+    // Container pinta por fuera del recorte.
     return Container(
       decoration: BoxDecoration(
         borderRadius: RadiosTaller.tarjeta,

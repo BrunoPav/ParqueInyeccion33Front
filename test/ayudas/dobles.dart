@@ -1,7 +1,6 @@
 import 'package:taller_mecanico_frontend/api/api_cliente.dart';
 import 'package:taller_mecanico_frontend/modelos/cliente.dart';
 
-/// Devuelve dos clientes fijos, sin llamar a la red.
 class ApiClienteFalso extends ApiCliente {
   @override
   Future<List<Cliente>> listar({String? nombre, bool activo = true}) async {
@@ -12,7 +11,6 @@ class ApiClienteFalso extends ApiCliente {
   }
 }
 
-/// Simula que no hay clientes, sin llamar a la red.
 class ApiClienteVacia extends ApiCliente {
   @override
   Future<List<Cliente>> listar({String? nombre, bool activo = true}) async {

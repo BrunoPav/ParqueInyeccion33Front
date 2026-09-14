@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../core/design_system/design_system.dart';
 
-/// Agrupa campos de formulario con un encabezado opcional y el espaciado
-/// vertical del token entre cada uno — elimina los `SizedBox(height: 16)`
-/// sueltos entre `TextFormField`.
 class SeccionFormulario extends StatelessWidget {
   final String? titulo;
   final List<Widget> campos;

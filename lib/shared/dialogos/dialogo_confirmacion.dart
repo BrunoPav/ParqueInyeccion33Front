@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../widgets/botones/boton_peligro.dart';
 
-/// Título, cuerpo y etiquetas configurables, con variante destructiva —
-/// reemplaza las 2 copias del `AlertDialog` de borrado. La variante
-/// destructiva corrige un detalle de las copias actuales: un "Eliminar"
-/// debe leerse como destructivo, no con el color primario.
+/// `destructivo: true` usa [BotonPeligro] en vez de `FilledButton`: un
+/// "Eliminar" debe leerse como destructivo, no con el color primario.
 Future<bool> dialogoConfirmacion(
   BuildContext context, {
   required String titulo,

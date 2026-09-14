@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/design_system/design_system.dart';
 
-/// Un solo punto para los `SnackBar` de error y de éxito — reemplaza las
-/// 6 copias textuales de `ScaffoldMessenger.of(context).showSnackBar(...)`
-/// repartidas entre las 3 pantallas de listado y los 3 formularios.
+/// Un solo punto para los `SnackBar` de error y de éxito.
 abstract final class Notificador {
   static void error(BuildContext context, String mensaje) {
     final colores = context.colores;

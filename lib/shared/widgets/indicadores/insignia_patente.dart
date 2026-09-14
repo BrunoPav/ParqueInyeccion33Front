@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../core/design_system/design_system.dart';
 
-/// Badge mono, mayúsculas, radio 4, borde 1px. Reemplaza el `Text` crudo
-/// de la patente en la fila de vehículos.
 class InsigniaPatente extends StatelessWidget {
   final String patente;
 
