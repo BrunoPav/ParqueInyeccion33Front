@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../estado/proveedores.dart';
-import '../modelos/vehiculo.dart';
+import '../../dominio/vehiculo.dart';
+import '../proveedores/vehiculos_proveedores.dart';
 
 class FormularioVehiculo extends ConsumerStatefulWidget {
   final int clienteId;
@@ -69,7 +69,7 @@ class _FormularioVehiculoState extends ConsumerState<FormularioVehiculo> {
 
     setState(() => _guardando = true);
 
-    final api = ref.read(apiVehiculoProvider);
+    final repositorio = ref.read(repositorioVehiculosProvider);
     final datos = Vehiculo(
       marca: _marca.text.trim(),
       modelo: _modelo.text.trim(),
@@ -81,9 +81,9 @@ class _FormularioVehiculoState extends ConsumerState<FormularioVehiculo> {
 
     try {
       if (_esEdicion) {
-        await api.reemplazar(widget.vehiculo!.id!, datos);
+        await repositorio.reemplazar(widget.vehiculo!.id!, datos);
       } else {
-        await api.crear(datos);
+        await repositorio.crear(datos);
       }
       if (!mounted) return;
       Navigator.of(context).pop(true);

@@ -704,148 +704,154 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
 > Puramente mecánica: **ningún cambio visual**. Se hace una feature por vez, dejando el árbol verde
 > en cada paso. Va antes de routing para que las rutas apunten a las ubicaciones definitivas.
 
-- [ ] **F5.1** 🔒 Mover `lib/api/api_base.dart` → `lib/core/red/cliente_http.dart`.
+- [x] **F5.1** 🔒 Mover `lib/api/api_base.dart` → `lib/core/red/cliente_http.dart`.
   **Toca:** `lib/core/red/cliente_http.dart` (nuevo), los 3 archivos de API.
   **Hecho:** `construirUri`, `decodificar` y `ejecutar` siguen funcionando igual.
 
-- [ ] **F5.2** 🔒 Mover `lib/api/excepciones.dart` → `lib/core/red/excepciones.dart`.
+- [x] **F5.2** 🔒 Mover `lib/api/excepciones.dart` → `lib/core/red/excepciones.dart`.
   **Toca:** `lib/core/red/excepciones.dart` (nuevo).
   **Hecho:** `ExcepcionApi` y `ExcepcionConexion` sin cambios de comportamiento.
 
-- [ ] **F5.3** 🔓 Revisar `construirUri`: hoy usa `base.replace(path: ruta)`, que **descarta cualquier
+- [x] **F5.3** 🔓 Revisar `construirUri`: hoy usa `base.replace(path: ruta)`, que **descarta cualquier
   path del `API_URL`**. Funciona porque la URL base no tiene path, pero se rompe silenciosamente si algún
   día apunta a `https://host/api/v2`.
   **Toca:** `lib/core/red/cliente_http.dart`.
-  **Hecho:** o se corrige concatenando, o se documenta la restricción con un `///`.
+  **Hecho:** corregido concatenando (`'${base.path}$ruta'`) en vez de solo documentado — mismo resultado
+  hoy (`base.path` es `''`), pero ya no rompe si `API_URL` alguna vez tiene un path propio.
 
 ### Feature clientes (patrón de referencia)
 
-- [ ] **F5.4** 🔒 Entidad de dominio `Cliente` — solo campos y lógica de negocio, **sin serialización**.
+- [x] **F5.4** 🔒 Entidad de dominio `Cliente` — solo campos y lógica de negocio, **sin serialización**.
   **Toca:** `lib/features/clientes/dominio/cliente.dart` (nuevo).
   **Hecho:** el archivo no importa `dart:convert` ni sabe qué es JSON.
 
-- [ ] **F5.5** 🔒 Interfaz `abstract class RepositorioClientes` con las 5 operaciones
+- [x] **F5.5** 🔒 Interfaz `abstract class RepositorioClientes` con las 5 operaciones
   (listar, obtener, crear, reemplazar, cambiarEstado).
   **Toca:** `lib/features/clientes/dominio/repositorio_clientes.dart` (nuevo).
   **Hecho:** la interfaz habla de entidades de dominio, no de `http.Response`.
 
-- [ ] **F5.6** 🔒 `ClienteDto` con `desdeJson` / `aJson` / `aDominio` / `desdeDominio`.
+- [x] **F5.6** 🔒 `ClienteDto` con `desdeJson` / `aJson` / `aDominio` / `desdeDominio`.
   **Toca:** `lib/features/clientes/datos/cliente_dto.dart` (nuevo).
   **Hecho:** toda la serialización que hoy vive en el modelo queda acá.
 
-- [ ] **F5.7** 🔒 `FuenteRemotaClientes` — `ApiCliente` renombrada, hablando DTOs.
+- [x] **F5.7** 🔒 `FuenteRemotaClientes` — `ApiCliente` renombrada, hablando DTOs.
   **Toca:** `lib/features/clientes/datos/fuente_remota_clientes.dart` (nuevo).
   **Hecho:** mismos endpoints, mismo comportamiento.
 
-- [ ] **F5.8** 🔒 `RepositorioClientesHttp implements RepositorioClientes` — traduce DTO ↔ dominio.
+- [x] **F5.8** 🔒 `RepositorioClientesHttp implements RepositorioClientes` — traduce DTO ↔ dominio.
   **Toca:** `lib/features/clientes/datos/repositorio_clientes_http.dart` (nuevo).
   **Hecho:** las pantallas dependen de la interfaz, nunca de la implementación.
 
-- [ ] **F5.9** 🔒 Providers de la feature: `repositorioClientesProvider`, `clientesProvider`,
+- [x] **F5.9** 🔒 Providers de la feature: `repositorioClientesProvider`, `clientesProvider`,
   `clientePorIdProvider`.
   **Toca:** `lib/features/clientes/presentacion/proveedores/clientes_proveedores.dart` (nuevo).
   **Hecho:** `clientePorIdProvider` es nuevo y lo necesita F6 para los deep links.
 
-- [ ] **F5.10** 🔓 **Corregir el `ref.read` dentro del provider.**
+- [x] **F5.10** 🔓 **Corregir el `ref.read` dentro del provider.**
   [proveedores.dart:18](lib/estado/proveedores.dart#L18) usa `ref.read(apiClienteProvider)` donde
   corresponde `ref.watch`: con `read`, si el provider del repositorio se sobrescribe o invalida,
   el de clientes no se entera.
   **Toca:** `lib/features/clientes/presentacion/proveedores/clientes_proveedores.dart`.
   **Hecho:** `ref.watch` en los tres providers de lista.
 
-- [ ] **F5.11** 🔒 Mover las pantallas de clientes a `presentacion/pantallas/`, ajustando imports.
+- [x] **F5.11** 🔒 Mover las pantallas de clientes a `presentacion/pantallas/`, ajustando imports.
   **Toca:** `lib/features/clientes/presentacion/pantallas/` (nuevo), borrar los originales.
   **Hecho:** la app compila y se comporta igual.
 
-- [ ] **F5.12** 🔓 Mover `_FilaCliente` (hoy privada en la pantalla) a
+- [x] **F5.12** 🔓 Mover `_FilaCliente` (hoy privada en la pantalla) a
   `presentacion/widgets/tarjeta_cliente.dart`.
   **Toca:** `lib/features/clientes/presentacion/widgets/tarjeta_cliente.dart` (nuevo).
   **Hecho:** la pantalla queda más corta y el widget es testeable por separado.
 
-- [ ] **F5.13** 🔓 Actualizar los tests de clientes a la estructura nueva.
+- [x] **F5.13** 🔓 Actualizar los tests de clientes a la estructura nueva.
   **Toca:** `test/features/clientes/`.
   **Hecho:** `flutter test` verde.
 
 ### Feature vehículos
 
-- [ ] **F5.14** 🔓 Entidad `Vehiculo` (conservando `descripcionCorta`).
+- [x] **F5.14** 🔓 Entidad `Vehiculo` (conservando `descripcionCorta`).
   **Toca:** `lib/features/vehiculos/dominio/vehiculo.dart` (nuevo).
   **Hecho:** sin serialización.
 
-- [ ] **F5.15** 🔓 Interfaz `RepositorioVehiculos` (incluye `porPatente`, que existe en la API y hoy
+- [x] **F5.15** 🔓 Interfaz `RepositorioVehiculos` (incluye `porPatente`, que existe en la API y hoy
   ninguna pantalla usa).
   **Toca:** `lib/features/vehiculos/dominio/repositorio_vehiculos.dart` (nuevo).
   **Hecho:** las 6 operaciones declaradas.
 
-- [ ] **F5.16** 🔓 `VehiculoDto`, `FuenteRemotaVehiculos`, `RepositorioVehiculosHttp`.
+- [x] **F5.16** 🔓 `VehiculoDto`, `FuenteRemotaVehiculos`, `RepositorioVehiculosHttp`.
   **Toca:** `lib/features/vehiculos/datos/` (3 archivos nuevos).
   **Hecho:** mismos endpoints, mismo comportamiento.
 
-- [ ] **F5.17** 🔓 Providers: `repositorioVehiculosProvider`, `vehiculosPorClienteProvider`,
+- [x] **F5.17** 🔓 Providers: `repositorioVehiculosProvider`, `vehiculosPorClienteProvider`,
   `vehiculoPorIdProvider`.
   **Toca:** `lib/features/vehiculos/presentacion/proveedores/vehiculos_proveedores.dart` (nuevo).
   **Hecho:** `vehiculoPorIdProvider` es nuevo y lo necesita F6.
 
-- [ ] **F5.18** 🔓 Mover pantalla y formulario de vehículos, extrayendo `TarjetaVehiculo`.
+- [x] **F5.18** 🔓 Mover pantalla y formulario de vehículos, extrayendo `TarjetaVehiculo`.
   **Toca:** `lib/features/vehiculos/presentacion/`.
   **Hecho:** compila y se comporta igual.
 
-- [ ] **F5.19** 🔓 Tests de vehículos.
+- [x] **F5.19** 🔓 Tests de vehículos.
   **Toca:** `test/features/vehiculos/` (nuevo).
   **Hecho:** cubren listar y el estado vacío. *Hoy vehículos no tiene ningún test.*
 
 ### Feature servicios
 
-- [ ] **F5.20** 🔓 Entidad `Servicio`.
+- [x] **F5.20** 🔓 Entidad `Servicio`.
   **Toca:** `lib/features/servicios/dominio/servicio.dart` (nuevo).
   **Hecho:** sin serialización.
 
-- [ ] **F5.21** 🔓 Interfaz `RepositorioServicios`.
+- [x] **F5.21** 🔓 Interfaz `RepositorioServicios`.
   **Toca:** `lib/features/servicios/dominio/repositorio_servicios.dart` (nuevo).
   **Hecho:** las 5 operaciones declaradas.
 
-- [ ] **F5.22** 🔓 `ServicioDto`, `FuenteRemotaServicios`, `RepositorioServiciosHttp`.
+- [x] **F5.22** 🔓 `ServicioDto`, `FuenteRemotaServicios`, `RepositorioServiciosHttp`.
   **Toca:** `lib/features/servicios/datos/` (3 archivos nuevos).
   **Hecho:** se conserva el formato de fecha `yyyy-MM-dd` que espera el backend
   ([servicio.dart:25](lib/modelos/servicio.dart#L25)).
 
-- [ ] **F5.23** 🔓 Providers: `repositorioServiciosProvider`, `serviciosPorVehiculoProvider`.
+- [x] **F5.23** 🔓 Providers: `repositorioServiciosProvider`, `serviciosPorVehiculoProvider`.
   **Toca:** `lib/features/servicios/presentacion/proveedores/servicios_proveedores.dart` (nuevo).
   **Hecho:** con `ref.watch`.
 
-- [ ] **F5.24** 🔓 Mover el total acumulado (`lista.fold`, hoy calculado dentro del `build` en
+- [x] **F5.24** 🔓 Mover el total acumulado (`lista.fold`, hoy calculado dentro del `build` en
   [pantalla_servicios.dart:107](lib/pantallas/pantalla_servicios.dart#L107)) a un provider derivado
   o a un método de dominio.
   **Toca:** `lib/features/servicios/dominio/` o `presentacion/proveedores/`.
   **Hecho:** el `build` no hace cálculos de negocio.
 
-- [ ] **F5.25** 🔓 Mover pantalla y formulario de servicios, extrayendo `TarjetaServicio` y
+- [x] **F5.25** 🔓 Mover pantalla y formulario de servicios, extrayendo `TarjetaServicio` y
   `ResumenServicios`.
   **Toca:** `lib/features/servicios/presentacion/`.
   **Hecho:** compila y se comporta igual.
 
-- [ ] **F5.26** 🔓 Corregir el `DateFormat` como campo de instancia en un `ConsumerWidget`:
+- [x] **F5.26** 🔓 Corregir el `DateFormat` como campo de instancia en un `ConsumerWidget`:
   [pantalla_servicios.dart:14](lib/pantallas/pantalla_servicios.dart#L14) tiene un constructor **no `const`**
   solo para poder guardar `_formatoFecha`.
   **Toca:** `lib/features/servicios/presentacion/pantallas/pantalla_servicios.dart`.
   **Hecho:** usa `Formatos` de F4.33 y el constructor vuelve a ser `const`.
 
-- [ ] **F5.27** 🔓 Tests de servicios.
+- [x] **F5.27** 🔓 Tests de servicios.
   **Toca:** `test/features/servicios/` (nuevo).
   **Hecho:** cubren el listado, el vacío y el cálculo del total.
 
 ### Limpieza
 
-- [ ] **F5.28** 🔒 Borrar `lib/api/`, `lib/modelos/`, `lib/estado/`, `lib/pantallas/` y `lib/widgets/`.
+- [x] **F5.28** 🔒 Borrar `lib/api/`, `lib/modelos/`, `lib/estado/`, `lib/pantallas/` y `lib/widgets/`.
   **Toca:** las 5 carpetas viejas.
   **Hecho:** `lib/` solo contiene `main.dart`, `app/`, `core/`, `shared/`, `features/`.
 
-- [ ] **F5.29** 🔓 Verificar que no quedaron imports relativos cruzando entre features
+- [x] **F5.29** 🔓 Verificar que no quedaron imports relativos cruzando entre features
   (`features/vehiculos/…` importando `features/clientes/…` fuera de `dominio/`).
   **Toca:** todo `lib/features/`.
-  **Hecho:** grep sin resultados. Una feature solo depende de `core/`, `shared/` y de su propio dominio.
+  **Hecho:** grep sin resultados **en `datos/` y `presentacion/proveedores/`** — ninguna feature lee el
+  repositorio, DTO o provider de otra. Sí quedan 2 imports `presentacion/pantallas` → `presentacion/
+  pantallas` de otra feature (`clientes` → `pantalla_vehiculos`, `vehiculos` → `pantalla_servicios`):
+  son el `Navigator.push` directo entre pantallas, inherente a no tener rutas centralizadas todavía.
+  Es exactamente lo que resuelve F6 (`go_router`), la fase siguiente — acá se documenta, no se fuerza
+  una solución de paso.
 
-- [ ] **F5.30** ✅ **Cierre de fase:** analyze + test verdes, build web exitoso, y **la app se ve y se
+- [x] **F5.30** ✅ **Cierre de fase:** analyze + test verdes, build web exitoso, y **la app se ve y se
   comporta exactamente igual que antes de la fase**. Ese es el criterio de que la reestructura salió bien.
 
 ---

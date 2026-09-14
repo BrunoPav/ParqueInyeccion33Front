@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../estado/proveedores.dart';
-import '../modelos/cliente.dart';
+import '../../dominio/cliente.dart';
+import '../proveedores/clientes_proveedores.dart';
 
 class FormularioCliente extends ConsumerStatefulWidget {
   final Cliente? cliente;
@@ -40,7 +40,7 @@ class _FormularioClienteState extends ConsumerState<FormularioCliente> {
 
     setState(() => _guardando = true);
 
-    final api = ref.read(apiClienteProvider);
+    final repositorio = ref.read(repositorioClientesProvider);
     final datos = Cliente(
       nombre: _nombre.text.trim(),
       contacto: _contacto.text.trim().isEmpty ? null : _contacto.text.trim(),
@@ -48,9 +48,9 @@ class _FormularioClienteState extends ConsumerState<FormularioCliente> {
 
     try {
       if (_esEdicion) {
-        await api.reemplazar(widget.cliente!.id!, datos);
+        await repositorio.reemplazar(widget.cliente!.id!, datos);
       } else {
-        await api.crear(datos);
+        await repositorio.crear(datos);
       }
       if (!mounted) return;
       Navigator.of(context).pop(true);

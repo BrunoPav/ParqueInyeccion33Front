@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../estado/proveedores.dart';
-import '../features/ajustes/presentacion/pantallas/pantalla_ajustes.dart';
-import '../modelos/cliente.dart';
-import '../shared/shared.dart';
+import '../../../../shared/shared.dart';
+import '../../../ajustes/presentacion/pantallas/pantalla_ajustes.dart';
+import '../../../vehiculos/presentacion/pantallas/pantalla_vehiculos.dart';
+import '../../dominio/cliente.dart';
+import '../../dominio/repositorio_clientes.dart';
+import '../proveedores/clientes_proveedores.dart';
+import '../widgets/tarjeta_cliente.dart';
 import 'formulario_cliente.dart';
-import 'pantalla_vehiculos.dart';
 
 class PantallaClientes extends ConsumerStatefulWidget {
   const PantallaClientes({super.key});
@@ -40,7 +42,7 @@ class _PantallaClientesState extends ConsumerState<PantallaClientes> {
   Future<void> _cambiarEstado(Cliente cliente) async {
     try {
       await ref
-          .read(apiClienteProvider)
+          .read(repositorioClientesProvider)
           .cambiarEstado(cliente.id!, !cliente.activo);
       ref.invalidate(clientesProvider);
     } catch (error) {
@@ -136,12 +138,19 @@ class _PantallaClientesState extends ConsumerState<PantallaClientes> {
                 return ListView.separated(
                   itemCount: lista.length,
                   separatorBuilder: (_, _) => const Divider(height: 1),
-                  itemBuilder: (_, indice) =>
-                      _FilaCliente(
-                        cliente: lista[indice],
-                        alEditar: () => _abrirFormulario(cliente: lista[indice]),
-                        alCambiarEstado: () => _cambiarEstado(lista[indice]),
+                  itemBuilder: (_, indice) {
+                    final cliente = lista[indice];
+                    return TarjetaCliente(
+                      cliente: cliente,
+                      alTocar: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => PantallaVehiculos(cliente: cliente),
+                        ),
                       ),
+                      alEditar: () => _abrirFormulario(cliente: cliente),
+                      alCambiarEstado: () => _cambiarEstado(cliente),
+                    );
+                  },
                 );
               },
             ),
@@ -152,49 +161,6 @@ class _PantallaClientesState extends ConsumerState<PantallaClientes> {
         onPressed: () => _abrirFormulario(),
         icon: const Icon(Icons.add),
         label: const Text('Nuevo cliente'),
-      ),
-    );
-  }
-}
-
-class _FilaCliente extends StatelessWidget {
-  final Cliente cliente;
-  final VoidCallback alEditar;
-  final VoidCallback alCambiarEstado;
-
-  const _FilaCliente({
-    required this.cliente,
-    required this.alEditar,
-    required this.alCambiarEstado,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: CircleAvatar(
-        child: Text(
-          cliente.nombre.isEmpty ? '?' : cliente.nombre[0].toUpperCase(),
-        ),
-      ),
-      title: Text(cliente.nombre),
-      subtitle: Text(
-        cliente.contacto?.isNotEmpty == true ? cliente.contacto! : 'Sin contacto',
-      ),
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => PantallaVehiculos(cliente: cliente)),
-      ),
-      trailing: PopupMenuButton<String>(
-        onSelected: (opcion) {
-          if (opcion == 'editar') alEditar();
-          if (opcion == 'estado') alCambiarEstado();
-        },
-        itemBuilder: (_) => [
-          const PopupMenuItem(value: 'editar', child: Text('Editar')),
-          PopupMenuItem(
-            value: 'estado',
-            child: Text(cliente.activo ? 'Desactivar' : 'Activar'),
-          ),
-        ],
       ),
     );
   }

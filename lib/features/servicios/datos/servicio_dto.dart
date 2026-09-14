@@ -1,11 +1,13 @@
-class Servicio {
+import '../dominio/servicio.dart';
+
+class ServicioDto {
   final int? id;
   final DateTime fecha;
   final String descripcion;
   final double precio;
   final int vehiculoId;
 
-  const Servicio({
+  const ServicioDto({
     this.id,
     required this.fecha,
     required this.descripcion,
@@ -13,12 +15,20 @@ class Servicio {
     required this.vehiculoId,
   });
 
-  factory Servicio.desdeJson(Map<String, dynamic> json) => Servicio(
+  factory ServicioDto.desdeJson(Map<String, dynamic> json) => ServicioDto(
         id: json['id'] as int?,
         fecha: DateTime.parse(json['fecha'] as String),
         descripcion: json['descripcion'] as String,
         precio: (json['precio'] as num).toDouble(),
         vehiculoId: json['vehiculoId'] as int,
+      );
+
+  factory ServicioDto.desdeDominio(Servicio servicio) => ServicioDto(
+        id: servicio.id,
+        fecha: servicio.fecha,
+        descripcion: servicio.descripcion,
+        precio: servicio.precio,
+        vehiculoId: servicio.vehiculoId,
       );
 
   Map<String, dynamic> aJson() => {
@@ -27,4 +37,12 @@ class Servicio {
         'precio': precio,
         'vehiculoId': vehiculoId,
       };
+
+  Servicio aDominio() => Servicio(
+        id: id,
+        fecha: fecha,
+        descripcion: descripcion,
+        precio: precio,
+        vehiculoId: vehiculoId,
+      );
 }

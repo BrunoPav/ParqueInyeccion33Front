@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 
-import '../estado/proveedores.dart';
-import '../modelos/servicio.dart';
+import '../../../../core/utilidades/formatos.dart';
+import '../../dominio/servicio.dart';
+import '../proveedores/servicios_proveedores.dart';
 
 class FormularioServicio extends ConsumerStatefulWidget {
   final int vehiculoId;
@@ -21,7 +21,6 @@ class FormularioServicio extends ConsumerStatefulWidget {
 
 class _FormularioServicioState extends ConsumerState<FormularioServicio> {
   final _claveFormulario = GlobalKey<FormState>();
-  final _formatoFecha = DateFormat('dd/MM/yyyy');
   late final TextEditingController _descripcion;
   late final TextEditingController _precio;
   late DateTime _fecha;
@@ -63,7 +62,7 @@ class _FormularioServicioState extends ConsumerState<FormularioServicio> {
 
     setState(() => _guardando = true);
 
-    final api = ref.read(apiServicioProvider);
+    final repositorio = ref.read(repositorioServiciosProvider);
     final datos = Servicio(
       fecha: _fecha,
       descripcion: _descripcion.text.trim(),
@@ -73,9 +72,9 @@ class _FormularioServicioState extends ConsumerState<FormularioServicio> {
 
     try {
       if (_esEdicion) {
-        await api.reemplazar(widget.servicio!.id!, datos);
+        await repositorio.reemplazar(widget.servicio!.id!, datos);
       } else {
-        await api.crear(datos);
+        await repositorio.crear(datos);
       }
       if (!mounted) return;
       Navigator.of(context).pop(true);
@@ -110,7 +109,7 @@ class _FormularioServicioState extends ConsumerState<FormularioServicio> {
                   border: OutlineInputBorder(),
                   suffixIcon: Icon(Icons.calendar_today),
                 ),
-                child: Text(_formatoFecha.format(_fecha)),
+                child: Text(Formatos.fecha(_fecha)),
               ),
             ),
             const SizedBox(height: 16),

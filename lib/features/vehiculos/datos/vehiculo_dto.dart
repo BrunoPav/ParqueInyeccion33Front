@@ -1,4 +1,6 @@
-class Vehiculo {
+import '../dominio/vehiculo.dart';
+
+class VehiculoDto {
   final int? id;
   final String marca;
   final String modelo;
@@ -7,7 +9,7 @@ class Vehiculo {
   final int kilometraje;
   final int clienteId;
 
-  const Vehiculo({
+  const VehiculoDto({
     this.id,
     required this.marca,
     required this.modelo,
@@ -17,7 +19,7 @@ class Vehiculo {
     required this.clienteId,
   });
 
-  factory Vehiculo.desdeJson(Map<String, dynamic> json) => Vehiculo(
+  factory VehiculoDto.desdeJson(Map<String, dynamic> json) => VehiculoDto(
         id: json['id'] as int?,
         marca: json['marca'] as String,
         modelo: json['modelo'] as String,
@@ -25,6 +27,16 @@ class Vehiculo {
         patente: json['patente'] as String,
         kilometraje: json['kilometraje'] as int,
         clienteId: json['clienteId'] as int,
+      );
+
+  factory VehiculoDto.desdeDominio(Vehiculo vehiculo) => VehiculoDto(
+        id: vehiculo.id,
+        marca: vehiculo.marca,
+        modelo: vehiculo.modelo,
+        anio: vehiculo.anio,
+        patente: vehiculo.patente,
+        kilometraje: vehiculo.kilometraje,
+        clienteId: vehiculo.clienteId,
       );
 
   Map<String, dynamic> aJson() => {
@@ -36,5 +48,13 @@ class Vehiculo {
         'clienteId': clienteId,
       };
 
-  String get descripcionCorta => '$marca $modelo ($anio)';
+  Vehiculo aDominio() => Vehiculo(
+        id: id,
+        marca: marca,
+        modelo: modelo,
+        anio: anio,
+        patente: patente,
+        kilometraje: kilometraje,
+        clienteId: clienteId,
+      );
 }
