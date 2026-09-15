@@ -1136,7 +1136,9 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
 - [x] **F7.21** ✅ **Cierre de fase:** analyze + test verdes; probado en Chrome redimensionando y en un
   dispositivo Android real.
   **Verificado:** `flutter analyze` sin issues, `flutter test` con 73 tests en verde (44 previos +
-  29 de esta fase), `flutter build web --release --base-href` sin errores.
+  29 de esta fase), `flutter build web --release --base-href` sin errores, y el deploy real en
+  `https://brunopav.github.io/ParqueInyeccion33Front/` responde 200 con el `base href` correcto y
+  `main.dart.js`/`flutter_bootstrap.js` sirviendo bien.
   **No verificado:** uso real en un Chrome redimensionando a mano ni en un dispositivo Android —
   este entorno no tiene navegador ni dispositivo interactivo. La cobertura de
   `adaptativo_test.dart` (5 anchos × 4 rutas sin overflow, cambio de `NavigationBar`/`Rail`,
