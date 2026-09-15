@@ -13,6 +13,15 @@ import 'package:taller_mecanico_frontend/features/vehiculos/presentacion/proveed
 import '../../ayudas/dobles.dart';
 
 Future<void> _navegarA(WidgetTester tester, String ruta, {List<Override> overrides = const []}) async {
+  // Ancho compacto fijo: estos tests verifican que cada ruta resuelve a la
+  // pantalla correcta, no el comportamiento adaptativo de F7 (eso lo cubre
+  // adaptativo_test.dart). Con un ancho medio/expandido el rail de
+  // AndamioAdaptativo duplicaría textos como "Clientes"/"Ajustes".
+  tester.view.physicalSize = const Size(390, 844);
+  tester.view.devicePixelRatio = 1.0;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+
   SharedPreferences.setMockInitialValues({});
   final preferencias = await SharedPreferences.getInstance();
 
@@ -48,7 +57,7 @@ void main() {
   group('cada ruta definida resuelve a la pantalla esperada', () {
     testWidgets('/clientes -> PantallaClientes', (tester) async {
       await _navegarA(tester, '/clientes');
-      expect(find.text('Clientes'), findsOneWidget);
+      expect(find.widgetWithText(AppBar, 'Clientes'), findsOneWidget);
       expect(find.text('Ana Gomez'), findsOneWidget);
     });
 
@@ -101,7 +110,7 @@ void main() {
 
     testWidgets('/ajustes -> PantallaAjustes', (tester) async {
       await _navegarA(tester, '/ajustes');
-      expect(find.text('Ajustes'), findsOneWidget);
+      expect(find.widgetWithText(AppBar, 'Ajustes'), findsOneWidget);
     });
   });
 

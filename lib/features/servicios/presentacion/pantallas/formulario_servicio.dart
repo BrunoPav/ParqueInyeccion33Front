@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/design_system/design_system.dart';
+import '../../../../core/layout/contexto_layout.dart';
 import '../../../../core/utilidades/formatos.dart';
+import '../../../../shared/shared.dart';
 import '../../dominio/servicio.dart';
 import '../proveedores/servicios_proveedores.dart';
 
@@ -98,78 +101,82 @@ class _FormularioServicioState extends ConsumerState<FormularioServicio> {
       appBar: AppBar(
         title: Text(_esEdicion ? 'Editar servicio' : 'Nuevo servicio'),
       ),
-      body: Form(
-        key: _claveFormulario,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            InkWell(
-              onTap: _elegirFecha,
-              child: InputDecorator(
-                decoration: const InputDecoration(
-                  labelText: 'Fecha',
-                  border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.calendar_today),
+      body: ContenedorFormulario(
+        child: Form(
+          key: _claveFormulario,
+          child: ListView(
+            padding: EdgeInsets.all(context.bordePantalla),
+            children: [
+              InkWell(
+                onTap: _elegirFecha,
+                child: InputDecorator(
+                  decoration: const InputDecoration(
+                    labelText: 'Fecha',
+                    border: OutlineInputBorder(),
+                    suffixIcon: Icon(Icons.calendar_today),
+                  ),
+                  child: Text(Formatos.fecha(_fecha)),
                 ),
-                child: Text(Formatos.fecha(_fecha)),
               ),
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _descripcion,
-              decoration: const InputDecoration(
-                labelText: 'Descripcion',
-                border: OutlineInputBorder(),
-                alignLabelWithHint: true,
+              SizedBox(height: context.espaciado.md),
+              TextFormField(
+                controller: _descripcion,
+                decoration: const InputDecoration(
+                  labelText: 'Descripcion',
+                  border: OutlineInputBorder(),
+                  alignLabelWithHint: true,
+                ),
+                maxLines: 4,
+                textCapitalization: TextCapitalization.sentences,
+                validator: (valor) {
+                  if (valor == null || valor.trim().isEmpty) {
+                    return 'La descripcion es obligatoria';
+                  }
+                  if (valor.trim().length > 2000) {
+                    return 'No puede exceder los 2000 caracteres';
+                  }
+                  return null;
+                },
               ),
-              maxLines: 4,
-              textCapitalization: TextCapitalization.sentences,
-              validator: (valor) {
-                if (valor == null || valor.trim().isEmpty) {
-                  return 'La descripcion es obligatoria';
-                }
-                if (valor.trim().length > 2000) {
-                  return 'No puede exceder los 2000 caracteres';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _precio,
-              decoration: const InputDecoration(
-                labelText: 'Precio',
-                border: OutlineInputBorder(),
-                prefixText: '\$ ',
+              SizedBox(height: context.espaciado.md),
+              TextFormField(
+                controller: _precio,
+                decoration: const InputDecoration(
+                  labelText: 'Precio',
+                  border: OutlineInputBorder(),
+                  prefixText: '\$ ',
+                ),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                textInputAction: TextInputAction.done,
+                onFieldSubmitted: (_) => _guardar(),
+                validator: (valor) {
+                  if (valor == null || valor.trim().isEmpty) {
+                    return 'El precio es obligatorio';
+                  }
+                  final numero = double.tryParse(valor.trim().replaceAll(',', '.'));
+                  if (numero == null) {
+                    return 'Ingresa un numero valido';
+                  }
+                  if (numero < 0) {
+                    return 'No puede ser negativo';
+                  }
+                  return null;
+                },
               ),
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              validator: (valor) {
-                if (valor == null || valor.trim().isEmpty) {
-                  return 'El precio es obligatorio';
-                }
-                final numero = double.tryParse(valor.trim().replaceAll(',', '.'));
-                if (numero == null) {
-                  return 'Ingresa un numero valido';
-                }
-                if (numero < 0) {
-                  return 'No puede ser negativo';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 24),
-            FilledButton.icon(
-              onPressed: _guardando ? null : _guardar,
-              icon: _guardando
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.save),
-              label: Text(_guardando ? 'Guardando...' : 'Guardar'),
-            ),
-          ],
+              SizedBox(height: context.espaciado.xl),
+              FilledButton.icon(
+                onPressed: _guardando ? null : _guardar,
+                icon: _guardando
+                    ? const SizedBox(
+                        width: Dimensiones.spinnerBoton,
+                        height: Dimensiones.spinnerBoton,
+                        child: CircularProgressIndicator(strokeWidth: Dimensiones.anchoTrazoSpinner),
+                      )
+                    : const Icon(Icons.save),
+                label: Text(_guardando ? 'Guardando...' : 'Guardar'),
+              ),
+            ],
+          ),
         ),
       ),
     );

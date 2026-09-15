@@ -18,6 +18,7 @@ import '../../features/vehiculos/presentacion/pantallas/pantalla_vehiculos.dart'
 import '../../features/vehiculos/presentacion/proveedores/vehiculos_proveedores.dart';
 import '../../shared/widgets/retroalimentacion/pantalla_no_encontrada.dart';
 import '../design_system/tokens/duraciones.dart';
+import '../layout/andamio_adaptativo.dart';
 import 'resolver_por_id.dart';
 import 'rutas.dart';
 
@@ -42,9 +43,51 @@ final routerProvider = Provider<GoRouter>((ref) {
     initialLocation: Rutas.clientes,
     errorBuilder: (context, state) => const PantallaNoEncontrada(),
     routes: [
-      GoRoute(
-        path: Rutas.clientes,
-        pageBuilder: (context, state) => _pagina(const PantallaClientes()),
+      ShellRoute(
+        builder: (context, state, child) {
+          return AndamioAdaptativo(
+            rutaActual: state.uri.toString(),
+            alSeleccionarDestino: (ruta) => context.go(ruta),
+            child: child,
+          );
+        },
+        routes: [
+          GoRoute(
+            path: Rutas.clientes,
+            pageBuilder: (context, state) => _pagina(const PantallaClientes()),
+          ),
+          GoRoute(
+            path: Rutas.vehiculos,
+            pageBuilder: (context, state) {
+              final clienteId = _idDesdeRuta(state, 'clienteId');
+              if (clienteId == null) return _pagina(const PantallaNoEncontrada());
+              return _pagina(
+                PantallaVehiculos(clienteId: clienteId, clienteExtra: state.extra as Cliente?),
+              );
+            },
+          ),
+          GoRoute(
+            path: Rutas.servicios,
+            pageBuilder: (context, state) {
+              final clienteId = _idDesdeRuta(state, 'clienteId');
+              final vehiculoId = _idDesdeRuta(state, 'vehiculoId');
+              if (clienteId == null || vehiculoId == null) {
+                return _pagina(const PantallaNoEncontrada());
+              }
+              return _pagina(
+                PantallaServicios(
+                  clienteId: clienteId,
+                  vehiculoId: vehiculoId,
+                  vehiculoExtra: state.extra as Vehiculo?,
+                ),
+              );
+            },
+          ),
+          GoRoute(
+            path: Rutas.ajustes,
+            pageBuilder: (context, state) => _pagina(const PantallaAjustes()),
+          ),
+        ],
       ),
       GoRoute(
         path: Rutas.clienteNuevo,
@@ -62,16 +105,6 @@ final routerProvider = Provider<GoRouter>((ref) {
               reintentar: (ref) => ref.invalidate(clientePorIdProvider(id)),
               constructor: (cliente) => FormularioCliente(cliente: cliente),
             ),
-          );
-        },
-      ),
-      GoRoute(
-        path: Rutas.vehiculos,
-        pageBuilder: (context, state) {
-          final clienteId = _idDesdeRuta(state, 'clienteId');
-          if (clienteId == null) return _pagina(const PantallaNoEncontrada());
-          return _pagina(
-            PantallaVehiculos(clienteId: clienteId, clienteExtra: state.extra as Cliente?),
           );
         },
       ),
@@ -105,23 +138,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
-        path: Rutas.servicios,
-        pageBuilder: (context, state) {
-          final clienteId = _idDesdeRuta(state, 'clienteId');
-          final vehiculoId = _idDesdeRuta(state, 'vehiculoId');
-          if (clienteId == null || vehiculoId == null) {
-            return _pagina(const PantallaNoEncontrada());
-          }
-          return _pagina(
-            PantallaServicios(
-              clienteId: clienteId,
-              vehiculoId: vehiculoId,
-              vehiculoExtra: state.extra as Vehiculo?,
-            ),
-          );
-        },
-      ),
-      GoRoute(
         path: Rutas.servicioNuevo,
         pageBuilder: (context, state) {
           final vehiculoId = _idDesdeRuta(state, 'vehiculoId');
@@ -149,10 +165,6 @@ final routerProvider = Provider<GoRouter>((ref) {
             ),
           );
         },
-      ),
-      GoRoute(
-        path: Rutas.ajustes,
-        pageBuilder: (context, state) => _pagina(const PantallaAjustes()),
       ),
     ],
   );

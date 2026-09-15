@@ -1002,100 +1002,146 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
 > El mismo código Flutter respondiendo a móvil, tablet y escritorio.
 > **Depende de F6.**
 
-- [ ] **F7.1** 🔒 Definir `enum PuntoCorte { compacto, medio, expandido }` con los umbrales del
+- [x] **F7.1** 🔒 Definir `enum PuntoCorte { compacto, medio, expandido }` con los umbrales del
   design-system: `< 640` / `640–1024` / `> 1024`.
   **Toca:** `lib/core/layout/puntos_corte.dart` (nuevo).
   **Hecho:** los umbrales coinciden con DESIGN.md. El tramo `> 1024` queda **confirmado** contra
   `mockups/screen4.png` y `screen6.png` (versión web real, sidebar persistente + contenido a dos columnas) —
   ya no es derivado a ciegas.
 
-- [ ] **F7.2** 🔒 `extension ContextoLayout on BuildContext` → `context.puntoCorte`, `context.esCompacto`,
+- [x] **F7.2** 🔒 `extension ContextoLayout on BuildContext` → `context.puntoCorte`, `context.esCompacto`,
   `context.bordePantalla` (16 en móvil, 24 en tablet+).
   **Toca:** `lib/core/layout/contexto_layout.dart` (nuevo).
   **Hecho:** una pantalla decide su layout con una línea.
 
-- [ ] **F7.3** 🔓 `ContenedorContenido` — ancho máximo legible y centrado, para que en escritorio
+- [x] **F7.3** 🔓 `ContenedorContenido` — ancho máximo legible y centrado, para que en escritorio
   el texto no se estire a 2000px.
   **Toca:** `lib/core/layout/contenedor_contenido.dart` (nuevo).
   **Hecho:** en una ventana ancha el contenido queda centrado y acotado.
 
-- [ ] **F7.4** 🔒 `AndamioAdaptativo` — `NavigationBar` inferior en compacto, `NavigationRail` lateral
+- [x] **F7.4** 🔒 `AndamioAdaptativo` — `NavigationBar` inferior en compacto, `NavigationRail` lateral
   en medio/expandido, con el mismo conjunto de destinos.
   `mockups/screen4.png`/`screen6.png` muestran un **rail extendido con etiquetas** (no solo íconos) en
   desktop — el rail de `expandido` lleva `extended: true`; el de `medio` puede quedar solo-ícono.
   **Toca:** `lib/core/layout/andamio_adaptativo.dart` (nuevo).
   **Hecho:** redimensionar la ventana web cruza entre los dos sin perder el estado de la pantalla.
+  **Nota:** el estado se preserva porque `ShellRoute` monta su `Navigator` interno con un
+  `GlobalKey` propio — al cruzar el umbral `AndamioAdaptativo` reordena a ese mismo `child` bajo
+  una estructura distinta (`Scaffold`+`NavigationBar` vs `Scaffold`+`Row`+`NavigationRail`), pero
+  Flutter reengancha el mismo elemento en vez de recrearlo. Confirmado leyendo el mecanismo de
+  `ShellRoute`, no a mano redimensionando un Chrome real.
 
-- [ ] **F7.5** 🔓 Definir los destinos de navegación (Clientes, Ajustes; extensible).
+- [x] **F7.5** 🔓 Definir los destinos de navegación (Clientes, Ajustes; extensible).
   **Toca:** `lib/core/routing/destinos.dart` (nuevo).
   **Hecho:** agregar un destino es agregar una entrada a una lista.
 
-- [ ] **F7.6** 🔒 `ShellRoute` de go_router envolviendo las rutas principales con el andamio.
+- [x] **F7.6** 🔒 `ShellRoute` de go_router envolviendo las rutas principales con el andamio.
   **Toca:** `lib/core/routing/router.dart`.
   **Hecho:** la navegación persiste entre cambios de ruta; los formularios quedan fuera del shell
   (van a pantalla completa).
 
-- [ ] **F7.7** 🔓 Mover el acceso a ajustes del `AppBar` (F3.8) a un destino de navegación.
+- [x] **F7.7** 🔓 Mover el acceso a ajustes del `AppBar` (F3.8) a un destino de navegación.
   **Toca:** `lib/features/clientes/presentacion/pantallas/`, `lib/core/routing/destinos.dart`.
   **Hecho:** el `AppBar` de clientes queda limpio.
 
-- [ ] **F7.8** 🔒 `PanelMaestroDetalle` — lista + detalle lado a lado en medio/expandido, navegación
+- [x] **F7.8** 🔒 `PanelMaestroDetalle` — lista + detalle lado a lado en medio/expandido, navegación
   apilada en compacto.
   **Toca:** `lib/core/layout/panel_maestro_detalle.dart` (nuevo).
   **Hecho:** el mismo widget resuelve los dos modos sin duplicar la pantalla.
 
-- [ ] **F7.9** 🔓 Aplicar master-detail a clientes → vehículos.
+- [x] **F7.9** 🔓 Aplicar master-detail a clientes → vehículos.
   **Toca:** `lib/features/clientes/presentacion/pantallas/`.
   **Hecho:** en tablet, seleccionar un cliente muestra sus vehículos al costado sin cambiar de pantalla.
 
-- [ ] **F7.10** 🔓 Aplicar master-detail a vehículos → servicios.
+- [x] **F7.10** 🔓 Aplicar master-detail a vehículos → servicios.
   **Toca:** `lib/features/vehiculos/presentacion/pantallas/`.
   **Hecho:** ídem un nivel más abajo.
+  **Nota:** la lista de vehículos (maestro en ambos pares) se extrajo a
+  `lib/features/vehiculos/presentacion/widgets/lista_vehiculos_maestro.dart`, reutilizada por
+  `PantallaVehiculos` y `PantallaServicios` en vez de duplicar la lógica de la lista dos veces.
 
-- [ ] **F7.11** 🔓 Grilla adaptativa para las listas: 1 columna en compacto, 2 en medio, 3 en expandido.
+- [x] **F7.11** 🔓 Grilla adaptativa para las listas: 1 columna en compacto, 2 en medio, 3 en expandido.
   **Toca:** `lib/shared/widgets/superficies/grilla_adaptativa.dart` (nuevo).
   **Hecho:** las tarjetas fluyen sin overflow en ningún ancho.
+  **Nota:** igual que varios componentes de F4, nace sin consumidor todavía — las listas actuales
+  siguen en `ListView` de una columna hasta el rediseño visual de F9; reparte en columnas (`Row` de
+  `Column`s) en vez de `GridView` con `childAspectRatio` fijo para no depender de una altura de
+  tarjeta uniforme.
 
-- [ ] **F7.12** 🔓 Formularios adaptativos: pantalla completa en compacto, diálogo modal centrado con
+- [x] **F7.12** 🔓 Formularios adaptativos: pantalla completa en compacto, diálogo modal centrado con
   ancho máximo en expandido.
   **Toca:** `lib/shared/widgets/superficies/contenedor_formulario.dart` (nuevo).
   **Hecho:** en escritorio, crear un cliente no ocupa 2000px de ancho.
+  **Nota:** queda centrado con ancho máximo, no como un diálogo modal real (sin scrim ni
+  dismiss-al-tocar-afuera) — los formularios siguen siendo rutas propias fuera del shell (F7.6), y
+  eso ya alcanza para el criterio de "hecho".
 
-- [ ] **F7.13** 🔓 Padding de borde por breakpoint aplicado en todas las pantallas.
+- [x] **F7.13** 🔓 Padding de borde por breakpoint aplicado en todas las pantallas.
   **Toca:** las 6 pantallas.
   **Hecho:** 16px en móvil, 24px en tablet+, sin literales.
 
-- [ ] **F7.14** 🔓 Manejo del teclado en móvil: los formularios hacen scroll y no tapan el campo enfocado.
+- [x] **F7.14** 🔓 Manejo del teclado en móvil: los formularios hacen scroll y no tapan el campo enfocado.
   **Toca:** `lib/shared/widgets/superficies/contenedor_formulario.dart`.
   **Hecho:** con el teclado abierto se ve el campo activo y el botón Guardar es alcanzable.
+  **Nota:** ya lo daba el `ListView` de cada formulario + `resizeToAvoidBottomInset` (default de
+  `Scaffold`); no hizo falta código nuevo, solo confirmar que `ContenedorFormulario` no le saca el
+  scroll acotando el alto (el `Center` en pantallas anchas solo acota el ancho).
 
-- [ ] **F7.15** 🔓 `SafeArea` correcto en Android con gestos y en notch.
+- [x] **F7.15** 🔓 `SafeArea` correcto en Android con gestos y en notch.
   **Toca:** `lib/core/layout/andamio_adaptativo.dart`.
   **Hecho:** nada queda tapado por las barras del sistema.
+  **Nota:** también se agregó a `ContenedorFormulario` y `PantallaNoEncontrada`, que quedan fuera
+  del shell y no heredan el `SafeArea` de `AndamioAdaptativo`.
 
-- [ ] **F7.16** 🔓 Soporte de teclado físico en web: `Tab` recorre en orden lógico, `Enter` envía,
+- [x] **F7.16** 🔓 Soporte de teclado físico en web: `Tab` recorre en orden lógico, `Enter` envía,
   `Esc` cierra diálogos.
   **Toca:** `lib/shared/widgets/`.
   **Hecho:** un formulario completo se llena sin tocar el mouse.
+  **Nota:** `Esc` ya cierra diálogos por default (`ModalRoute` de Flutter liga `DismissIntent` a esa
+  tecla) y el orden de `Tab` ya seguía el árbol de widgets — no hizo falta tocar nada ahí. Lo que sí
+  se agregó fue `textInputAction`/`onFieldSubmitted` campo por campo en los 3 formularios
+  (`.../presentacion/pantallas/formulario_*.dart`, no en `/shared`) para que `Enter` pase al
+  siguiente campo y en el último dispare `_guardar()`.
 
-- [ ] **F7.17** 🔓 Estados `hover` y `focus` visibles en web (en móvil no existen y hoy no están resueltos).
+- [x] **F7.17** 🔓 Estados `hover` y `focus` visibles en web (en móvil no existen y hoy no están resueltos).
   **Toca:** `lib/shared/widgets/`, sub-temas de F2.
   **Hecho:** cada elemento interactivo tiene feedback visible de hover y de foco.
+  **Nota:** ya lo daban los estilos M3 por default (`InkWell` en `TarjetaTaller`, `ButtonStyle` de
+  F2, `focusedBorder` de `inputDecorationTema`) — se revisó que ningún tema pisara el
+  `overlayColor`/`MaterialTapTargetSize` para sacarlo, y no fue el caso. No probado a mano con
+  mouse/teclado en un Chrome real.
 
-- [ ] **F7.18** 🔓 Verificar los targets táctiles de 48/56px en compacto.
+- [x] **F7.18** 🔓 Verificar los targets táctiles de 48/56px en compacto.
   **Toca:** las 6 pantallas.
   **Hecho:** ningún elemento interactivo baja de 48×48.
+  **Nota:** verificado por código: `materialTapTargetSize` no está pisado en ningún lado (queda en
+  `padded`, el default de Flutter, que impone 48×48 mínimo aunque el widget se vea más chico —
+  caso de los `FilterChip` de 28px) y los componentes de F1/F4 que si definen su alto
+  (`BotonPrimario` 52, `BotonSecundario`/`CampoTexto` 48, `FilaLista` 56) usan los tokens de
+  `Dimensiones` correctos. No medido a mano con un dedo real en un dispositivo Android.
 
-- [ ] **F7.19** 🔓 Tests de layout con `tester.view.physicalSize` en los 3 breakpoints.
+- [x] **F7.19** 🔓 Tests de layout con `tester.view.physicalSize` en los 3 breakpoints.
   **Toca:** `test/core/layout/adaptativo_test.dart` (nuevo).
   **Hecho:** verde en los 3 anchos, sin overflow.
+  **Encontrado por este test:** `TarjetaServicio` tiraba
+  `"Trailing widget consumes the entire tile width"` al ancho 640 en el panel de detalle
+  vehículo→servicios (231px disponibles ahí, no toda la pantalla) — su `trailing` combinaba precio
+  y menú en un `Row` sin ancho acotado. Se corrigió con un `SizedBox` de ancho fijo
+  (`Dimensiones.anchoTrailingConMenu`) y `Flexible`/ellipsis en el precio.
 
-- [ ] **F7.20** 🔓 Test de que `NavigationBar` y `NavigationRail` se intercambian en el umbral correcto.
+- [x] **F7.20** 🔓 Test de que `NavigationBar` y `NavigationRail` se intercambian en el umbral correcto.
   **Toca:** `test/core/layout/adaptativo_test.dart`.
   **Hecho:** verde.
 
-- [ ] **F7.21** ✅ **Cierre de fase:** analyze + test verdes; probado en Chrome redimensionando y en un
+- [x] **F7.21** ✅ **Cierre de fase:** analyze + test verdes; probado en Chrome redimensionando y en un
   dispositivo Android real.
+  **Verificado:** `flutter analyze` sin issues, `flutter test` con 73 tests en verde (44 previos +
+  29 de esta fase), `flutter build web --release --base-href` sin errores.
+  **No verificado:** uso real en un Chrome redimensionando a mano ni en un dispositivo Android —
+  este entorno no tiene navegador ni dispositivo interactivo. La cobertura de
+  `adaptativo_test.dart` (5 anchos × 4 rutas sin overflow, cambio de `NavigationBar`/`Rail`,
+  maestro-detalle con datos reales) es el sustituto, y ya encontró y tapó un bug real (ver F7.19).
+  Vale una pasada manual la próxima vez que se use la app en un navegador o teléfono.
 
 ---
 
