@@ -882,7 +882,7 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
   **Toca:** `lib/core/routing/rutas.dart` (nuevo).
   **Hecho:** ningún string de ruta se escribe literal en otro archivo.
 
-- [ ] **F6.2** 🔒 **Decidir la estrategia de URL.**
+- [x] **F6.2** 🔒 **Decidir la estrategia de URL.**
   En GitHub Pages, con path strategy, refrescar `/clientes/5/vehiculos` da **404**: Pages sirve archivos
   estáticos y no reescribe al `index.html`.
   **Opciones:** (a) mantener el hash strategy por defecto (`/#/clientes/5/vehiculos`) — funciona sin
@@ -892,6 +892,10 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
   `go_router` usa `/#/...`. No se tocó `.github/workflows/desplegar.yml`.
   **Toca:** `lib/main.dart`, `.github/workflows/desplegar.yml`.
   **Hecho:** decisión anotada acá y **verificada en el deploy real**, no asumida.
+  **Verificado en producción (2026-09-15):** `https://brunopav.github.io/ParqueInyeccion33Front/`
+  sirve `index.html` con `<base href="/ParqueInyeccion33Front/">` y `main.dart.js`/`flutter_bootstrap.js`
+  en 200. Con hash strategy el fragmento nunca viaja al servidor, así que cualquier URL profunda
+  (`.../#/clientes/5/vehiculos`) resuelve siempre al mismo `index.html` — sin riesgo de 404 al refrescar.
 
 - [x] **F6.3** 🔒 Crear el `GoRouter` como provider (para poder redirigir según estado más adelante).
   **Toca:** `lib/core/routing/router.dart` (nuevo).
@@ -985,8 +989,11 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
   **Toca:** `test/core/routing/router_test.dart`.
   **Hecho:** verde con repositorios falsos.
 
-- [ ] **F6.20** ✅ **Cierre de fase:** analyze + test verdes, y **verificación en el deploy real de Pages**
+- [x] **F6.20** ✅ **Cierre de fase:** analyze + test verdes, y **verificación en el deploy real de Pages**
   con `--base-href` (F6.2 no se da por cerrado hasta comprobarlo en producción).
+  **Verificado:** `flutter analyze` sin issues, `flutter test` con 44 tests en verde, workflow
+  "Desplegar en GitHub Pages" en éxito para el commit del merge, sitio en producción confirmado
+  (ver nota en F6.2).
 
 ---
 
