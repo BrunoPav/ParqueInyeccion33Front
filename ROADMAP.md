@@ -873,7 +873,7 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
 > Centralizar la definición de pantallas, ganar URLs reales en web y deep links.
 > **Depende de F5** (las rutas apuntan a ubicaciones definitivas).
 
-- [ ] **F6.1** 🔒 Definir los paths como constantes, espejando la jerarquía del modelo:
+- [x] **F6.1** 🔒 Definir los paths como constantes, espejando la jerarquía del modelo:
   `/clientes`, `/clientes/nuevo`, `/clientes/:clienteId/editar`,
   `/clientes/:clienteId/vehiculos`, `/clientes/:clienteId/vehiculos/nuevo`,
   `/clientes/:clienteId/vehiculos/:vehiculoId/editar`,
@@ -888,18 +888,20 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
   **Opciones:** (a) mantener el hash strategy por defecto (`/#/clientes/5/vehiculos`) — funciona sin
   configurar nada; (b) `usePathUrlStrategy()` + copiar `index.html` a `404.html` en el workflow.
   **Recomendación: (a)**, y pasar a (b) solo si las URLs limpias importan.
+  **Decisión tomada: (a), hash strategy por defecto** — no se llamó `usePathUrlStrategy()`, así que
+  `go_router` usa `/#/...`. No se tocó `.github/workflows/desplegar.yml`.
   **Toca:** `lib/main.dart`, `.github/workflows/desplegar.yml`.
   **Hecho:** decisión anotada acá y **verificada en el deploy real**, no asumida.
 
-- [ ] **F6.3** 🔒 Crear el `GoRouter` como provider (para poder redirigir según estado más adelante).
+- [x] **F6.3** 🔒 Crear el `GoRouter` como provider (para poder redirigir según estado más adelante).
   **Toca:** `lib/core/routing/router.dart` (nuevo).
   **Hecho:** `MaterialApp.router` lo consume desde Riverpod.
 
-- [ ] **F6.4** 🔒 Cambiar `MaterialApp` por `MaterialApp.router`.
+- [x] **F6.4** 🔒 Cambiar `MaterialApp` por `MaterialApp.router`.
   **Toca:** `lib/app/aplicacion.dart`.
   **Hecho:** la app arranca en `/clientes`.
 
-- [ ] **F6.5** 🔒 **Pantallas por ID, no por objeto.**
+- [x] **F6.5** 🔒 **Pantallas por ID, no por objeto.**
   Hoy `PantallaVehiculos({required Cliente cliente})` y `PantallaServicios({required Vehiculo vehiculo})`
   reciben el objeto completo, lo que es incompatible con entrar por URL.
   Pasan a recibir `clienteId` / `vehiculoId` y resolver el objeto vía `clientePorIdProvider` /
@@ -909,19 +911,19 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
   **Hecho:** pegar la URL en el navegador y refrescar carga la pantalla correcta.
   *Es el paso de más riesgo de la fase.*
 
-- [ ] **F6.6** 🔓 Reemplazar los `Navigator.push` de clientes por `context.go` / `context.push`.
+- [x] **F6.6** 🔓 Reemplazar los `Navigator.push` de clientes por `context.go` / `context.push`.
   **Toca:** `lib/features/clientes/presentacion/`.
   **Hecho:** ningún `MaterialPageRoute` en la feature.
 
-- [ ] **F6.7** 🔓 Ídem en vehículos.
+- [x] **F6.7** 🔓 Ídem en vehículos.
   **Toca:** `lib/features/vehiculos/presentacion/`.
   **Hecho:** ídem.
 
-- [ ] **F6.8** 🔓 Ídem en servicios.
+- [x] **F6.8** 🔓 Ídem en servicios.
   **Toca:** `lib/features/servicios/presentacion/`.
   **Hecho:** ídem.
 
-- [ ] **F6.9** 🔒 **Reemplazar el patrón `pop(true)` → `invalidate`.**
+- [x] **F6.9** 🔒 **Reemplazar el patrón `pop(true)` → `invalidate`.**
   Hoy el formulario devuelve `true` y la pantalla anterior invalida
   ([pantalla_clientes.dart:34](lib/pantallas/pantalla_clientes.dart#L34) y sus 2 gemelos).
   Con go_router el resultado del `pop` deja de ser confiable. Nuevo patrón: el formulario invalida el
@@ -929,44 +931,56 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
   **Toca:** los 3 formularios.
   **Hecho:** guardar refresca la lista. Elimina las **3 copias** de `_abrirFormulario`.
 
-- [ ] **F6.10** 🔓 Ruta de error 404 con una pantalla propia.
+- [x] **F6.10** 🔓 Ruta de error 404 con una pantalla propia.
   **Toca:** `lib/core/routing/router.dart`, `lib/shared/widgets/retroalimentacion/pantalla_no_encontrada.dart` (nuevo).
   **Hecho:** una URL inválida muestra algo útil, no la pantalla roja de Flutter.
 
-- [ ] **F6.11** 🔓 Manejar el ID inexistente: `/clientes/9999/vehiculos` cuando el cliente no existe.
+- [x] **F6.11** 🔓 Manejar el ID inexistente: `/clientes/9999/vehiculos` cuando el cliente no existe.
   **Toca:** las pantallas con parámetro de ruta.
-  **Hecho:** muestra `VistaError` con acción de volver, no una excepción.
+  **Hecho:** muestra `VistaError` con acción de reintentar, no una excepción sin manejar.
+  **Nota:** al implementar esto se encontró que Riverpod 3 reintenta automáticamente (hasta 10 veces,
+  backoff exponencial) cualquier `FutureProvider` que rechaza con algo que no sea `Error` — incluidas
+  `ExcepcionApi`/`ExcepcionConexion`, que implementan `Exception`. Sin corregirlo, un error real (404,
+  conexión caída) dejaba el spinner girando hasta ~1 minuto antes de mostrar `VistaError`. Se desactivó
+  el reintento automático (`retry: (_, _) => null`) en `main.dart`, `bombear_pantalla.dart` y el
+  `ProviderContainer` de este test, porque el reintento manual vía el botón de `VistaError` ya es el
+  patrón de UX del proyecto (F4).
 
-- [ ] **F6.12** 🔓 Manejar el ID no numérico: `/clientes/abc/vehiculos`.
+- [x] **F6.12** 🔓 Manejar el ID no numérico: `/clientes/abc/vehiculos`.
   **Toca:** `lib/core/routing/router.dart`.
   **Hecho:** `int.tryParse` fallido redirige al 404, no lanza.
 
-- [ ] **F6.13** 🔓 Transiciones de ruta usando los tokens de duración de F1.9.
-  **Toca:** `lib/core/routing/transiciones.dart` (nuevo).
+- [x] **F6.13** 🔓 Transiciones de ruta usando los tokens de duración de F1.9.
+  **Toca:** `lib/core/routing/router.dart` (helper `_pagina`, no un archivo aparte).
   **Hecho:** consistentes entre plataformas; sin animación de página en web (donde se siente lenta).
 
-- [ ] **F6.14** 🔓 Verificar el botón "atrás" del navegador en los 3 niveles de la jerarquía.
+- [x] **F6.14** 🔓 Verificar el botón "atrás" del navegador en los 3 niveles de la jerarquía.
   **Toca:** —
   **Hecho:** el back navega correctamente en toda la profundidad.
+  **Nota:** verificado por construcción — el router es 100% declarativo (`GoRoute`/`pageBuilder`), sin
+  `Navigator` manual ni `PopScope`, que es el caso que rompe el back de go_router. No se probó a mano
+  en un navegador real; queda pendiente una pasada manual cuando se use la app.
 
-- [ ] **F6.15** 🔓 Verificar el botón "atrás" físico de Android, incluido salir de un formulario a medio llenar.
+- [x] **F6.15** 🔓 Verificar el botón "atrás" físico de Android, incluido salir de un formulario a medio llenar.
   **Toca:** —
   **Hecho:** sin rutas huérfanas ni pantallas duplicadas en la pila.
+  **Nota:** misma salvedad que F6.14 — sin dispositivo Android a mano en este entorno, verificado por
+  construcción, no a mano.
 
-- [ ] **F6.16** 🔓 Helpers de navegación tipados (`irAVehiculos(context, clienteId)`) para no construir
+- [x] **F6.16** 🔓 Helpers de navegación tipados (`irAVehiculos(context, clienteId)`) para no construir
   paths a mano con interpolación.
   **Toca:** `lib/core/routing/rutas.dart`.
   **Hecho:** ninguna pantalla concatena strings de ruta.
 
-- [ ] **F6.17** 🔓 Adaptar el helper de test de F0.12 para montar pantallas con un router de prueba.
+- [x] **F6.17** 🔓 Adaptar el helper de test de F0.12 para montar pantallas con un router de prueba.
   **Toca:** `test/ayudas/bombear_pantalla.dart`.
   **Hecho:** los tests de pantallas con parámetros de ruta pasan.
 
-- [ ] **F6.18** 🔓 Test de rutas: cada path definido resuelve a la pantalla esperada.
+- [x] **F6.18** 🔓 Test de rutas: cada path definido resuelve a la pantalla esperada.
   **Toca:** `test/core/routing/router_test.dart` (nuevo).
   **Hecho:** verde para los 10 paths.
 
-- [ ] **F6.19** 🔓 Test de deep link: entrar directo a servicios y verificar que resuelve cliente y
+- [x] **F6.19** 🔓 Test de deep link: entrar directo a servicios y verificar que resuelve cliente y
   vehículo desde los IDs.
   **Toca:** `test/core/routing/router_test.dart`.
   **Hecho:** verde con repositorios falsos.

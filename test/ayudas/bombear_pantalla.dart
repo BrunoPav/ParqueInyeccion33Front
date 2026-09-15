@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:riverpod/misc.dart' show Override;
 import 'package:taller_mecanico_frontend/core/design_system/design_system.dart';
 
@@ -11,19 +12,31 @@ import 'package:taller_mecanico_frontend/core/design_system/design_system.dart';
 /// prueba, y `tema` para probar contra un [ThemeData] distinto al claro por
 /// defecto — cualquier pantalla que use `context.colores`/`context.espaciado`
 /// (vía `ContextoTema`) necesita sus `ThemeExtension` registradas.
+///
+/// Pasar `enrutador` en vez de `pantalla` cuando el test necesita que
+/// `context.push`/`context.pop` funcionen de verdad (un `GoRouter` de
+/// prueba), en vez de un `MaterialApp` sin router.
 Future<void> bombearPantalla(
   WidgetTester tester,
-  Widget pantalla, {
+  Widget? pantalla, {
   List<Override> overrides = const [],
   ThemeData? tema,
+  GoRouter? enrutador,
 }) {
+  assert(
+    (pantalla == null) != (enrutador == null),
+    'bombearPantalla necesita pantalla O enrutador, no los dos ni ninguno.',
+  );
+
+  final temaResuelto = tema ?? temaPrecision(const PaletaPrecisionClara(), Brightness.light);
+
   return tester.pumpWidget(
     ProviderScope(
       overrides: overrides,
-      child: MaterialApp(
-        theme: tema ?? temaPrecision(const PaletaPrecisionClara(), Brightness.light),
-        home: pantalla,
-      ),
+      retry: (_, _) => null,
+      child: enrutador != null
+          ? MaterialApp.router(theme: temaResuelto, routerConfig: enrutador)
+          : MaterialApp(theme: temaResuelto, home: pantalla),
     ),
   );
 }

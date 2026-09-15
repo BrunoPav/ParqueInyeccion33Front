@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/design_system/design_system.dart';
+import '../core/routing/router.dart';
 import '../features/ajustes/presentacion/proveedores/tema_proveedores.dart';
-import '../features/clientes/presentacion/pantallas/pantalla_clientes.dart';
 
 class AplicacionTaller extends ConsumerWidget {
   const AplicacionTaller({super.key});
@@ -24,6 +24,7 @@ class AplicacionTaller extends ConsumerWidget {
     final constructor = catalogoTemas[idTema]!;
     final brilloResuelto = _brilloResuelto(context, modo);
     final colorFondoResuelto = constructor(brilloResuelto).colorScheme.surface;
+    final router = ref.watch(routerProvider);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: (brilloResuelto == Brightness.dark
@@ -34,13 +35,13 @@ class AplicacionTaller extends ConsumerWidget {
         systemNavigationBarIconBrightness:
             brilloResuelto == Brightness.dark ? Brightness.light : Brightness.dark,
       ),
-      child: MaterialApp(
+      child: MaterialApp.router(
         title: 'Taller Mecanico',
         debugShowCheckedModeBanner: false,
         theme: constructor(Brightness.light),
         darkTheme: constructor(Brightness.dark),
         themeMode: modo,
-        home: const PantallaClientes(),
+        routerConfig: router,
       ),
     );
   }

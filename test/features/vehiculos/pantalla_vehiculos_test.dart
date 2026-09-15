@@ -14,7 +14,7 @@ void main() {
   ) async {
     await bombearPantalla(
       tester,
-      const PantallaVehiculos(cliente: cliente),
+      const PantallaVehiculos(clienteId: 1, clienteExtra: cliente),
       overrides: [repositorioVehiculosProvider.overrideWithValue(RepositorioVehiculosFalso())],
     );
 
@@ -28,7 +28,7 @@ void main() {
   testWidgets('muestra un mensaje cuando el cliente no tiene vehiculos', (tester) async {
     await bombearPantalla(
       tester,
-      const PantallaVehiculos(cliente: cliente),
+      const PantallaVehiculos(clienteId: 1, clienteExtra: cliente),
       overrides: [repositorioVehiculosProvider.overrideWithValue(RepositorioVehiculosVacio())],
     );
 

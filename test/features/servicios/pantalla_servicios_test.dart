@@ -36,7 +36,7 @@ void main() {
   ) async {
     await bombearPantalla(
       tester,
-      const PantallaServicios(vehiculo: vehiculo),
+      const PantallaServicios(clienteId: 1, vehiculoId: 1, vehiculoExtra: vehiculo),
       overrides: [repositorioServiciosProvider.overrideWithValue(RepositorioServiciosFalso())],
     );
 
@@ -50,7 +50,7 @@ void main() {
   testWidgets('muestra un mensaje cuando el vehiculo no tiene servicios', (tester) async {
     await bombearPantalla(
       tester,
-      const PantallaServicios(vehiculo: vehiculo),
+      const PantallaServicios(clienteId: 1, vehiculoId: 1, vehiculoExtra: vehiculo),
       overrides: [repositorioServiciosProvider.overrideWithValue(RepositorioServiciosVacio())],
     );
 

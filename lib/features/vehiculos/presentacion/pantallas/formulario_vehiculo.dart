@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../dominio/vehiculo.dart';
 import '../proveedores/vehiculos_proveedores.dart';
@@ -85,8 +86,9 @@ class _FormularioVehiculoState extends ConsumerState<FormularioVehiculo> {
       } else {
         await repositorio.crear(datos);
       }
+      ref.invalidate(vehiculosPorClienteProvider(widget.clienteId));
       if (!mounted) return;
-      Navigator.of(context).pop(true);
+      context.pop();
     } catch (error) {
       if (!mounted) return;
       setState(() => _guardando = false);

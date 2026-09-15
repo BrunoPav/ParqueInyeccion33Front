@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../core/routing/rutas.dart';
 import '../../../../shared/shared.dart';
-import '../../../ajustes/presentacion/pantallas/pantalla_ajustes.dart';
-import '../../../vehiculos/presentacion/pantallas/pantalla_vehiculos.dart';
 import '../../dominio/cliente.dart';
 import '../../dominio/repositorio_clientes.dart';
 import '../proveedores/clientes_proveedores.dart';
 import '../widgets/tarjeta_cliente.dart';
-import 'formulario_cliente.dart';
 
 class PantallaClientes extends ConsumerStatefulWidget {
   const PantallaClientes({super.key});
@@ -29,15 +28,6 @@ class _PantallaClientesState extends ConsumerState<PantallaClientes> {
   }
 
   FiltroClientes get _filtro => (nombre: _nombreFiltro, activo: _mostrarActivos);
-
-  Future<void> _abrirFormulario({Cliente? cliente}) async {
-    final guardado = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(builder: (_) => FormularioCliente(cliente: cliente)),
-    );
-    if (guardado == true) {
-      ref.invalidate(clientesProvider);
-    }
-  }
 
   Future<void> _cambiarEstado(Cliente cliente) async {
     try {
@@ -72,9 +62,7 @@ class _PantallaClientesState extends ConsumerState<PantallaClientes> {
           IconButton(
             tooltip: 'Ajustes',
             icon: const Icon(Icons.settings_outlined),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const PantallaAjustes()),
-            ),
+            onPressed: () => context.push(Rutas.ajustes),
           ),
         ],
       ),
@@ -142,12 +130,14 @@ class _PantallaClientesState extends ConsumerState<PantallaClientes> {
                     final cliente = lista[indice];
                     return TarjetaCliente(
                       cliente: cliente,
-                      alTocar: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => PantallaVehiculos(cliente: cliente),
-                        ),
+                      alTocar: () => context.push(
+                        rutaVehiculos(cliente.id!),
+                        extra: cliente,
                       ),
-                      alEditar: () => _abrirFormulario(cliente: cliente),
+                      alEditar: () => context.push(
+                        rutaClienteEditar(cliente.id!),
+                        extra: cliente,
+                      ),
                       alCambiarEstado: () => _cambiarEstado(cliente),
                     );
                   },
@@ -158,7 +148,7 @@ class _PantallaClientesState extends ConsumerState<PantallaClientes> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _abrirFormulario(),
+        onPressed: () => context.push(Rutas.clienteNuevo),
         icon: const Icon(Icons.add),
         label: const Text('Nuevo cliente'),
       ),
