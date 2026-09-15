@@ -1113,7 +1113,8 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
 
 - [ ] **F8.8** 🔓 Plantillas de test: repositorio, providers y pantalla.
   **Toca:** `docs/plantilla_feature/test/`.
-  **Hecho:** una feature nueva nace con tests.
+  **Hecho:** una feature nueva nace con tests de comportamiento: que crear/editar/eliminar disparan
+  la acción correcta y refrescan la lista — no golden tests.
 
 - [ ] **F8.9** 🔒 Escribir `docs/COMO_AGREGAR_FEATURE.md`: los pasos en orden, qué registrar en el router,
   en los destinos de navegación y en los barrels.
@@ -1122,7 +1123,7 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
 
 - [ ] **F8.10** 🔓 Checklist de "feature terminada" al final de ese documento.
   **Toca:** `docs/COMO_AGREGAR_FEATURE.md`.
-  **Hecho:** cubre dominio, datos, presentación, ruta, destino, tests y goldens.
+  **Hecho:** cubre dominio, datos, presentación, ruta, destino y tests de comportamiento.
 
 - [ ] **F8.11** 🔓 **Validar la plantilla usándola**: generar una feature descartable siguiendo solo
   el documento, sin mirar el código existente.
@@ -1269,9 +1270,51 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
   **Toca:** —
   **Hecho:** ídem.
 
-- [ ] **F9.29** 🔓 Actualizar los goldens de pantalla completa en ambos temas y los 3 breakpoints.
-  **Toca:** `test/features/*/goldens/`.
-  **Hecho:** generados y versionados.
+- [ ] **F9.29** 🔓 Verificación visual manual de las 6 pantallas, en ambos temas y los 3 breakpoints —
+  el mismo enfoque descartable de F3.12: capturas de widget test con las fuentes cargadas a mano,
+  miradas una por una y borradas antes de commitear, sin comparar por pixel.
+  **Toca:** —
+  **Hecho:** cada pantalla se vio en claro/oscuro y en compacto/medio/expandido; lo que no cierra
+  queda anotado o corregido antes de cerrar la fase.
+
+### Tests de comportamiento
+
+> Reemplaza lo que los goldens no daban: en vez de comparar píxeles, estos tests accionan la UI real
+> (tocar, escribir, esperar un `Future`) y verifican el efecto.
+
+- [ ] **F9.30** 🔓 Tocar una `TarjetaCliente` navega a `PantallaVehiculos` con el cliente correcto;
+  tocar una `TarjetaVehiculo` navega a `PantallaServicios` con el vehículo correcto.
+  **Toca:** `test/features/clientes/`, `test/features/vehiculos/`.
+  **Hecho:** verde con repositorios falsos, sin tocar la red.
+
+- [ ] **F9.31** 🔓 Guardar en un formulario (los 3) invalida la lista de la pantalla anterior y
+  vuelve: el patrón de F6.9, probado de punta a punta con la pantalla real.
+  **Toca:** los 3 pares pantalla + formulario.
+  **Hecho:** después de "Guardar", la lista muestra el ítem nuevo sin refrescar a mano.
+
+- [ ] **F9.32** 🔓 `BarraBusqueda`: escribir no filtra antes del debounce; después del delay, filtra.
+  **Toca:** `test/features/clientes/`.
+  **Hecho:** verde usando `tester.pump(duration)` para simular el paso del tiempo.
+
+- [ ] **F9.33** 🔓 Alternar los chips Activos/Inactivos cambia qué lista se pide y se muestra.
+  **Toca:** `test/features/clientes/`.
+  **Hecho:** verde con un repositorio falso que devuelve listas distintas según `activo`.
+
+- [ ] **F9.34** 🔓 `VistaAsync`: el estado de carga se ve mientras el `Future` está pendiente y
+  desaparece al resolver; el estado de error muestra `VistaError` y tocar "Reintentar" vuelve a
+  pedir los datos.
+  **Toca:** la primera pantalla que lo consuma.
+  **Hecho:** verde con un repositorio falso que falla la primera vez y responde la segunda.
+
+- [ ] **F9.35** 🔓 `dialogoConfirmacion` destructivo: cancelar no elimina nada; confirmar elimina y
+  refresca la lista.
+  **Toca:** `test/features/vehiculos/`, `test/features/servicios/`.
+  **Hecho:** verde para ambos caminos del diálogo.
+
+- [ ] **F9.36** 🔓 Salir de un formulario con cambios sin guardar pide confirmación (F9.23);
+  confirmar descarta, cancelar mantiene el formulario abierto.
+  **Toca:** los 3 formularios.
+  **Hecho:** verde para ambos caminos.
 
 ### 🆕 Vista global de vehículos (opcional, judgment call)
 
@@ -1283,19 +1326,19 @@ anidado bajo un cliente. A diferencia del resto del backlog, **esto no requiere 
 puro" sin ampliar el alcance, pero sí agrega un destino de navegación nuevo, así que queda marcado como
 opcional en vez de asumido.
 
-- [ ] **F9.30** 🔓 **[Opcional]** `PantallaVehiculosGlobal`: lista todos los vehículos con `BarraBusqueda`
+- [ ] **F9.37** 🔓 **[Opcional]** `PantallaVehiculosGlobal`: lista todos los vehículos con `BarraBusqueda`
   filtrando por patente (usa `porPatente`), cada `TarjetaVehiculo` navega a su historial de servicios.
   **Toca:** `lib/features/vehiculos/presentacion/pantallas/pantalla_vehiculos_global.dart` (nuevo),
   `lib/core/routing/rutas.dart` (agrega `/vehiculos`), `lib/core/routing/destinos.dart`.
   **Hecho:** un mecánico puede llegar a un vehículo por patente sin pasar por su cliente.
   **Si se descarta:** no bloquea nada — el resto de F9 no depende de este paso.
 
-- [ ] **F9.31** 🔓 **[Opcional]** Agregar "Vehículos" como destino de `AndamioAdaptativo` (F7.5),
+- [ ] **F9.38** 🔓 **[Opcional]** Agregar "Vehículos" como destino de `AndamioAdaptativo` (F7.5),
   junto a Clientes y Ajustes.
   **Toca:** `lib/core/routing/destinos.dart`.
   **Hecho:** visible en `NavigationBar` y `NavigationRail`.
 
-- [ ] **F9.32** ✅ **Cierre de fase:** analyze + test verdes, build web exitoso, revisión visual completa.
+- [ ] **F9.39** ✅ **Cierre de fase:** analyze + test verdes, build web exitoso, revisión visual completa.
 
 ---
 
@@ -1377,13 +1420,9 @@ opcional en vez de asumido.
   **Hecho:** el recorrido documentado coincide con el código.
   *Nota: `FLUJO.md` está en `.gitignore`, es documento personal — actualizarlo igual, se usa para estudiar.*
 
-- [ ] **F10.17** 🔓 Agregar un job de goldens al CI para que una regresión visual falle el build.
-  **Toca:** `.github/workflows/desplegar.yml`.
-  **Hecho:** el workflow corre los goldens y falla si difieren.
-
-- [ ] **F10.18** ✅ **Verificación final end-to-end:**
+- [ ] **F10.17** ✅ **Verificación final end-to-end:**
   1. `flutter analyze` sin issues
-  2. `flutter test` verde, goldens incluidos
+  2. `flutter test` verde
   3. `flutter build web --release --base-href /ParqueInyeccion33Front/` exitoso
   4. `flutter run -d chrome`: recorrer los 3 niveles, crear/editar/eliminar en cada entidad
   5. Alternar claro/oscuro y repetir el recorrido
@@ -1418,7 +1457,7 @@ guardar; si había una segunda pantalla de clientes distinta (otro estado, otro 
 | **Servicio → línea de orden** | screen5-6 (desglose ítem/categoría/cantidad/subtotal en vez de un precio único) | `Servicio` pasa de `{descripcion, precio}` a una orden con ítems de línea — depende de "Órdenes de Trabajo" | Grande (subsumido en la fila 1) |
 | **Compartir / exportar** | screen4 ("Compartir por WhatsApp"), screen6 ("Descargar Informe PDF", "Exportar Historial Completo") | Generación de PDF en backend o cliente; integración de share intent | Chico–Mediano |
 | **Garantías** | screen3-6 ("Garantías Activas: 1, vigente x 60 días", "Historial Técnico Certificado… garantía de 90 días o 5.000 km") | Campo de garantía en la orden + regla de vigencia | Chico |
-| **Vista global de vehículos** | screen1-4 ("Vehículos" en nav) | **Ninguno** — `ApiVehiculo.listar()` sin `clienteId` y `porPatente()` ya existen | Incluido como opcional en **F9.30–F9.31** |
+| **Vista global de vehículos** | screen1-4 ("Vehículos" en nav) | **Ninguno** — `ApiVehiculo.listar()` sin `clienteId` y `porPatente()` ya existen | Incluido como opcional en **F9.37–F9.38** |
 
 **Si en algún momento se decide avanzar con esto:** empezar por Mecánicos y Órdenes de Trabajo (todo lo
 demás depende de o se apoya en esas dos), y planificar el backend Java antes que el frontend — el patrón
@@ -1439,9 +1478,9 @@ de features de F8 sirve igual para las entidades nuevas.
 | F6 · go_router | 20 | F5 | URLs reales, deep links |
 | F7 · Responsive | 21 | F6 | Adaptación a 3 tamaños |
 | F8 · Plantilla | 12 | F5 | Feature nueva en minutos |
-| F9 · Rediseño | 32 | F4, F6, F7 | **La app se ve como el mockup** |
-| F10 · Pulido | 18 | F9 | Listo para producción |
-| **Total** | **239** | | |
+| F9 · Rediseño | 39 | F4, F6, F7 | **La app se ve como el mockup** |
+| F10 · Pulido | 17 | F9 | Listo para producción |
+| **Total** | **245** | | |
 
 **F1, F2 y F5 no cambian nada visualmente, y eso es el criterio de que salieron bien.**
 Si algo se ve distinto al terminar esas fases, hay un efecto colateral que no debería estar.
@@ -1467,5 +1506,5 @@ Si algo se ve distinto al terminar esas fases, hay un efecto colateral que no de
   confirmar tamaños exactos a simple vista. Revisar en F9.27/F9.28 contra las capturas.
 - **F1.12** — la paleta oscura se presenta para aprobación antes de cablearse (ningún mockup trae oscuro).
 - **F6.2** — la estrategia de URL hay que verificarla en el deploy real de Pages, no asumirla.
-- **F9.30/F9.31** — vista global de vehículos: opcional, a confirmar si se incluye o se deja también
+- **F9.37/F9.38** — vista global de vehículos: opcional, a confirmar si se incluye o se deja también
   para el backlog.
