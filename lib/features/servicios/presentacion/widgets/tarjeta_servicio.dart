@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/design_system/tokens/tokens.dart';
 import '../../../../core/utilidades/formatos.dart';
 import '../../dominio/servicio.dart';
 
@@ -22,24 +23,30 @@ class TarjetaServicio extends StatelessWidget {
       leading: const CircleAvatar(child: Icon(Icons.build)),
       title: Text(Formatos.fecha(servicio.fecha)),
       subtitle: Text(servicio.descripcion),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            Formatos.moneda(servicio.precio),
-            style: Theme.of(context).textTheme.titleSmall,
-          ),
-          PopupMenuButton<String>(
-            onSelected: (opcion) {
-              if (opcion == 'editar') alEditar();
-              if (opcion == 'eliminar') alEliminar();
-            },
-            itemBuilder: (_) => const [
-              PopupMenuItem(value: 'editar', child: Text('Editar')),
-              PopupMenuItem(value: 'eliminar', child: Text('Eliminar')),
-            ],
-          ),
-        ],
+      trailing: SizedBox(
+        width: Dimensiones.anchoTrailingConMenu,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Flexible(
+              child: Text(
+                Formatos.moneda(servicio.precio),
+                style: Theme.of(context).textTheme.titleSmall,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            PopupMenuButton<String>(
+              onSelected: (opcion) {
+                if (opcion == 'editar') alEditar();
+                if (opcion == 'eliminar') alEliminar();
+              },
+              itemBuilder: (_) => const [
+                PopupMenuItem(value: 'editar', child: Text('Editar')),
+                PopupMenuItem(value: 'eliminar', child: Text('Eliminar')),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/design_system/design_system.dart';
+import '../../../../core/layout/contexto_layout.dart';
+import '../../../../shared/shared.dart';
 import '../../dominio/cliente.dart';
 import '../proveedores/clientes_proveedores.dart';
 
@@ -74,55 +77,60 @@ class _FormularioClienteState extends ConsumerState<FormularioCliente> {
       appBar: AppBar(
         title: Text(_esEdicion ? 'Editar cliente' : 'Nuevo cliente'),
       ),
-      body: Form(
-        key: _claveFormulario,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            TextFormField(
-              controller: _nombre,
-              decoration: const InputDecoration(
-                labelText: 'Nombre',
-                border: OutlineInputBorder(),
+      body: ContenedorFormulario(
+        child: Form(
+          key: _claveFormulario,
+          child: ListView(
+            padding: EdgeInsets.all(context.bordePantalla),
+            children: [
+              TextFormField(
+                controller: _nombre,
+                decoration: const InputDecoration(
+                  labelText: 'Nombre',
+                  border: OutlineInputBorder(),
+                ),
+                textCapitalization: TextCapitalization.words,
+                textInputAction: TextInputAction.next,
+                validator: (valor) {
+                  if (valor == null || valor.trim().isEmpty) {
+                    return 'El nombre es obligatorio';
+                  }
+                  if (valor.trim().length > 100) {
+                    return 'No puede exceder los 100 caracteres';
+                  }
+                  return null;
+                },
               ),
-              textCapitalization: TextCapitalization.words,
-              validator: (valor) {
-                if (valor == null || valor.trim().isEmpty) {
-                  return 'El nombre es obligatorio';
-                }
-                if (valor.trim().length > 100) {
-                  return 'No puede exceder los 100 caracteres';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _contacto,
-              decoration: const InputDecoration(
-                labelText: 'Contacto',
-                border: OutlineInputBorder(),
+              SizedBox(height: context.espaciado.md),
+              TextFormField(
+                controller: _contacto,
+                decoration: const InputDecoration(
+                  labelText: 'Contacto',
+                  border: OutlineInputBorder(),
+                ),
+                textInputAction: TextInputAction.done,
+                onFieldSubmitted: (_) => _guardar(),
+                validator: (valor) {
+                  if (valor != null && valor.trim().length > 100) {
+                    return 'No puede exceder los 100 caracteres';
+                  }
+                  return null;
+                },
               ),
-              validator: (valor) {
-                if (valor != null && valor.trim().length > 100) {
-                  return 'No puede exceder los 100 caracteres';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 24),
-            FilledButton.icon(
-              onPressed: _guardando ? null : _guardar,
-              icon: _guardando
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.save),
-              label: Text(_guardando ? 'Guardando...' : 'Guardar'),
-            ),
-          ],
+              SizedBox(height: context.espaciado.xl),
+              FilledButton.icon(
+                onPressed: _guardando ? null : _guardar,
+                icon: _guardando
+                    ? const SizedBox(
+                        width: Dimensiones.spinnerBoton,
+                        height: Dimensiones.spinnerBoton,
+                        child: CircularProgressIndicator(strokeWidth: Dimensiones.anchoTrazoSpinner),
+                      )
+                    : const Icon(Icons.save),
+                label: Text(_guardando ? 'Guardando...' : 'Guardar'),
+              ),
+            ],
+          ),
         ),
       ),
     );

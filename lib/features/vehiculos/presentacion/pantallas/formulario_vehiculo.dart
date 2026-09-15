@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/design_system/design_system.dart';
+import '../../../../core/layout/contexto_layout.dart';
+import '../../../../shared/shared.dart';
 import '../../dominio/vehiculo.dart';
 import '../proveedores/vehiculos_proveedores.dart';
 
@@ -107,95 +110,103 @@ class _FormularioVehiculoState extends ConsumerState<FormularioVehiculo> {
       appBar: AppBar(
         title: Text(_esEdicion ? 'Editar vehiculo' : 'Nuevo vehiculo'),
       ),
-      body: Form(
-        key: _claveFormulario,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            TextFormField(
-              controller: _marca,
-              decoration: const InputDecoration(
-                labelText: 'Marca',
-                border: OutlineInputBorder(),
+      body: ContenedorFormulario(
+        child: Form(
+          key: _claveFormulario,
+          child: ListView(
+            padding: EdgeInsets.all(context.bordePantalla),
+            children: [
+              TextFormField(
+                controller: _marca,
+                decoration: const InputDecoration(
+                  labelText: 'Marca',
+                  border: OutlineInputBorder(),
+                ),
+                textCapitalization: TextCapitalization.words,
+                textInputAction: TextInputAction.next,
+                validator: (valor) => (valor == null || valor.trim().isEmpty)
+                    ? 'La marca es obligatoria'
+                    : null,
               ),
-              textCapitalization: TextCapitalization.words,
-              validator: (valor) => (valor == null || valor.trim().isEmpty)
-                  ? 'La marca es obligatoria'
-                  : null,
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _modelo,
-              decoration: const InputDecoration(
-                labelText: 'Modelo',
-                border: OutlineInputBorder(),
+              SizedBox(height: context.espaciado.md),
+              TextFormField(
+                controller: _modelo,
+                decoration: const InputDecoration(
+                  labelText: 'Modelo',
+                  border: OutlineInputBorder(),
+                ),
+                textCapitalization: TextCapitalization.words,
+                textInputAction: TextInputAction.next,
+                validator: (valor) => (valor == null || valor.trim().isEmpty)
+                    ? 'El modelo es obligatorio'
+                    : null,
               ),
-              textCapitalization: TextCapitalization.words,
-              validator: (valor) => (valor == null || valor.trim().isEmpty)
-                  ? 'El modelo es obligatorio'
-                  : null,
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _anio,
-              decoration: const InputDecoration(
-                labelText: 'Anio',
-                border: OutlineInputBorder(),
+              SizedBox(height: context.espaciado.md),
+              TextFormField(
+                controller: _anio,
+                decoration: const InputDecoration(
+                  labelText: 'Anio',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
+                textInputAction: TextInputAction.next,
+                validator: (valor) => _validarEntero(
+                  valor,
+                  minimo: 1900,
+                  maximo: 2100,
+                  etiqueta: 'El anio',
+                ),
               ),
-              keyboardType: TextInputType.number,
-              validator: (valor) => _validarEntero(
-                valor,
-                minimo: 1900,
-                maximo: 2100,
-                etiqueta: 'El anio',
+              SizedBox(height: context.espaciado.md),
+              TextFormField(
+                controller: _patente,
+                decoration: const InputDecoration(
+                  labelText: 'Patente',
+                  border: OutlineInputBorder(),
+                ),
+                textCapitalization: TextCapitalization.characters,
+                textInputAction: TextInputAction.next,
+                validator: (valor) {
+                  if (valor == null || valor.trim().isEmpty) {
+                    return 'La patente es obligatoria';
+                  }
+                  if (valor.trim().length > 10) {
+                    return 'No puede exceder los 10 caracteres';
+                  }
+                  return null;
+                },
               ),
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _patente,
-              decoration: const InputDecoration(
-                labelText: 'Patente',
-                border: OutlineInputBorder(),
+              SizedBox(height: context.espaciado.md),
+              TextFormField(
+                controller: _kilometraje,
+                decoration: const InputDecoration(
+                  labelText: 'Kilometraje',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
+                textInputAction: TextInputAction.done,
+                onFieldSubmitted: (_) => _guardar(),
+                validator: (valor) => _validarEntero(
+                  valor,
+                  minimo: 0,
+                  maximo: 9999999,
+                  etiqueta: 'El kilometraje',
+                ),
               ),
-              textCapitalization: TextCapitalization.characters,
-              validator: (valor) {
-                if (valor == null || valor.trim().isEmpty) {
-                  return 'La patente es obligatoria';
-                }
-                if (valor.trim().length > 10) {
-                  return 'No puede exceder los 10 caracteres';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _kilometraje,
-              decoration: const InputDecoration(
-                labelText: 'Kilometraje',
-                border: OutlineInputBorder(),
+              SizedBox(height: context.espaciado.xl),
+              FilledButton.icon(
+                onPressed: _guardando ? null : _guardar,
+                icon: _guardando
+                    ? const SizedBox(
+                        width: Dimensiones.spinnerBoton,
+                        height: Dimensiones.spinnerBoton,
+                        child: CircularProgressIndicator(strokeWidth: Dimensiones.anchoTrazoSpinner),
+                      )
+                    : const Icon(Icons.save),
+                label: Text(_guardando ? 'Guardando...' : 'Guardar'),
               ),
-              keyboardType: TextInputType.number,
-              validator: (valor) => _validarEntero(
-                valor,
-                minimo: 0,
-                maximo: 9999999,
-                etiqueta: 'El kilometraje',
-              ),
-            ),
-            const SizedBox(height: 24),
-            FilledButton.icon(
-              onPressed: _guardando ? null : _guardar,
-              icon: _guardando
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.save),
-              label: Text(_guardando ? 'Guardando...' : 'Guardar'),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

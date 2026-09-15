@@ -7,6 +7,7 @@ class TarjetaVehiculo extends StatelessWidget {
   final VoidCallback alTocar;
   final VoidCallback alEditar;
   final VoidCallback alEliminar;
+  final bool seleccionado;
 
   const TarjetaVehiculo({
     super.key,
@@ -14,11 +15,13 @@ class TarjetaVehiculo extends StatelessWidget {
     required this.alTocar,
     required this.alEditar,
     required this.alEliminar,
+    this.seleccionado = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      selected: seleccionado,
       leading: const CircleAvatar(child: Icon(Icons.directions_car)),
       title: Text(vehiculo.descripcionCorta),
       subtitle: Text('${vehiculo.patente}  -  ${vehiculo.kilometraje} km'),

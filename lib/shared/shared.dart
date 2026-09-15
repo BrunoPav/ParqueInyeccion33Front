@@ -22,6 +22,8 @@ export 'widgets/retroalimentacion/notificador.dart';
 export 'widgets/retroalimentacion/vista_async.dart';
 export 'widgets/retroalimentacion/vista_error.dart';
 export 'widgets/retroalimentacion/vista_vacia.dart';
+export 'widgets/superficies/contenedor_formulario.dart';
 export 'widgets/superficies/fila_lista.dart';
+export 'widgets/superficies/grilla_adaptativa.dart';
 export 'widgets/superficies/seccion_formulario.dart';
 export 'widgets/superficies/tarjeta_taller.dart';

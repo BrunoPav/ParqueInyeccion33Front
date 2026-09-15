@@ -18,4 +18,17 @@ abstract final class Dimensiones {
   static const double avatarChico = 32;
   static const double avatarMediano = 40;
   static const double avatarGrande = 48;
+
+  /// No especificado en DESIGN.md; derivado para que el texto no se estire
+  /// a todo el ancho de un monitor de escritorio.
+  static const double anchoMaximoContenido = 1120;
+
+  static const double anchoMaestro = 360;
+  static const double anchoMaximoFormulario = 560;
+
+  /// Ancho fijo para un `trailing` de `ListTile` con precio + menú: sin esto,
+  /// `ListTile` mide el ancho natural (sin límite) de ese contenido antes de
+  /// achicarlo, y con poco espacio (panel maestro-detalle angosto) tira
+  /// "Trailing widget consumes the entire tile width".
+  static const double anchoTrailingConMenu = 96;
 }

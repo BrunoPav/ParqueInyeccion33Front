@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/design_system/design_system.dart';
+import '../../../../core/layout/contenedor_contenido.dart';
+import '../../../../core/layout/contexto_layout.dart';
+import '../../../../core/layout/panel_maestro_detalle.dart';
 import '../../../../core/routing/rutas.dart';
 import '../../../../shared/shared.dart';
 import '../../../vehiculos/dominio/vehiculo.dart';
 import '../../../vehiculos/presentacion/proveedores/vehiculos_proveedores.dart';
+import '../../../vehiculos/presentacion/widgets/lista_vehiculos_maestro.dart';
 import '../../dominio/servicio.dart';
 import '../proveedores/servicios_proveedores.dart';
 import '../widgets/resumen_servicios.dart';
@@ -83,6 +88,49 @@ class _ContenidoServicios extends ConsumerWidget {
     }
   }
 
+  void _irAServicios(BuildContext context, Vehiculo otroVehiculo) {
+    final ruta = rutaServicios(clienteId, otroVehiculo.id!);
+    context.go(ruta, extra: otroVehiculo);
+  }
+
+  Widget _historialServicios(BuildContext context, WidgetRef ref, AsyncValue<List<Servicio>> servicios) {
+    return VistaAsync<List<Servicio>>(
+      valor: servicios,
+      alReintentar: () => ref.invalidate(serviciosPorVehiculoProvider(vehiculo.id!)),
+      enDatos: (lista) {
+        if (lista.isEmpty) {
+          return const VistaVacia(
+            icono: Icons.build_outlined,
+            titulo: 'Este vehiculo no tiene servicios registrados',
+          );
+        }
+
+        return Column(
+          children: [
+            ResumenServicios(servicios: lista),
+            Expanded(
+              child: ListView.separated(
+                itemCount: lista.length,
+                separatorBuilder: (_, _) => const Divider(height: 1),
+                itemBuilder: (_, indice) {
+                  final servicio = lista[indice];
+                  return TarjetaServicio(
+                    servicio: servicio,
+                    alEditar: () => context.push(
+                      rutaServicioEditar(clienteId, vehiculo.id!, servicio.id!),
+                      extra: servicio,
+                    ),
+                    alEliminar: () => _eliminar(context, ref, servicio),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final servicios = ref.watch(serviciosPorVehiculoProvider(vehiculo.id!));
@@ -93,46 +141,23 @@ class _ContenidoServicios extends ConsumerWidget {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(24),
           child: Padding(
-            padding: const EdgeInsets.only(bottom: 8),
+            padding: EdgeInsets.only(bottom: context.espaciado.xs),
             child: Text('Historial de ${vehiculo.patente}'),
           ),
         ),
       ),
-      body: VistaAsync<List<Servicio>>(
-        valor: servicios,
-        alReintentar: () => ref.invalidate(serviciosPorVehiculoProvider(vehiculo.id!)),
-        enDatos: (lista) {
-          if (lista.isEmpty) {
-            return const VistaVacia(
-              icono: Icons.build_outlined,
-              titulo: 'Este vehiculo no tiene servicios registrados',
-            );
-          }
-
-          return Column(
-            children: [
-              ResumenServicios(servicios: lista),
-              Expanded(
-                child: ListView.separated(
-                  itemCount: lista.length,
-                  separatorBuilder: (_, _) => const Divider(height: 1),
-                  itemBuilder: (_, indice) {
-                    final servicio = lista[indice];
-                    return TarjetaServicio(
-                      servicio: servicio,
-                      alEditar: () => context.push(
-                        rutaServicioEditar(clienteId, vehiculo.id!, servicio.id!),
-                        extra: servicio,
-                      ),
-                      alEliminar: () => _eliminar(context, ref, servicio),
-                    );
-                  },
+      body: context.esCompacto
+          ? _historialServicios(context, ref, servicios)
+          : ContenedorContenido(
+              child: PanelMaestroDetalle(
+                maestro: ListaVehiculosMaestro(
+                  clienteId: clienteId,
+                  vehiculoSeleccionadoId: vehiculo.id,
+                  alSeleccionar: _irAServicios,
                 ),
+                detalle: _historialServicios(context, ref, servicios),
               ),
-            ],
-          );
-        },
-      ),
+            ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push(rutaServicioNuevo(clienteId, vehiculo.id!)),
         icon: const Icon(Icons.add),

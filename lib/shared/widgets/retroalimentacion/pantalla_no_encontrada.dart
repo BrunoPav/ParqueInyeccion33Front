@@ -10,12 +10,14 @@ class PantallaNoEncontrada extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: VistaVacia(
-        icono: Icons.signpost_outlined,
-        titulo: 'No encontramos esta página',
-        textoApoyo: 'La dirección no existe o el enlace está roto.',
-        etiquetaAccion: 'Ir a clientes',
-        onAccion: () => context.go(Rutas.clientes),
+      body: SafeArea(
+        child: VistaVacia(
+          icono: Icons.signpost_outlined,
+          titulo: 'No encontramos esta página',
+          textoApoyo: 'La dirección no existe o el enlace está roto.',
+          etiquetaAccion: 'Ir a clientes',
+          onAccion: () => context.go(Rutas.clientes),
+        ),
       ),
     );
   }

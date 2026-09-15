@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/design_system/design_system.dart';
+import '../../../../core/layout/contenedor_contenido.dart';
 import '../proveedores/tema_proveedores.dart';
 
 class PantallaAjustes extends ConsumerWidget {
@@ -28,62 +29,54 @@ class PantallaAjustes extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Ajustes')),
-      body: ListView(
-        children: [
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-              context.espaciado.md,
-              context.espaciado.md,
-              context.espaciado.md,
-              context.espaciado.xs,
+      body: ContenedorContenido(
+        child: ListView(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(top: context.espaciado.md, bottom: context.espaciado.xs),
+              child: Text('Apariencia', style: context.textos.titleMedium),
             ),
-            child: Text('Apariencia', style: context.textos.titleMedium),
-          ),
-          RadioGroup<ThemeMode>(
-            groupValue: modoActual,
-            onChanged: (valor) {
-              if (valor != null) {
-                ref.read(modoTemaProvider.notifier).establecer(valor);
-              }
-            },
-            child: Column(
-              children: [
-                for (final modo in ThemeMode.values)
-                  RadioListTile<ThemeMode>(
-                    title: Text(_etiquetaModo(modo)),
-                    value: modo,
-                  ),
-              ],
+            RadioGroup<ThemeMode>(
+              groupValue: modoActual,
+              onChanged: (valor) {
+                if (valor != null) {
+                  ref.read(modoTemaProvider.notifier).establecer(valor);
+                }
+              },
+              child: Column(
+                children: [
+                  for (final modo in ThemeMode.values)
+                    RadioListTile<ThemeMode>(
+                      title: Text(_etiquetaModo(modo)),
+                      value: modo,
+                    ),
+                ],
+              ),
             ),
-          ),
-          const Divider(height: 1),
-          Padding(
-            padding: EdgeInsets.fromLTRB(
-              context.espaciado.md,
-              context.espaciado.md,
-              context.espaciado.md,
-              context.espaciado.xs,
+            const Divider(height: 1),
+            Padding(
+              padding: EdgeInsets.only(top: context.espaciado.md, bottom: context.espaciado.xs),
+              child: Text('Tema', style: context.textos.titleMedium),
             ),
-            child: Text('Tema', style: context.textos.titleMedium),
-          ),
-          RadioGroup<IdTema>(
-            groupValue: idTemaActual,
-            onChanged: (valor) {
-              if (valor != null) {
-                ref.read(temaSeleccionadoProvider.notifier).establecer(valor);
-              }
-            },
-            child: Column(
-              children: [
-                for (final id in IdTema.values)
-                  RadioListTile<IdTema>(
-                    title: Text(_etiquetaTema(id)),
-                    value: id,
-                  ),
-              ],
+            RadioGroup<IdTema>(
+              groupValue: idTemaActual,
+              onChanged: (valor) {
+                if (valor != null) {
+                  ref.read(temaSeleccionadoProvider.notifier).establecer(valor);
+                }
+              },
+              child: Column(
+                children: [
+                  for (final id in IdTema.values)
+                    RadioListTile<IdTema>(
+                      title: Text(_etiquetaTema(id)),
+                      value: id,
+                    ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
