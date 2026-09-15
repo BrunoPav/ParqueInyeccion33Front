@@ -15,7 +15,13 @@ class RepositorioClientesFalso implements RepositorioClientes {
   }
 
   @override
-  Future<Cliente> obtener(int id) async => throw UnimplementedError();
+  Future<Cliente> obtener(int id) async {
+    final lista = await listar();
+    return lista.firstWhere(
+      (cliente) => cliente.id == id,
+      orElse: () => throw Exception('cliente $id: no encontrado'),
+    );
+  }
 
   @override
   Future<Cliente> crear(Cliente cliente) async => throw UnimplementedError();
@@ -70,7 +76,13 @@ class RepositorioVehiculosFalso implements RepositorioVehiculos {
   }
 
   @override
-  Future<Vehiculo> obtener(int id) async => throw UnimplementedError();
+  Future<Vehiculo> obtener(int id) async {
+    final lista = await listar();
+    return lista.firstWhere(
+      (vehiculo) => vehiculo.id == id,
+      orElse: () => throw Exception('vehiculo $id: no encontrado'),
+    );
+  }
 
   @override
   Future<Vehiculo> porPatente(String patente) async => throw UnimplementedError();
@@ -127,7 +139,13 @@ class RepositorioServiciosFalso implements RepositorioServicios {
   }
 
   @override
-  Future<Servicio> obtener(int id) async => throw UnimplementedError();
+  Future<Servicio> obtener(int id) async {
+    final lista = await listar();
+    return lista.firstWhere(
+      (servicio) => servicio.id == id,
+      orElse: () => throw Exception('servicio $id: no encontrado'),
+    );
+  }
 
   @override
   Future<Servicio> crear(Servicio servicio) async => throw UnimplementedError();

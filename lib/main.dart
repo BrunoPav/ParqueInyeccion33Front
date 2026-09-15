@@ -12,6 +12,7 @@ void main() async {
   runApp(
     ProviderScope(
       overrides: [preferenciasProvider.overrideWithValue(preferencias)],
+      retry: (_, _) => null,
       child: const AplicacionTaller(),
     ),
   );

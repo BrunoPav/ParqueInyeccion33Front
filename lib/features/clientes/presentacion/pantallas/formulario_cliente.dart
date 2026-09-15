@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../dominio/cliente.dart';
 import '../proveedores/clientes_proveedores.dart';
@@ -52,8 +53,9 @@ class _FormularioClienteState extends ConsumerState<FormularioCliente> {
       } else {
         await repositorio.crear(datos);
       }
+      ref.invalidate(clientesProvider);
       if (!mounted) return;
-      Navigator.of(context).pop(true);
+      context.pop();
     } catch (error) {
       if (!mounted) return;
       setState(() => _guardando = false);

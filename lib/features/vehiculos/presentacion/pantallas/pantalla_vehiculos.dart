@@ -1,42 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../core/routing/rutas.dart';
 import '../../../../shared/shared.dart';
 import '../../../clientes/dominio/cliente.dart';
-import '../../../servicios/presentacion/pantallas/pantalla_servicios.dart';
+import '../../../clientes/presentacion/proveedores/clientes_proveedores.dart';
 import '../../dominio/vehiculo.dart';
 import '../proveedores/vehiculos_proveedores.dart';
 import '../widgets/tarjeta_vehiculo.dart';
-import 'formulario_vehiculo.dart';
 
 class PantallaVehiculos extends ConsumerWidget {
+  final int clienteId;
+  final Cliente? clienteExtra;
+
+  const PantallaVehiculos({super.key, required this.clienteId, this.clienteExtra});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final extra = clienteExtra;
+    if (extra != null) {
+      return _ContenidoVehiculos(cliente: extra);
+    }
+
+    final clienteAsync = ref.watch(clientePorIdProvider(clienteId));
+    return VistaAsync<Cliente>(
+      valor: clienteAsync,
+      alReintentar: () => ref.invalidate(clientePorIdProvider(clienteId)),
+      enDatos: (cliente) => _ContenidoVehiculos(cliente: cliente),
+    );
+  }
+}
+
+class _ContenidoVehiculos extends ConsumerWidget {
   final Cliente cliente;
 
-  const PantallaVehiculos({super.key, required this.cliente});
+  const _ContenidoVehiculos({required this.cliente});
 
-  Future<void> _abrirFormulario(
-    BuildContext context,
-    WidgetRef ref, {
-    Vehiculo? vehiculo,
-  }) async {
-    final guardado = await Navigator.of(context).push<bool>(
-      MaterialPageRoute(
-        builder: (_) => FormularioVehiculo(
-          clienteId: cliente.id!,
-          vehiculo: vehiculo,
-        ),
-      ),
-    );
-    if (guardado == true) {
-      ref.invalidate(vehiculosPorClienteProvider(cliente.id!));
-    }
-  }
-
-  Future<void> _eliminar(
-    BuildContext context,
-    WidgetRef ref,
-    Vehiculo vehiculo,
-  ) async {
+  Future<void> _eliminar(BuildContext context, WidgetRef ref, Vehiculo vehiculo) async {
     final confirmado = await showDialog<bool>(
       context: context,
       builder: (dialogo) => AlertDialog(
@@ -91,8 +92,7 @@ class PantallaVehiculos extends ConsumerWidget {
       ),
       body: VistaAsync<List<Vehiculo>>(
         valor: vehiculos,
-        alReintentar: () =>
-            ref.invalidate(vehiculosPorClienteProvider(cliente.id!)),
+        alReintentar: () => ref.invalidate(vehiculosPorClienteProvider(cliente.id!)),
         enDatos: (lista) {
           if (lista.isEmpty) {
             return const VistaVacia(
@@ -107,12 +107,14 @@ class PantallaVehiculos extends ConsumerWidget {
               final vehiculo = lista[indice];
               return TarjetaVehiculo(
                 vehiculo: vehiculo,
-                alTocar: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => PantallaServicios(vehiculo: vehiculo),
-                  ),
+                alTocar: () => context.push(
+                  rutaServicios(cliente.id!, vehiculo.id!),
+                  extra: vehiculo,
                 ),
-                alEditar: () => _abrirFormulario(context, ref, vehiculo: vehiculo),
+                alEditar: () => context.push(
+                  rutaVehiculoEditar(cliente.id!, vehiculo.id!),
+                  extra: vehiculo,
+                ),
                 alEliminar: () => _eliminar(context, ref, vehiculo),
               );
             },
@@ -120,7 +122,7 @@ class PantallaVehiculos extends ConsumerWidget {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _abrirFormulario(context, ref),
+        onPressed: () => context.push(rutaVehiculoNuevo(cliente.id!)),
         icon: const Icon(Icons.add),
         label: const Text('Nuevo vehiculo'),
       ),
