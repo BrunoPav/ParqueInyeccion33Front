@@ -99,7 +99,7 @@ void main() {
       await _navegarA(tester, '/ajustes', ancho: 1280);
 
       final rail = tester.widget<NavigationRail>(find.byType(NavigationRail));
-      expect(rail.selectedIndex, 1);
+      expect(rail.selectedIndex, 2);
     });
   });
 

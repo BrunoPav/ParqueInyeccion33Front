@@ -1236,132 +1236,180 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
 
 ### Listado de clientes
 
-- [ ] **F9.1** 🔒 Reemplazar el `TextField` inline por `BarraBusqueda`, ganando el debounce.
+- [x] **F9.1** 🔒 Reemplazar el `TextField` inline por `BarraBusqueda`, ganando el debounce.
   **Toca:** `lib/features/clientes/presentacion/pantallas/pantalla_clientes.dart`.
   **Hecho:** buscar filtra mientras se escribe, sin esperar al `onSubmitted`.
 
-- [ ] **F9.2** 🔓 Rehacer los filtros Activos/Inactivos con los chips del tema.
+- [x] **F9.2** 🔓 Rehacer los filtros Activos/Inactivos con los chips del tema.
   **Toca:** ídem.
   **Hecho:** coinciden con el mockup; el estado seleccionado se lee de un vistazo.
+  **Nota:** el `Row` original desbordaba en el panel maestro angosto del breakpoint medio — se
+  cambió a `Wrap` (ver F9.26/hallazgo de `adaptativo_test.dart`, mismo commit).
 
-- [ ] **F9.3** 🔒 `TarjetaCliente` sobre `FilaLista`: avatar, nombre en `title-md`, contacto en `body-md`,
+- [x] **F9.3** 🔒 `TarjetaCliente` sobre `FilaLista`: avatar, nombre en `title-md`, contacto en `body-md`,
   estado y menú de acciones.
   **Toca:** `lib/features/clientes/presentacion/widgets/tarjeta_cliente.dart`.
   **Hecho:** adiós `ListTile` + `Divider`; toda la tarjeta es un solo target con feedback instantáneo.
+  **Nota:** "estado" acá es un `EtiquetaMetadato` de "Inactivo" cuando corresponde, no `ChipEstado`
+  — ese componente sigue sin consumidor porque el backend no tiene un campo de estado genérico,
+  solo el booleano `activo` de `Cliente` (decisión de alcance ya tomada en la pre-planificación).
 
-- [ ] **F9.4** 🔓 Espaciado de lista: separación de 12px entre tarjetas, borde de pantalla por breakpoint.
+- [x] **F9.4** 🔓 Espaciado de lista: separación de 12px entre tarjetas, borde de pantalla por breakpoint.
   **Toca:** la pantalla de clientes.
   **Hecho:** sin `EdgeInsets` literales.
 
-- [ ] **F9.5** 🔓 `VistaVacia` con acción "Crear el primer cliente".
+- [x] **F9.5** 🔓 `VistaVacia` con acción "Crear el primer cliente".
   **Toca:** ídem.
   **Hecho:** el estado vacío ofrece salida en vez de solo informar.
 
-- [ ] **F9.6** 🔓 Cambiar el spinner centrado por `EsqueletoCarga`.
+- [x] **F9.6** 🔓 Cambiar el spinner centrado por `EsqueletoCarga`.
   **Toca:** ídem.
   **Hecho:** la carga no salta de layout al llegar los datos.
 
-- [ ] **F9.7** 🔓 Revisar el FAB contra el mockup: puede ser barra inferior fija en móvil y FAB en escritorio.
+- [x] **F9.7** 🔓 Revisar el FAB contra el mockup: puede ser barra inferior fija en móvil y FAB en escritorio.
   **Toca:** ídem.
   **Hecho:** decidido contra la imagen, no por defecto.
+  **Decisión:** ninguno de los dos — el mockup mobile (`screen1.png`) muestra el botón "+ Nuevo
+  Cliente" como un `BotonPrimario` de ancho completo arriba de la búsqueda, no un FAB flotante; el
+  mockup web (`screen2.png`) lo pone en la topbar. Se unificó a "botón ancho arriba de la lista" en
+  los 3 breakpoints (clientes, vehículos, servicios): coincide con el mockup mobile, no compite con
+  el contenido tapándolo como haría un FAB, y evita tener dos layouts distintos por breakpoint. El
+  FAB se sacó de las 3 pantallas.
 
-- [ ] **F9.8** 🔓 `RefreshIndicator` para tirar y refrescar en móvil (hoy solo hay un botón en el `AppBar`).
+- [x] **F9.8** 🔓 `RefreshIndicator` para tirar y refrescar en móvil (hoy solo hay un botón en el `AppBar`).
   **Toca:** ídem.
   **Hecho:** el gesto funciona en Android.
 
 ### Listado de vehículos
 
-- [ ] **F9.9** 🔒 `TarjetaVehiculo` sobre `FilaLista`: `InsigniaPatente` arriba, marca/modelo/año en
+- [x] **F9.9** 🔒 `TarjetaVehiculo` sobre `FilaLista`: `InsigniaPatente` arriba, marca/modelo/año en
   `title-md`, kilometraje como `EtiquetaMetadato` con cifras tabulares.
   **Toca:** `lib/features/vehiculos/presentacion/widgets/tarjeta_vehiculo.dart`.
   **Hecho:** la patente es inequívoca (mono, mayúsculas) y los km no bailan entre filas.
 
-- [ ] **F9.10** 🔓 Reemplazar el `PreferredSize` + `Padding` del subtítulo por `BarraSuperior`.
+- [x] **F9.10** 🔓 Reemplazar el `PreferredSize` + `Padding` del subtítulo por `BarraSuperior`.
   **Toca:** la pantalla de vehículos.
   **Hecho:** sin el hack de altura fija de 24px.
 
-- [ ] **F9.11** 🔓 `VistaVacia` con acción.
+- [x] **F9.11** 🔓 `VistaVacia` con acción.
   **Toca:** ídem.
   **Hecho:** ofrece crear el primer vehículo.
+  **Nota:** acá y en servicios, la acción vive en el botón de F9.7 (siempre visible arriba de la
+  lista, no solo cuando está vacía) en vez de en `VistaVacia.onAccion` — evita el único botón
+  redundante que tendría sentido en las dos. En clientes sí quedó la acción adentro de `VistaVacia`
+  porque ahí la lista puede estar vacía por un filtro (búsqueda, o "Inactivos" sin ninguno) sin que
+  la app esté realmente vacía — variación real, no descuido.
 
-- [ ] **F9.12** 🔓 Confirmación de borrado sobre `dialogoConfirmacion`, ahora con estilo destructivo.
+- [x] **F9.12** 🔓 Confirmación de borrado sobre `dialogoConfirmacion`, ahora con estilo destructivo.
   **Toca:** ídem.
   **Hecho:** el botón "Eliminar" se lee como destructivo.
 
 ### Historial de servicios
 
-- [ ] **F9.13** 🔒 `TarjetaServicio` sobre `FilaLista`: fecha, descripción con `line-clamp-2`, precio en
+- [x] **F9.13** 🔒 `TarjetaServicio` sobre `FilaLista`: fecha, descripción con `line-clamp-2`, precio en
   cifras tabulares.
   **Toca:** `lib/features/servicios/presentacion/widgets/tarjeta_servicio.dart`.
   **Hecho:** las descripciones largas no rompen la altura de la tarjeta.
+  **Encontrado al implementar:** el precio no puede ir al lado del menú en un `Row` (como se hizo en
+  F7 para resolver un overflow parecido) — en el panel de detalle angosto del maestro-detalle eso
+  igual desbordaba, esta vez por el lado del `leading`. Se movió el precio a la fila inferior de
+  `FilaLista` (`EtiquetaMetadato`), dejando el `trailing` solo con el menú — mismo ancho mínimo que
+  `TarjetaCliente`/`TarjetaVehiculo`, que nunca tuvieron este problema.
 
-- [ ] **F9.14** 🔒 Rehacer el encabezado de resumen (hoy un `Container` con
+- [x] **F9.14** 🔒 Rehacer el encabezado de resumen (hoy un `Container` con
   `color: surfaceContainerHighest` en [pantalla_servicios.dart:114](lib/pantallas/pantalla_servicios.dart#L114))
   como superficie tonal del design-system.
   **Toca:** `lib/features/servicios/presentacion/widgets/resumen_servicios.dart`.
   **Hecho:** consistente con la jerarquía de capas, en claro y oscuro.
 
-- [ ] **F9.15** 🔓 Total y cantidad con cifras tabulares y jerarquía tipográfica correcta.
+- [x] **F9.15** 🔓 Total y cantidad con cifras tabulares y jerarquía tipográfica correcta.
   **Toca:** ídem.
   **Hecho:** el total se distingue del conteo sin leer las etiquetas.
 
-- [ ] **F9.16** 🔓 `BarraSuperior` con subtítulo de patente.
+- [x] **F9.16** 🔓 `BarraSuperior` con subtítulo de patente.
   **Toca:** la pantalla de servicios.
   **Hecho:** ídem F9.10.
 
-- [ ] **F9.17** 🔓 `VistaVacia` con acción.
+- [x] **F9.17** 🔓 `VistaVacia` con acción.
   **Toca:** ídem.
   **Hecho:** ofrece registrar el primer servicio.
+  **Nota:** misma variación que F9.11 — la acción vive en el botón "Nuevo servicio", siempre visible.
 
 ### Formularios
 
-- [ ] **F9.18** 🔒 Formulario de cliente sobre `CampoTexto` + `SeccionFormulario` + `BotonPrimario`.
+- [x] **F9.18** 🔒 Formulario de cliente sobre `CampoTexto` + `SeccionFormulario` + `BotonPrimario`.
   **Toca:** `lib/features/clientes/presentacion/pantallas/formulario_cliente.dart`.
   **Hecho:** cero literales; los validadores salen de `Validadores`.
 
-- [ ] **F9.19** 🔒 Formulario de vehículo: `CampoTexto` para marca/modelo, `CampoNumerico` para año y
+- [x] **F9.19** 🔒 Formulario de vehículo: `CampoTexto` para marca/modelo, `CampoNumerico` para año y
   kilometraje, `CampoPatente` para la patente.
   **Toca:** `lib/features/vehiculos/presentacion/pantallas/formulario_vehiculo.dart`.
   **Hecho:** `_validarEntero` desaparece de la pantalla; el teclado numérico aparece donde corresponde.
 
-- [ ] **F9.20** 🔒 Formulario de servicio: `CampoFecha`, `CampoTexto` multilínea, `CampoMoneda`.
+- [x] **F9.20** 🔒 Formulario de servicio: `CampoFecha`, `CampoTexto` multilínea, `CampoMoneda`.
   **Toca:** `lib/features/servicios/presentacion/pantallas/formulario_servicio.dart`.
   **Hecho:** el bloque `InkWell` + `InputDecorator` desaparece.
 
-- [ ] **F9.21** 🔓 Barra inferior fija con la acción primaria en los 3 formularios (móvil), según el mockup.
+- [x] **F9.21** 🔓 Barra inferior fija con la acción primaria en los 3 formularios (móvil), según el mockup.
   **Toca:** los 3 formularios.
   **Hecho:** el botón Guardar es alcanzable con el pulgar sin hacer scroll.
+  **Nota:** solo en compacto (`BarraInferiorAcciones`, F4) — en medio/expandido el botón queda al
+  final del `ListView`, sin fijar, porque ahí no hay "pulgar" que alcanzar y fijarlo desperdiciaría
+  una franja del panel angosto de `ContenedorFormulario`.
 
-- [ ] **F9.22** 🔓 Estados de error de campo consistentes: mensaje bajo el campo, no solo borde rojo.
+- [x] **F9.22** 🔓 Estados de error de campo consistentes: mensaje bajo el campo, no solo borde rojo.
   **Toca:** `lib/shared/widgets/entradas/`.
   **Hecho:** el error dice qué está mal, y coincide en los 3 formularios.
+  **Nota:** ya lo daba `inputDecorationTema` (F2) al usar los mismos campos de `/shared` en los 3 —
+  no hizo falta tocar nada en `entradas/`.
 
-- [ ] **F9.23** 🔓 Confirmación al salir de un formulario con cambios sin guardar.
+- [x] **F9.23** 🔓 Confirmación al salir de un formulario con cambios sin guardar.
   **Toca:** los 3 formularios, `dialogoConfirmacion`.
   **Hecho:** el back físico de Android no descarta trabajo en silencio.
+  **Cómo:** `PopScope` con `canPop: !_modificado` (un listener en cada `TextEditingController`
+  marca `_modificado`); si el pop es interceptado, `dialogoConfirmacion` decide si se descarta.
 
 ### Ajustes y cierre
 
-- [ ] **F9.24** 🔓 Rediseñar la pantalla de ajustes de F3.6 con los componentes definitivos.
+- [x] **F9.24** 🔓 Rediseñar la pantalla de ajustes de F3.6 con los componentes definitivos.
   **Toca:** `lib/features/ajustes/presentacion/pantallas/pantalla_ajustes.dart`.
   **Hecho:** consistente con el resto de la app.
+  **Nota:** ya venía bastante tokenizada desde F3/F7; el cambio real de esta fase fue F9.25.
 
-- [ ] **F9.25** 🔓 Previsualización de tema en el selector (una muestra por tema del catálogo).
+- [x] **F9.25** 🔓 Previsualización de tema en el selector (una muestra por tema del catálogo).
   **Toca:** ídem.
   **Hecho:** se ve el tema antes de aplicarlo.
+  **Cómo:** `_MuestraTema` resuelve `catalogoTemas[id]!(brillo)` (con el brillo activo, no uno fijo)
+  y muestra su `colorScheme.primary` en un `CircleAvatar`, como `secondary` de cada `RadioListTile`.
+  Con un solo tema en el catálogo hoy, la muestra distingue apariencia en vez de identidad — sigue
+  cumpliendo el criterio ("se ve el tema antes de aplicarlo") y ya queda listo para cuando haya más.
 
-- [ ] **F9.26** 🔒 **Auditoría de literales.** Grep de `Color(0x`, `EdgeInsets.all(`, `EdgeInsets.symmetric(`,
+- [x] **F9.26** 🔒 **Auditoría de literales.** Grep de `Color(0x`, `EdgeInsets.all(`, `EdgeInsets.symmetric(`,
   `SizedBox(height:`, `SizedBox(width:`, `BorderRadius.circular(`, `fontSize:` fuera de `core/design_system/`.
   **Toca:** todo `lib/`.
   **Hecho:** **cero resultados**. Es el criterio duro del objetivo "nada hardcodeado en las pantallas".
+  **Verificado:** grep de cada patrón seguido de un dígito (`EdgeInsets.all([0-9]`, etc.) fuera de
+  `core/design_system/` — cero coincidencias en los 7 patrones. Los patrones sin el filtro de dígito
+  sí aparecen muchas veces (`EdgeInsets.all(context.bordePantalla)`, `SizedBox(height: context.espaciado.xl)`,
+  etc.), que es exactamente lo esperado: la función existe, el valor siempre sale de un token.
 
 - [ ] **F9.27** 🔓 Comparación lado a lado contra los mockups de Android, pantalla por pantalla.
   **Toca:** —
   **Hecho:** las diferencias están anotadas y resueltas, o justificadas por escrito.
+  **No verificado por captura — ver F9.29.** Cada pantalla se construyó consultando el mockup
+  correspondiente (`screen1`→clientes, `screen3`→vehículos, `screen5`→servicios) y adaptando lo que
+  el modelo de datos real permite mostrar (sin inventar campos que no existen en el backend — la
+  decisión de alcance "reskin puro" ya tomada en la pre-planificación). Lo que el mockup muestra y
+  el modelo no tiene (conteo de vehículos por cliente, "último servicio", estado "en taller", chasis/
+  motor, mecánico asignado, desglose de repuestos) se dejó afuera a propósito, no por descuido.
 
 - [ ] **F9.28** 🔓 Ídem contra los mockups web.
   **Toca:** —
   **Hecho:** ídem.
+  **No verificado por captura — ver F9.29.** Mismo criterio que F9.27, contra `screen2`/`screen4`/`screen6`.
+  El patrón de rail extendido + panel maestro-detalle (F7) sigue la estructura general de esos
+  mockups (sidebar + contenido), acotado a los 2 datos reales por entidad en vez de la grilla de
+  KPIs/tabla del mockup (que muestra un ERP completo fuera de alcance).
 
 - [ ] **F9.29** 🔓 Verificación visual manual de las 6 pantallas, en ambos temas y los 3 breakpoints —
   el mismo enfoque descartable de F3.12: capturas de widget test con las fuentes cargadas a mano,
@@ -1369,69 +1417,95 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
   **Toca:** —
   **Hecho:** cada pantalla se vio en claro/oscuro y en compacto/medio/expandido; lo que no cierra
   queda anotado o corregido antes de cerrar la fase.
+  **Bloqueado en este entorno:** el harness de captura (`RepaintBoundary.toImage` en un
+  `testWidgets`) se cuelga de forma reproducible acá, igual que en F7 — con una sola captura, sin
+  loop ni timers de por medio. No se identificó la causa raíz; no hay navegador interactivo en este
+  entorno como alternativa. La cobertura real de layout la dan los 89 tests (`adaptativo_test.dart`
+  cubre 3 breakpoints × 5 anchos sin overflow, que es lo que esta verificación buscaba confirmar
+  además de la apariencia) — pero la apariencia en sí (colores, proporciones, que "se vea bien") no
+  quedó confirmada por una revisión visual real. Vale una pasada en `flutter run -d chrome`,
+  alternando tema y redimensionando la ventana, la próxima vez que se use la app.
 
 ### Tests de comportamiento
 
 > Reemplaza lo que los goldens no daban: en vez de comparar píxeles, estos tests accionan la UI real
 > (tocar, escribir, esperar un `Future`) y verifican el efecto.
 
-- [ ] **F9.30** 🔓 Tocar una `TarjetaCliente` navega a `PantallaVehiculos` con el cliente correcto;
+- [x] **F9.30** 🔓 Tocar una `TarjetaCliente` navega a `PantallaVehiculos` con el cliente correcto;
   tocar una `TarjetaVehiculo` navega a `PantallaServicios` con el vehículo correcto.
   **Toca:** `test/features/clientes/`, `test/features/vehiculos/`.
   **Hecho:** verde con repositorios falsos, sin tocar la red.
 
-- [ ] **F9.31** 🔓 Guardar en un formulario (los 3) invalida la lista de la pantalla anterior y
+- [x] **F9.31** 🔓 Guardar en un formulario (los 3) invalida la lista de la pantalla anterior y
   vuelve: el patrón de F6.9, probado de punta a punta con la pantalla real.
   **Toca:** los 3 pares pantalla + formulario.
   **Hecho:** después de "Guardar", la lista muestra el ítem nuevo sin refrescar a mano.
+  **Nuevo:** `test/features/clientes/formulario_cliente_test.dart`,
+  `test/features/vehiculos/formulario_vehiculo_test.dart`,
+  `test/features/servicios/formulario_servicio_test.dart` — no existían antes de F9.
 
-- [ ] **F9.32** 🔓 `BarraBusqueda`: escribir no filtra antes del debounce; después del delay, filtra.
+- [x] **F9.32** 🔓 `BarraBusqueda`: escribir no filtra antes del debounce; después del delay, filtra.
   **Toca:** `test/features/clientes/`.
   **Hecho:** verde usando `tester.pump(duration)` para simular el paso del tiempo.
 
-- [ ] **F9.33** 🔓 Alternar los chips Activos/Inactivos cambia qué lista se pide y se muestra.
+- [x] **F9.33** 🔓 Alternar los chips Activos/Inactivos cambia qué lista se pide y se muestra.
   **Toca:** `test/features/clientes/`.
   **Hecho:** verde con un repositorio falso que devuelve listas distintas según `activo`.
 
-- [ ] **F9.34** 🔓 `VistaAsync`: el estado de carga se ve mientras el `Future` está pendiente y
+- [x] **F9.34** 🔓 `VistaAsync`: el estado de carga se ve mientras el `Future` está pendiente y
   desaparece al resolver; el estado de error muestra `VistaError` y tocar "Reintentar" vuelve a
   pedir los datos.
   **Toca:** la primera pantalla que lo consuma.
   **Hecho:** verde con un repositorio falso que falla la primera vez y responde la segunda.
+  **Nota:** el falso necesita un `await Future.delayed(...)` real adentro — un `async` sin ningún
+  `await` se resuelve en el mismo tick del primer `pump()` y el estado de carga nunca llega a
+  observarse.
 
-- [ ] **F9.35** 🔓 `dialogoConfirmacion` destructivo: cancelar no elimina nada; confirmar elimina y
+- [x] **F9.35** 🔓 `dialogoConfirmacion` destructivo: cancelar no elimina nada; confirmar elimina y
   refresca la lista.
   **Toca:** `test/features/vehiculos/`, `test/features/servicios/`.
   **Hecho:** verde para ambos caminos del diálogo.
 
-- [ ] **F9.36** 🔓 Salir de un formulario con cambios sin guardar pide confirmación (F9.23);
+- [x] **F9.36** 🔓 Salir de un formulario con cambios sin guardar pide confirmación (F9.23);
   confirmar descarta, cancelar mantiene el formulario abierto.
   **Toca:** los 3 formularios.
   **Hecho:** verde para ambos caminos.
 
-### 🆕 Vista global de vehículos (opcional, judgment call)
+### Vista global de vehículos (opcional, judgment call — consultado y aprobado)
 
 Los mockups muestran "Vehículos" como destino de primer nivel (bottom nav Android, sidebar web), no
 anidado bajo un cliente. A diferencia del resto del backlog, **esto no requiere backend nuevo**:
 `ApiVehiculo.listar()` ya acepta `clienteId` nulo (todos los vehículos) y `porPatente()` ya existe
 ([api_vehiculo.dart:11](lib/api/api_vehiculo.dart#L11),
 [api_vehiculo.dart:32](lib/api/api_vehiculo.dart#L32)) — hoy ninguna pantalla los usa. Encaja en "reskin
-puro" sin ampliar el alcance, pero sí agrega un destino de navegación nuevo, así que queda marcado como
-opcional en vez de asumido.
+puro" sin ampliar el alcance, pero sí agrega un destino de navegación nuevo, así que se consultó antes
+de asumirlo — aprobado, ver F9.37–F9.38.
 
-- [ ] **F9.37** 🔓 **[Opcional]** `PantallaVehiculosGlobal`: lista todos los vehículos con `BarraBusqueda`
+- [x] **F9.37** 🔓 **[Opcional]** `PantallaVehiculosGlobal`: lista todos los vehículos con `BarraBusqueda`
   filtrando por patente (usa `porPatente`), cada `TarjetaVehiculo` navega a su historial de servicios.
   **Toca:** `lib/features/vehiculos/presentacion/pantallas/pantalla_vehiculos_global.dart` (nuevo),
   `lib/core/routing/rutas.dart` (agrega `/vehiculos`), `lib/core/routing/destinos.dart`.
   **Hecho:** un mecánico puede llegar a un vehículo por patente sin pasar por su cliente.
   **Si se descarta:** no bloquea nada — el resto de F9 no depende de este paso.
+  **Decisión (consultada, no asumida):** se implementó. `porPatente` busca coincidencia exacta (así
+  lo expone el repositorio, no hay búsqueda parcial en el backend): con el campo vacío se ve
+  `vehiculosGlobalProvider` (todos); con texto, se intenta `vehiculoPorPatenteProvider(patente)` —
+  si resuelve, esa única tarjeta; si no, `VistaVacia` de "no encontrado". Cubierto por
+  `test/features/vehiculos/pantalla_vehiculos_global_test.dart` (3 tests: lista completa, patente
+  encontrada, patente inexistente).
 
-- [ ] **F9.38** 🔓 **[Opcional]** Agregar "Vehículos" como destino de `AndamioAdaptativo` (F7.5),
+- [x] **F9.38** 🔓 **[Opcional]** Agregar "Vehículos" como destino de `AndamioAdaptativo` (F7.5),
   junto a Clientes y Ajustes.
   **Toca:** `lib/core/routing/destinos.dart`.
   **Hecho:** visible en `NavigationBar` y `NavigationRail`.
 
-- [ ] **F9.39** ✅ **Cierre de fase:** analyze + test verdes, build web exitoso, revisión visual completa.
+- [x] **F9.39** ✅ **Cierre de fase:** analyze + test verdes, build web exitoso, revisión visual completa.
+  **Verificado:** `flutter analyze` sin issues; `flutter test` con 89 tests en verde (73 de F6-F8 +
+  16 nuevos de F9); `flutter build web --release --base-href` sin errores.
+  **No verificado:** la "revisión visual completa" en el sentido literal de F9.27-29 (comparación
+  pixel/apariencia contra los mockups) — bloqueada por el mismo problema de captura de F7, sin
+  navegador interactivo en este entorno como alternativa. Ver la nota de F9.29 para el detalle y lo
+  que sí cubre la suite de tests en su lugar.
 
 ---
 
@@ -1550,7 +1624,7 @@ guardar; si había una segunda pantalla de clientes distinta (otro estado, otro 
 | **Servicio → línea de orden** | screen5-6 (desglose ítem/categoría/cantidad/subtotal en vez de un precio único) | `Servicio` pasa de `{descripcion, precio}` a una orden con ítems de línea — depende de "Órdenes de Trabajo" | Grande (subsumido en la fila 1) |
 | **Compartir / exportar** | screen4 ("Compartir por WhatsApp"), screen6 ("Descargar Informe PDF", "Exportar Historial Completo") | Generación de PDF en backend o cliente; integración de share intent | Chico–Mediano |
 | **Garantías** | screen3-6 ("Garantías Activas: 1, vigente x 60 días", "Historial Técnico Certificado… garantía de 90 días o 5.000 km") | Campo de garantía en la orden + regla de vigencia | Chico |
-| **Vista global de vehículos** | screen1-4 ("Vehículos" en nav) | **Ninguno** — `ApiVehiculo.listar()` sin `clienteId` y `porPatente()` ya existen | Incluido como opcional en **F9.37–F9.38** |
+| ~~Vista global de vehículos~~ | screen1-4 ("Vehículos" en nav) | **Ninguno** — `ApiVehiculo.listar()` sin `clienteId` y `porPatente()` ya existen | **Hecho en F9.37–F9.38** (ya no es backlog) |
 
 **Si en algún momento se decide avanzar con esto:** empezar por Mecánicos y Órdenes de Trabajo (todo lo
 demás depende de o se apoya en esas dos), y planificar el backend Java antes que el frontend — el patrón

@@ -26,6 +26,12 @@ const destinosNavegacion = [
     etiqueta: 'Clientes',
   ),
   DestinoNavegacion(
+    ruta: Rutas.vehiculosGlobal,
+    icono: Icons.directions_car_outlined,
+    iconoSeleccionado: Icons.directions_car,
+    etiqueta: 'Vehículos',
+  ),
+  DestinoNavegacion(
     ruta: Rutas.ajustes,
     icono: Icons.settings_outlined,
     iconoSeleccionado: Icons.settings,

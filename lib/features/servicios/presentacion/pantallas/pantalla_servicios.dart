@@ -51,40 +51,21 @@ class _ContenidoServicios extends ConsumerWidget {
   const _ContenidoServicios({required this.clienteId, required this.vehiculo});
 
   Future<void> _eliminar(BuildContext context, WidgetRef ref, Servicio servicio) async {
-    final confirmado = await showDialog<bool>(
-      context: context,
-      builder: (dialogo) => AlertDialog(
-        title: const Text('Eliminar servicio'),
-        content: const Text(
-          'Se va a eliminar este servicio del historial. '
-          'Esta accion no se puede deshacer.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogo).pop(false),
-            child: const Text('Cancelar'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(dialogo).pop(true),
-            child: const Text('Eliminar'),
-          ),
-        ],
-      ),
+    final confirmado = await dialogoConfirmacion(
+      context,
+      titulo: 'Eliminar servicio',
+      cuerpo: 'Se va a eliminar este servicio del historial. Esta accion no se puede deshacer.',
+      etiquetaConfirmar: 'Eliminar',
+      destructivo: true,
     );
-
-    if (confirmado != true) return;
+    if (!confirmado) return;
 
     try {
       await ref.read(repositorioServiciosProvider).eliminar(servicio.id!);
       ref.invalidate(serviciosPorVehiculoProvider(vehiculo.id!));
     } catch (error) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.toString()),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
+      Notificador.error(context, error.toString());
     }
   }
 
@@ -94,40 +75,66 @@ class _ContenidoServicios extends ConsumerWidget {
   }
 
   Widget _historialServicios(BuildContext context, WidgetRef ref, AsyncValue<List<Servicio>> servicios) {
-    return VistaAsync<List<Servicio>>(
-      valor: servicios,
-      alReintentar: () => ref.invalidate(serviciosPorVehiculoProvider(vehiculo.id!)),
-      enDatos: (lista) {
-        if (lista.isEmpty) {
-          return const VistaVacia(
-            icono: Icons.build_outlined,
-            titulo: 'Este vehiculo no tiene servicios registrados',
-          );
-        }
-
-        return Column(
-          children: [
-            ResumenServicios(servicios: lista),
-            Expanded(
-              child: ListView.separated(
-                itemCount: lista.length,
-                separatorBuilder: (_, _) => const Divider(height: 1),
-                itemBuilder: (_, indice) {
-                  final servicio = lista[indice];
-                  return TarjetaServicio(
-                    servicio: servicio,
-                    alEditar: () => context.push(
-                      rutaServicioEditar(clienteId, vehiculo.id!, servicio.id!),
-                      extra: servicio,
-                    ),
-                    alEliminar: () => _eliminar(context, ref, servicio),
-                  );
-                },
-              ),
+    return Column(
+      children: [
+        Padding(
+          padding: EdgeInsets.fromLTRB(
+            context.espaciado.md,
+            context.espaciado.sm,
+            context.espaciado.md,
+            context.espaciado.xs,
+          ),
+          child: BotonPrimario(
+            etiqueta: 'Nuevo servicio',
+            icono: Icons.add,
+            onPressed: () => context.push(rutaServicioNuevo(clienteId, vehiculo.id!)),
+          ),
+        ),
+        Expanded(
+          child: VistaAsync<List<Servicio>>(
+            valor: servicios,
+            alReintentar: () => ref.invalidate(serviciosPorVehiculoProvider(vehiculo.id!)),
+            cargando: ListView.builder(
+              itemCount: 4,
+              itemBuilder: (_, _) => const EsqueletoFilaLista(),
             ),
-          ],
-        );
-      },
+            enDatos: (lista) {
+              if (lista.isEmpty) {
+                return const VistaVacia(
+                  icono: Icons.build_outlined,
+                  titulo: 'Este vehículo no tiene servicios registrados',
+                  textoApoyo: 'Usá el botón de arriba para registrar el primero.',
+                );
+              }
+
+              return Column(
+                children: [
+                  ResumenServicios(servicios: lista),
+                  Expanded(
+                    child: ListView.separated(
+                      padding: EdgeInsets.symmetric(horizontal: context.espaciado.md),
+                      itemCount: lista.length,
+                      separatorBuilder: (_, _) =>
+                          SizedBox(height: context.espaciado.separacionLista),
+                      itemBuilder: (_, indice) {
+                        final servicio = lista[indice];
+                        return TarjetaServicio(
+                          servicio: servicio,
+                          alEditar: () => context.push(
+                            rutaServicioEditar(clienteId, vehiculo.id!, servicio.id!),
+                            extra: servicio,
+                          ),
+                          alEliminar: () => _eliminar(context, ref, servicio),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -136,15 +143,9 @@ class _ContenidoServicios extends ConsumerWidget {
     final servicios = ref.watch(serviciosPorVehiculoProvider(vehiculo.id!));
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(vehiculo.descripcionCorta),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(24),
-          child: Padding(
-            padding: EdgeInsets.only(bottom: context.espaciado.xs),
-            child: Text('Historial de ${vehiculo.patente}'),
-          ),
-        ),
+      appBar: BarraSuperior(
+        titulo: vehiculo.descripcionCorta,
+        subtitulo: 'Historial de ${vehiculo.patente}',
       ),
       body: context.esCompacto
           ? _historialServicios(context, ref, servicios)
@@ -158,11 +159,6 @@ class _ContenidoServicios extends ConsumerWidget {
                 detalle: _historialServicios(context, ref, servicios),
               ),
             ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.push(rutaServicioNuevo(clienteId, vehiculo.id!)),
-        icon: const Icon(Icons.add),
-        label: const Text('Nuevo servicio'),
-      ),
     );
   }
 }

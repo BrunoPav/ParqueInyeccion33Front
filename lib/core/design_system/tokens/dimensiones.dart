@@ -25,10 +25,4 @@ abstract final class Dimensiones {
 
   static const double anchoMaestro = 360;
   static const double anchoMaximoFormulario = 560;
-
-  /// Ancho fijo para un `trailing` de `ListTile` con precio + menú: sin esto,
-  /// `ListTile` mide el ancho natural (sin límite) de ese contenido antes de
-  /// achicarlo, y con poco espacio (panel maestro-detalle angosto) tira
-  /// "Trailing widget consumes the entire tile width".
-  static const double anchoTrailingConMenu = 96;
 }

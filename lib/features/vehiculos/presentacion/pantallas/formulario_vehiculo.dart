@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/layout/contexto_layout.dart';
+import '../../../../core/utilidades/validadores.dart';
 import '../../../../shared/shared.dart';
 import '../../dominio/vehiculo.dart';
 import '../proveedores/vehiculos_proveedores.dart';
@@ -30,6 +31,7 @@ class _FormularioVehiculoState extends ConsumerState<FormularioVehiculo> {
   late final TextEditingController _patente;
   late final TextEditingController _kilometraje;
   bool _guardando = false;
+  bool _modificado = false;
 
   bool get _esEdicion => widget.vehiculo != null;
 
@@ -37,11 +39,12 @@ class _FormularioVehiculoState extends ConsumerState<FormularioVehiculo> {
   void initState() {
     super.initState();
     final v = widget.vehiculo;
-    _marca = TextEditingController(text: v?.marca ?? '');
-    _modelo = TextEditingController(text: v?.modelo ?? '');
-    _anio = TextEditingController(text: v?.anio.toString() ?? '');
-    _patente = TextEditingController(text: v?.patente ?? '');
-    _kilometraje = TextEditingController(text: v?.kilometraje.toString() ?? '');
+    _marca = TextEditingController(text: v?.marca ?? '')..addListener(_marcarModificado);
+    _modelo = TextEditingController(text: v?.modelo ?? '')..addListener(_marcarModificado);
+    _anio = TextEditingController(text: v?.anio.toString() ?? '')..addListener(_marcarModificado);
+    _patente = TextEditingController(text: v?.patente ?? '')..addListener(_marcarModificado);
+    _kilometraje = TextEditingController(text: v?.kilometraje.toString() ?? '')
+      ..addListener(_marcarModificado);
   }
 
   @override
@@ -54,18 +57,19 @@ class _FormularioVehiculoState extends ConsumerState<FormularioVehiculo> {
     super.dispose();
   }
 
-  String? _validarEntero(String? valor, {required int minimo, required int maximo, required String etiqueta}) {
-    if (valor == null || valor.trim().isEmpty) {
-      return '$etiqueta es obligatorio';
-    }
-    final numero = int.tryParse(valor.trim());
-    if (numero == null) {
-      return 'Ingresa un numero valido';
-    }
-    if (numero < minimo || numero > maximo) {
-      return 'Debe estar entre $minimo y $maximo';
-    }
-    return null;
+  void _marcarModificado() {
+    if (!_modificado) setState(() => _modificado = true);
+  }
+
+  Future<void> _confirmarSalida() async {
+    final confirmado = await dialogoConfirmacion(
+      context,
+      titulo: 'Descartar cambios',
+      cuerpo: 'Hay cambios sin guardar. Si salís ahora se van a perder.',
+      etiquetaConfirmar: 'Descartar',
+      destructivo: true,
+    );
+    if (confirmado && mounted) context.pop();
   }
 
   Future<void> _guardar() async {
@@ -91,123 +95,80 @@ class _FormularioVehiculoState extends ConsumerState<FormularioVehiculo> {
       }
       ref.invalidate(vehiculosPorClienteProvider(widget.clienteId));
       if (!mounted) return;
+      _modificado = false;
       context.pop();
     } catch (error) {
       if (!mounted) return;
       setState(() => _guardando = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.toString()),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
+      Notificador.error(context, error.toString());
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_esEdicion ? 'Editar vehiculo' : 'Nuevo vehiculo'),
-      ),
-      body: ContenedorFormulario(
-        child: Form(
-          key: _claveFormulario,
-          child: ListView(
-            padding: EdgeInsets.all(context.bordePantalla),
-            children: [
-              TextFormField(
-                controller: _marca,
-                decoration: const InputDecoration(
-                  labelText: 'Marca',
-                  border: OutlineInputBorder(),
+    final boton = BotonPrimario(
+      etiqueta: 'Guardar',
+      etiquetaCargando: 'Guardando...',
+      cargando: _guardando,
+      icono: Icons.save,
+      onPressed: _guardar,
+    );
+    final esCompacto = context.esCompacto;
+
+    return PopScope<Object?>(
+      canPop: !_modificado,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        _confirmarSalida();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(_esEdicion ? 'Editar vehículo' : 'Nuevo vehículo'),
+        ),
+        body: ContenedorFormulario(
+          child: Form(
+            key: _claveFormulario,
+            child: ListView(
+              padding: EdgeInsets.all(context.bordePantalla),
+              children: [
+                SeccionFormulario(
+                  campos: [
+                    CampoTexto(
+                      controller: _marca,
+                      etiqueta: 'Marca',
+                      capitalizacion: TextCapitalization.words,
+                      validador: (valor) => Validadores.obligatorio(valor, etiqueta: 'La marca'),
+                    ),
+                    CampoTexto(
+                      controller: _modelo,
+                      etiqueta: 'Modelo',
+                      capitalizacion: TextCapitalization.words,
+                      validador: (valor) => Validadores.obligatorio(valor, etiqueta: 'El modelo'),
+                    ),
+                    CampoNumerico(
+                      controller: _anio,
+                      etiqueta: 'Año',
+                      minimo: 1900,
+                      maximo: 2100,
+                    ),
+                    CampoPatente(controller: _patente),
+                    CampoNumerico(
+                      controller: _kilometraje,
+                      etiqueta: 'Kilometraje',
+                      minimo: 0,
+                      maximo: 9999999,
+                    ),
+                  ],
                 ),
-                textCapitalization: TextCapitalization.words,
-                textInputAction: TextInputAction.next,
-                validator: (valor) => (valor == null || valor.trim().isEmpty)
-                    ? 'La marca es obligatoria'
-                    : null,
-              ),
-              SizedBox(height: context.espaciado.md),
-              TextFormField(
-                controller: _modelo,
-                decoration: const InputDecoration(
-                  labelText: 'Modelo',
-                  border: OutlineInputBorder(),
-                ),
-                textCapitalization: TextCapitalization.words,
-                textInputAction: TextInputAction.next,
-                validator: (valor) => (valor == null || valor.trim().isEmpty)
-                    ? 'El modelo es obligatorio'
-                    : null,
-              ),
-              SizedBox(height: context.espaciado.md),
-              TextFormField(
-                controller: _anio,
-                decoration: const InputDecoration(
-                  labelText: 'Anio',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.number,
-                textInputAction: TextInputAction.next,
-                validator: (valor) => _validarEntero(
-                  valor,
-                  minimo: 1900,
-                  maximo: 2100,
-                  etiqueta: 'El anio',
-                ),
-              ),
-              SizedBox(height: context.espaciado.md),
-              TextFormField(
-                controller: _patente,
-                decoration: const InputDecoration(
-                  labelText: 'Patente',
-                  border: OutlineInputBorder(),
-                ),
-                textCapitalization: TextCapitalization.characters,
-                textInputAction: TextInputAction.next,
-                validator: (valor) {
-                  if (valor == null || valor.trim().isEmpty) {
-                    return 'La patente es obligatoria';
-                  }
-                  if (valor.trim().length > 10) {
-                    return 'No puede exceder los 10 caracteres';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: context.espaciado.md),
-              TextFormField(
-                controller: _kilometraje,
-                decoration: const InputDecoration(
-                  labelText: 'Kilometraje',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.number,
-                textInputAction: TextInputAction.done,
-                onFieldSubmitted: (_) => _guardar(),
-                validator: (valor) => _validarEntero(
-                  valor,
-                  minimo: 0,
-                  maximo: 9999999,
-                  etiqueta: 'El kilometraje',
-                ),
-              ),
-              SizedBox(height: context.espaciado.xl),
-              FilledButton.icon(
-                onPressed: _guardando ? null : _guardar,
-                icon: _guardando
-                    ? const SizedBox(
-                        width: Dimensiones.spinnerBoton,
-                        height: Dimensiones.spinnerBoton,
-                        child: CircularProgressIndicator(strokeWidth: Dimensiones.anchoTrazoSpinner),
-                      )
-                    : const Icon(Icons.save),
-                label: Text(_guardando ? 'Guardando...' : 'Guardar'),
-              ),
-            ],
+                if (!esCompacto) ...[
+                  SizedBox(height: context.espaciado.xl),
+                  boton,
+                ],
+              ],
+            ),
           ),
         ),
+        bottomNavigationBar: esCompacto ? BarraInferiorAcciones(child: boton) : null,
       ),
     );
   }
