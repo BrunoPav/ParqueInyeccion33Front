@@ -69,6 +69,7 @@ class PantallaAjustes extends ConsumerWidget {
                 children: [
                   for (final id in IdTema.values)
                     RadioListTile<IdTema>(
+                      secondary: _MuestraTema(id: id, brillo: Theme.of(context).brightness),
                       title: Text(_etiquetaTema(id)),
                       value: id,
                     ),
@@ -78,6 +79,26 @@ class PantallaAjustes extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// El color primario del tema en el brillo activo, antes de aplicarlo —
+/// F9.25.
+class _MuestraTema extends StatelessWidget {
+  final IdTema id;
+  final Brightness brillo;
+
+  const _MuestraTema({required this.id, required this.brillo});
+
+  @override
+  Widget build(BuildContext context) {
+    final colores = catalogoTemas[id]!(brillo).colorScheme;
+    return CircleAvatar(
+      radius: Dimensiones.avatarChico / 2,
+      backgroundColor: colores.primary,
+      foregroundColor: colores.onPrimary,
+      child: const Icon(Icons.palette_outlined, size: Dimensiones.iconoPequeno),
     );
   }
 }

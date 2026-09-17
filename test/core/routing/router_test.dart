@@ -80,14 +80,14 @@ void main() {
 
     testWidgets('/clientes/1/vehiculos/nuevo -> FormularioVehiculo', (tester) async {
       await _navegarA(tester, '/clientes/1/vehiculos/nuevo');
-      expect(find.text('Nuevo vehiculo'), findsOneWidget);
+      expect(find.text('Nuevo vehículo'), findsOneWidget);
     });
 
     testWidgets('/clientes/1/vehiculos/1/editar -> FormularioVehiculo con el vehiculo 1', (
       tester,
     ) async {
       await _navegarA(tester, '/clientes/1/vehiculos/1/editar');
-      expect(find.text('Editar vehiculo'), findsOneWidget);
+      expect(find.text('Editar vehículo'), findsOneWidget);
     });
 
     testWidgets('/clientes/1/vehiculos/1/servicios -> PantallaServicios', (tester) async {

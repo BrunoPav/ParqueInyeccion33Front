@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/design_system/design_system.dart';
+import '../../../../core/utilidades/formatos.dart';
+import '../../../../shared/shared.dart';
 import '../../dominio/vehiculo.dart';
 
 class TarjetaVehiculo extends StatelessWidget {
@@ -20,22 +23,35 @@ class TarjetaVehiculo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      selected: seleccionado,
-      leading: const CircleAvatar(child: Icon(Icons.directions_car)),
-      title: Text(vehiculo.descripcionCorta),
-      subtitle: Text('${vehiculo.patente}  -  ${vehiculo.kilometraje} km'),
-      onTap: alTocar,
-      trailing: PopupMenuButton<String>(
-        onSelected: (opcion) {
+    final fila = FilaLista(
+      filaSuperior: InsigniaPatente(patente: vehiculo.patente),
+      titulo: vehiculo.descripcionCorta,
+      filaInferior: EtiquetaMetadato(
+        icono: Icons.speed_outlined,
+        texto: Formatos.kilometraje(vehiculo.kilometraje),
+        esNumerico: true,
+      ),
+      trailing: MenuAcciones<String>(
+        onSeleccionar: (opcion) {
           if (opcion == 'editar') alEditar();
           if (opcion == 'eliminar') alEliminar();
         },
-        itemBuilder: (_) => const [
-          PopupMenuItem(value: 'editar', child: Text('Editar')),
-          PopupMenuItem(value: 'eliminar', child: Text('Eliminar')),
+        acciones: const [
+          AccionMenu(valor: 'editar', etiqueta: 'Editar', icono: Icons.edit_outlined),
+          AccionMenu(valor: 'eliminar', etiqueta: 'Eliminar', icono: Icons.delete_outline),
         ],
       ),
+      onTap: alTocar,
+    );
+
+    if (!seleccionado) return fila;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: RadiosTaller.tarjeta,
+        border: Border.all(color: context.colores.primary, width: 2),
+      ),
+      child: fila,
     );
   }
 }

@@ -10,6 +10,7 @@ abstract final class Rutas {
   static const servicioEditar =
       '/clientes/:clienteId/vehiculos/:vehiculoId/servicios/:servicioId/editar';
   static const ajustes = '/ajustes';
+  static const vehiculosGlobal = '/vehiculos';
 }
 
 String rutaClienteEditar(int clienteId) => '/clientes/$clienteId/editar';

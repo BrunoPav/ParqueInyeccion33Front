@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/layout/contexto_layout.dart';
-import '../../../../core/utilidades/formatos.dart';
+import '../../../../core/utilidades/validadores.dart';
 import '../../../../shared/shared.dart';
 import '../../dominio/servicio.dart';
 import '../proveedores/servicios_proveedores.dart';
@@ -29,6 +29,7 @@ class _FormularioServicioState extends ConsumerState<FormularioServicio> {
   late final TextEditingController _precio;
   late DateTime _fecha;
   bool _guardando = false;
+  bool _modificado = false;
 
   bool get _esEdicion => widget.servicio != null;
 
@@ -36,8 +37,10 @@ class _FormularioServicioState extends ConsumerState<FormularioServicio> {
   void initState() {
     super.initState();
     final s = widget.servicio;
-    _descripcion = TextEditingController(text: s?.descripcion ?? '');
-    _precio = TextEditingController(text: s?.precio.toStringAsFixed(2) ?? '');
+    _descripcion = TextEditingController(text: s?.descripcion ?? '')
+      ..addListener(_marcarModificado);
+    _precio = TextEditingController(text: s?.precio.toStringAsFixed(2) ?? '')
+      ..addListener(_marcarModificado);
     _fecha = s?.fecha ?? DateTime.now();
   }
 
@@ -48,17 +51,19 @@ class _FormularioServicioState extends ConsumerState<FormularioServicio> {
     super.dispose();
   }
 
-  Future<void> _elegirFecha() async {
-    final ahora = DateTime.now();
-    final elegida = await showDatePicker(
-      context: context,
-      initialDate: _fecha,
-      firstDate: DateTime(ahora.year - 20),
-      lastDate: ahora,
+  void _marcarModificado() {
+    if (!_modificado) setState(() => _modificado = true);
+  }
+
+  Future<void> _confirmarSalida() async {
+    final confirmado = await dialogoConfirmacion(
+      context,
+      titulo: 'Descartar cambios',
+      cuerpo: 'Hay cambios sin guardar. Si salís ahora se van a perder.',
+      etiquetaConfirmar: 'Descartar',
+      destructivo: true,
     );
-    if (elegida != null) {
-      setState(() => _fecha = elegida);
-    }
+    if (confirmado && mounted) context.pop();
   }
 
   Future<void> _guardar() async {
@@ -70,7 +75,7 @@ class _FormularioServicioState extends ConsumerState<FormularioServicio> {
     final datos = Servicio(
       fecha: _fecha,
       descripcion: _descripcion.text.trim(),
-      precio: double.parse(_precio.text.trim().replaceAll(',', '.')),
+      precio: CampoMoneda.parsear(_precio.text),
       vehiculoId: widget.vehiculoId,
     );
 
@@ -82,102 +87,74 @@ class _FormularioServicioState extends ConsumerState<FormularioServicio> {
       }
       ref.invalidate(serviciosPorVehiculoProvider(widget.vehiculoId));
       if (!mounted) return;
+      _modificado = false;
       context.pop();
     } catch (error) {
       if (!mounted) return;
       setState(() => _guardando = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.toString()),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
+      Notificador.error(context, error.toString());
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_esEdicion ? 'Editar servicio' : 'Nuevo servicio'),
-      ),
-      body: ContenedorFormulario(
-        child: Form(
-          key: _claveFormulario,
-          child: ListView(
-            padding: EdgeInsets.all(context.bordePantalla),
-            children: [
-              InkWell(
-                onTap: _elegirFecha,
-                child: InputDecorator(
-                  decoration: const InputDecoration(
-                    labelText: 'Fecha',
-                    border: OutlineInputBorder(),
-                    suffixIcon: Icon(Icons.calendar_today),
-                  ),
-                  child: Text(Formatos.fecha(_fecha)),
+    final boton = BotonPrimario(
+      etiqueta: 'Guardar',
+      etiquetaCargando: 'Guardando...',
+      cargando: _guardando,
+      icono: Icons.save,
+      onPressed: _guardar,
+    );
+    final esCompacto = context.esCompacto;
+
+    return PopScope<Object?>(
+      canPop: !_modificado,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        _confirmarSalida();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(_esEdicion ? 'Editar servicio' : 'Nuevo servicio'),
+        ),
+        body: ContenedorFormulario(
+          child: Form(
+            key: _claveFormulario,
+            child: ListView(
+              padding: EdgeInsets.all(context.bordePantalla),
+              children: [
+                SeccionFormulario(
+                  campos: [
+                    CampoFecha(
+                      etiqueta: 'Fecha',
+                      valor: _fecha,
+                      onCambiar: (elegida) {
+                        _marcarModificado();
+                        setState(() => _fecha = elegida);
+                      },
+                    ),
+                    CampoTexto(
+                      controller: _descripcion,
+                      etiqueta: 'Descripción',
+                      maxLineas: 4,
+                      capitalizacion: TextCapitalization.sentences,
+                      validador: Validadores.combinar([
+                        (valor) => Validadores.obligatorio(valor, etiqueta: 'La descripción'),
+                        (valor) => Validadores.largoMaximo(valor, 2000),
+                      ]),
+                    ),
+                    CampoMoneda(controller: _precio),
+                  ],
                 ),
-              ),
-              SizedBox(height: context.espaciado.md),
-              TextFormField(
-                controller: _descripcion,
-                decoration: const InputDecoration(
-                  labelText: 'Descripcion',
-                  border: OutlineInputBorder(),
-                  alignLabelWithHint: true,
-                ),
-                maxLines: 4,
-                textCapitalization: TextCapitalization.sentences,
-                validator: (valor) {
-                  if (valor == null || valor.trim().isEmpty) {
-                    return 'La descripcion es obligatoria';
-                  }
-                  if (valor.trim().length > 2000) {
-                    return 'No puede exceder los 2000 caracteres';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: context.espaciado.md),
-              TextFormField(
-                controller: _precio,
-                decoration: const InputDecoration(
-                  labelText: 'Precio',
-                  border: OutlineInputBorder(),
-                  prefixText: '\$ ',
-                ),
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                textInputAction: TextInputAction.done,
-                onFieldSubmitted: (_) => _guardar(),
-                validator: (valor) {
-                  if (valor == null || valor.trim().isEmpty) {
-                    return 'El precio es obligatorio';
-                  }
-                  final numero = double.tryParse(valor.trim().replaceAll(',', '.'));
-                  if (numero == null) {
-                    return 'Ingresa un numero valido';
-                  }
-                  if (numero < 0) {
-                    return 'No puede ser negativo';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: context.espaciado.xl),
-              FilledButton.icon(
-                onPressed: _guardando ? null : _guardar,
-                icon: _guardando
-                    ? const SizedBox(
-                        width: Dimensiones.spinnerBoton,
-                        height: Dimensiones.spinnerBoton,
-                        child: CircularProgressIndicator(strokeWidth: Dimensiones.anchoTrazoSpinner),
-                      )
-                    : const Icon(Icons.save),
-                label: Text(_guardando ? 'Guardando...' : 'Guardar'),
-              ),
-            ],
+                if (!esCompacto) ...[
+                  SizedBox(height: context.espaciado.xl),
+                  boton,
+                ],
+              ],
+            ),
           ),
         ),
+        bottomNavigationBar: esCompacto ? BarraInferiorAcciones(child: boton) : null,
       ),
     );
   }

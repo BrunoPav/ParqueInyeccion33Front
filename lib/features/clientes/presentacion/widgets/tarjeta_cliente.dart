@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../shared/shared.dart';
 import '../../dominio/cliente.dart';
 
 class TarjetaCliente extends StatelessWidget {
@@ -18,30 +19,28 @@ class TarjetaCliente extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: CircleAvatar(
-        child: Text(
-          cliente.nombre.isEmpty ? '?' : cliente.nombre[0].toUpperCase(),
-        ),
-      ),
-      title: Text(cliente.nombre),
-      subtitle: Text(
-        cliente.contacto?.isNotEmpty == true ? cliente.contacto! : 'Sin contacto',
-      ),
-      onTap: alTocar,
-      trailing: PopupMenuButton<String>(
-        onSelected: (opcion) {
+    return FilaLista(
+      leading: Avatar(inicial: cliente.nombre.isEmpty ? null : cliente.nombre[0]),
+      titulo: cliente.nombre,
+      descripcion: cliente.contacto?.isNotEmpty == true ? cliente.contacto : 'Sin contacto',
+      filaInferior: cliente.activo
+          ? null
+          : const EtiquetaMetadato(icono: Icons.person_off_outlined, texto: 'Inactivo'),
+      trailing: MenuAcciones<String>(
+        onSeleccionar: (opcion) {
           if (opcion == 'editar') alEditar();
           if (opcion == 'estado') alCambiarEstado();
         },
-        itemBuilder: (_) => [
-          const PopupMenuItem(value: 'editar', child: Text('Editar')),
-          PopupMenuItem(
-            value: 'estado',
-            child: Text(cliente.activo ? 'Desactivar' : 'Activar'),
+        acciones: [
+          const AccionMenu(valor: 'editar', etiqueta: 'Editar', icono: Icons.edit_outlined),
+          AccionMenu(
+            valor: 'estado',
+            etiqueta: cliente.activo ? 'Desactivar' : 'Activar',
+            icono: cliente.activo ? Icons.person_off_outlined : Icons.person_outline,
           ),
         ],
       ),
+      onTap: alTocar,
     );
   }
 }

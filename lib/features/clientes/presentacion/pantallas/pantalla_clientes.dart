@@ -21,32 +21,18 @@ class PantallaClientes extends ConsumerStatefulWidget {
 }
 
 class _PantallaClientesState extends ConsumerState<PantallaClientes> {
-  final _busqueda = TextEditingController();
   String _nombreFiltro = '';
   bool _mostrarActivos = true;
-
-  @override
-  void dispose() {
-    _busqueda.dispose();
-    super.dispose();
-  }
 
   FiltroClientes get _filtro => (nombre: _nombreFiltro, activo: _mostrarActivos);
 
   Future<void> _cambiarEstado(Cliente cliente) async {
     try {
-      await ref
-          .read(repositorioClientesProvider)
-          .cambiarEstado(cliente.id!, !cliente.activo);
+      await ref.read(repositorioClientesProvider).cambiarEstado(cliente.id!, !cliente.activo);
       ref.invalidate(clientesProvider);
     } catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.toString()),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
+      Notificador.error(context, error.toString());
     }
   }
 
@@ -74,36 +60,35 @@ class _PantallaClientesState extends ConsumerState<PantallaClientes> {
             horizontal,
             context.espaciado.xs,
           ),
-          child: TextField(
-            controller: _busqueda,
-            decoration: InputDecoration(
-              hintText: 'Buscar por nombre',
-              prefixIcon: const Icon(Icons.search),
-              border: const OutlineInputBorder(),
-              isDense: true,
-              suffixIcon: _nombreFiltro.isEmpty
-                  ? null
-                  : IconButton(
-                      icon: const Icon(Icons.clear),
-                      onPressed: () {
-                        _busqueda.clear();
-                        setState(() => _nombreFiltro = '');
-                      },
-                    ),
-            ),
-            onSubmitted: (valor) => setState(() => _nombreFiltro = valor.trim()),
+          child: BotonPrimario(
+            etiqueta: 'Nuevo cliente',
+            icono: Icons.add,
+            onPressed: () => context.push(Rutas.clienteNuevo),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.fromLTRB(
+            horizontal,
+            context.espaciado.xs,
+            horizontal,
+            context.espaciado.xs,
+          ),
+          child: BarraBusqueda(
+            sugerencia: 'Buscar por nombre',
+            onBuscar: (valor) => setState(() => _nombreFiltro = valor),
           ),
         ),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: horizontal),
-          child: Row(
+          child: Wrap(
+            spacing: context.espaciado.xs,
+            runSpacing: context.espaciado.xs,
             children: [
               FilterChip(
                 label: const Text('Activos'),
                 selected: _mostrarActivos,
                 onSelected: (_) => setState(() => _mostrarActivos = true),
               ),
-              SizedBox(width: context.espaciado.xs),
               FilterChip(
                 label: const Text('Inactivos'),
                 selected: !_mostrarActivos,
@@ -117,6 +102,10 @@ class _PantallaClientesState extends ConsumerState<PantallaClientes> {
           child: VistaAsync<List<Cliente>>(
             valor: clientes,
             alReintentar: () => ref.invalidate(clientesProvider),
+            cargando: ListView.builder(
+              itemCount: 6,
+              itemBuilder: (_, _) => const EsqueletoFilaLista(),
+            ),
             enDatos: (lista) {
               if (lista.isEmpty) {
                 return VistaVacia(
@@ -124,23 +113,29 @@ class _PantallaClientesState extends ConsumerState<PantallaClientes> {
                   titulo: _mostrarActivos
                       ? 'No hay clientes activos'
                       : 'No hay clientes inactivos',
+                  etiquetaAccion: _mostrarActivos ? 'Crear el primer cliente' : null,
+                  onAccion: _mostrarActivos ? () => context.push(Rutas.clienteNuevo) : null,
                 );
               }
-              return ListView.separated(
-                itemCount: lista.length,
-                separatorBuilder: (_, _) => const Divider(height: 1),
-                itemBuilder: (_, indice) {
-                  final cliente = lista[indice];
-                  return TarjetaCliente(
-                    cliente: cliente,
-                    alTocar: () => _irAVehiculos(context, cliente),
-                    alEditar: () => context.push(
-                      rutaClienteEditar(cliente.id!),
-                      extra: cliente,
-                    ),
-                    alCambiarEstado: () => _cambiarEstado(cliente),
-                  );
-                },
+              return RefreshIndicator(
+                onRefresh: () async => ref.invalidate(clientesProvider),
+                child: ListView.separated(
+                  padding: EdgeInsets.symmetric(horizontal: horizontal),
+                  itemCount: lista.length,
+                  separatorBuilder: (_, _) => SizedBox(height: context.espaciado.separacionLista),
+                  itemBuilder: (_, indice) {
+                    final cliente = lista[indice];
+                    return TarjetaCliente(
+                      cliente: cliente,
+                      alTocar: () => _irAVehiculos(context, cliente),
+                      alEditar: () => context.push(
+                        rutaClienteEditar(cliente.id!),
+                        extra: cliente,
+                      ),
+                      alCambiarEstado: () => _cambiarEstado(cliente),
+                    );
+                  },
+                ),
               );
             },
           ),
@@ -177,11 +172,6 @@ class _PantallaClientesState extends ConsumerState<PantallaClientes> {
                 ),
               ),
             ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.push(Rutas.clienteNuevo),
-        icon: const Icon(Icons.add),
-        label: const Text('Nuevo cliente'),
-      ),
     );
   }
 }

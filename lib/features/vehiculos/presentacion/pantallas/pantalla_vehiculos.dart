@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/design_system/design_system.dart';
 import '../../../../core/layout/contenedor_contenido.dart';
 import '../../../../core/layout/contexto_layout.dart';
 import '../../../../core/layout/panel_maestro_detalle.dart';
@@ -57,16 +56,7 @@ class _ContenidoVehiculos extends StatelessWidget {
     );
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(cliente.nombre),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(24),
-          child: Padding(
-            padding: EdgeInsets.only(bottom: context.espaciado.xs),
-            child: const Text('Vehiculos'),
-          ),
-        ),
-      ),
+      appBar: BarraSuperior(titulo: cliente.nombre, subtitulo: 'Vehículos'),
       body: context.esCompacto
           ? lista
           : ContenedorContenido(
@@ -79,11 +69,6 @@ class _ContenidoVehiculos extends StatelessWidget {
                 ),
               ),
             ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.push(rutaVehiculoNuevo(cliente.id!)),
-        icon: const Icon(Icons.add),
-        label: const Text('Nuevo vehiculo'),
-      ),
     );
   }
 }

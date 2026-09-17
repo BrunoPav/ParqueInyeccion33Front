@@ -15,6 +15,7 @@ import '../../features/servicios/presentacion/proveedores/servicios_proveedores.
 import '../../features/vehiculos/dominio/vehiculo.dart';
 import '../../features/vehiculos/presentacion/pantallas/formulario_vehiculo.dart';
 import '../../features/vehiculos/presentacion/pantallas/pantalla_vehiculos.dart';
+import '../../features/vehiculos/presentacion/pantallas/pantalla_vehiculos_global.dart';
 import '../../features/vehiculos/presentacion/proveedores/vehiculos_proveedores.dart';
 import '../../shared/widgets/retroalimentacion/pantalla_no_encontrada.dart';
 import '../design_system/tokens/duraciones.dart';
@@ -82,6 +83,10 @@ final routerProvider = Provider<GoRouter>((ref) {
                 ),
               );
             },
+          ),
+          GoRoute(
+            path: Rutas.vehiculosGlobal,
+            pageBuilder: (context, state) => _pagina(const PantallaVehiculosGlobal()),
           ),
           GoRoute(
             path: Rutas.ajustes,

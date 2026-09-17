@@ -16,3 +16,12 @@ final vehiculosPorClienteProvider = FutureProvider.family<List<Vehiculo>, int>((
 final vehiculoPorIdProvider = FutureProvider.family<Vehiculo, int>((ref, id) {
   return ref.watch(repositorioVehiculosProvider).obtener(id);
 });
+
+/// Todos los vehículos, sin filtrar por cliente — F9.37.
+final vehiculosGlobalProvider = FutureProvider<List<Vehiculo>>((ref) {
+  return ref.watch(repositorioVehiculosProvider).listar();
+});
+
+final vehiculoPorPatenteProvider = FutureProvider.family<Vehiculo, String>((ref, patente) {
+  return ref.watch(repositorioVehiculosProvider).porPatente(patente);
+});
