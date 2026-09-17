@@ -1501,7 +1501,9 @@ de asumirlo — aprobado, ver F9.37–F9.38.
 
 - [x] **F9.39** ✅ **Cierre de fase:** analyze + test verdes, build web exitoso, revisión visual completa.
   **Verificado:** `flutter analyze` sin issues; `flutter test` con 89 tests en verde (73 de F6-F8 +
-  16 nuevos de F9); `flutter build web --release --base-href` sin errores.
+  16 nuevos de F9); `flutter build web --release --base-href` sin errores; deploy real confirmado en
+  `https://brunopav.github.io/ParqueInyeccion33Front/` (200, `base href` correcto,
+  `main.dart.js`/`flutter_bootstrap.js` sirviendo bien).
   **No verificado:** la "revisión visual completa" en el sentido literal de F9.27-29 (comparación
   pixel/apariencia contra los mockups) — bloqueada por el mismo problema de captura de F7, sin
   navegador interactivo en este entorno como alternativa. Ver la nota de F9.29 para el detalle y lo
