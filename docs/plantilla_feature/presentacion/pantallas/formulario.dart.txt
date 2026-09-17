@@ -1,0 +1,122 @@
+// Copiar a: lib/features/<feature>/presentacion/pantallas/formulario_<entidad>.dart
+//
+// `<entidad>` nulo en el constructor = alta; no nulo = edicion (mismo
+// patron que FormularioCliente). El estado de guardado (`_guardando`)
+// deshabilita el boton y le cambia la etiqueta via BotonPrimario, sin que
+// haya que escribirlo a mano en cada formulario. Los errores van a
+// Notificador.error en vez de un SnackBar armado a mano.
+//
+// Guardar invalida <feature>Provider (la lista) y hace context.pop() — no
+// Navigator.pop(true): el que abrio el formulario no espera un resultado,
+// reacciona a la invalidacion (patron de F6.9).
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../core/design_system/design_system.dart';
+import '../../../../core/layout/contexto_layout.dart';
+import '../../../../shared/shared.dart';
+import '../../dominio/<entidad>.dart';
+import '../proveedores/<feature>_proveedores.dart';
+
+class Formulario<Entidad> extends ConsumerStatefulWidget {
+  final <Entidad>? <entidad>;
+
+  const Formulario<Entidad>({super.key, this.<entidad>});
+
+  @override
+  ConsumerState<Formulario<Entidad>> createState() => _Formulario<Entidad>State();
+}
+
+class _Formulario<Entidad>State extends ConsumerState<Formulario<Entidad>> {
+  final _claveFormulario = GlobalKey<FormState>();
+  late final TextEditingController _nombre;
+  late final TextEditingController _descripcion;
+  bool _guardando = false;
+
+  bool get _esEdicion => widget.<entidad> != null;
+
+  @override
+  void initState() {
+    super.initState();
+    _nombre = TextEditingController(text: widget.<entidad>?.nombre ?? '');
+    _descripcion = TextEditingController(text: widget.<entidad>?.descripcion ?? '');
+  }
+
+  @override
+  void dispose() {
+    _nombre.dispose();
+    _descripcion.dispose();
+    super.dispose();
+  }
+
+  Future<void> _guardar() async {
+    if (!_claveFormulario.currentState!.validate()) return;
+
+    setState(() => _guardando = true);
+
+    final repositorio = ref.read(repositorio<Feature>Provider);
+    final datos = <Entidad>(
+      nombre: _nombre.text.trim(),
+      descripcion: _descripcion.text.trim().isEmpty ? null : _descripcion.text.trim(),
+    );
+
+    try {
+      if (_esEdicion) {
+        await repositorio.reemplazar(widget.<entidad>!.id!, datos);
+      } else {
+        await repositorio.crear(datos);
+      }
+      ref.invalidate(<feature>Provider);
+      if (!mounted) return;
+      context.pop();
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _guardando = false);
+      Notificador.error(context, error.toString());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(_esEdicion ? 'Editar <entidad>' : 'Nuevo <entidad>'),
+      ),
+      body: ContenedorFormulario(
+        child: Form(
+          key: _claveFormulario,
+          child: ListView(
+            padding: EdgeInsets.all(context.bordePantalla),
+            children: [
+              SeccionFormulario(
+                campos: [
+                  CampoTexto(
+                    controller: _nombre,
+                    etiqueta: 'Nombre',
+                    validador: (valor) => (valor == null || valor.trim().isEmpty)
+                        ? 'El nombre es obligatorio'
+                        : null,
+                  ),
+                  CampoTexto(
+                    controller: _descripcion,
+                    etiqueta: 'Descripcion',
+                  ),
+                ],
+              ),
+              SizedBox(height: context.espaciado.xl),
+              BotonPrimario(
+                etiqueta: 'Guardar',
+                etiquetaCargando: 'Guardando...',
+                cargando: _guardando,
+                icono: Icons.save,
+                onPressed: _guardar,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

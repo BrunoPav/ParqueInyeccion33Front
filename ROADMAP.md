@@ -1152,55 +1152,79 @@ F5 Reestructura a features ──🔒──► F6 go_router ──🔒──► 
 > Que sumar una feature sea copiar, renombrar y llenar. **Depende de F5** (el patrón tiene que existir
 > antes de documentarse). No depende de F6 ni F7.
 
-- [ ] **F8.1** 🔓 Crear `docs/plantilla_feature/` con el árbol completo de las 3 capas y archivos de ejemplo.
+- [x] **F8.1** 🔓 Crear `docs/plantilla_feature/` con el árbol completo de las 3 capas y archivos de ejemplo.
   **Toca:** `docs/plantilla_feature/` (nuevo).
   **Hecho:** el árbol espeja exactamente el de `features/clientes/`.
+  **Nota:** sin `presentacion/widgets/` — ningún paso de F8 pide un widget propio (F8.6 arma el
+  listado directo sobre `FilaLista`); si una entidad real necesita uno, `COMO_AGREGAR_FEATURE.md`
+  señala a `tarjeta_cliente.dart` como referencia.
 
-- [ ] **F8.2** 🔓 Plantilla de entidad de dominio.
+- [x] **F8.2** 🔓 Plantilla de entidad de dominio.
   **Toca:** `docs/plantilla_feature/dominio/entidad.dart.txt`.
   **Hecho:** con marcadores `<Entidad>` claros.
 
-- [ ] **F8.3** 🔓 Plantilla de interfaz de repositorio.
+- [x] **F8.3** 🔓 Plantilla de interfaz de repositorio.
   **Toca:** `docs/plantilla_feature/dominio/repositorio.dart.txt`.
   **Hecho:** ídem.
 
-- [ ] **F8.4** 🔓 Plantillas de DTO, fuente remota e implementación de repositorio.
+- [x] **F8.4** 🔓 Plantillas de DTO, fuente remota e implementación de repositorio.
   **Toca:** `docs/plantilla_feature/datos/`.
   **Hecho:** las 3 con la conversión DTO ↔ dominio ya esbozada.
 
-- [ ] **F8.5** 🔓 Plantilla de providers de feature.
+- [x] **F8.5** 🔓 Plantilla de providers de feature.
   **Toca:** `docs/plantilla_feature/presentacion/proveedores/`.
   **Hecho:** con `ref.watch`, no `ref.read` (el error que se corrigió en F5.10).
 
-- [ ] **F8.6** 🔓 Plantilla de pantalla de listado, ya armada sobre `VistaAsync` + `FilaLista`.
+- [x] **F8.6** 🔓 Plantilla de pantalla de listado, ya armada sobre `VistaAsync` + `FilaLista`.
   **Toca:** `docs/plantilla_feature/presentacion/pantallas/`.
   **Hecho:** cubre carga, error y vacío desde el arranque.
 
-- [ ] **F8.7** 🔓 Plantilla de pantalla de formulario, sobre `SeccionFormulario` + `BotonPrimario`.
+- [x] **F8.7** 🔓 Plantilla de pantalla de formulario, sobre `SeccionFormulario` + `BotonPrimario`.
   **Toca:** `docs/plantilla_feature/presentacion/pantallas/`.
   **Hecho:** incluye el estado de guardado y el manejo de error vía `Notificador`.
 
-- [ ] **F8.8** 🔓 Plantillas de test: repositorio, providers y pantalla.
+- [x] **F8.8** 🔓 Plantillas de test: repositorio, providers y pantalla.
   **Toca:** `docs/plantilla_feature/test/`.
   **Hecho:** una feature nueva nace con tests de comportamiento: que crear/editar/eliminar disparan
   la acción correcta y refrescan la lista — no golden tests.
+  **Nota:** el de "repositorio" prueba el doble de test (`RepositorioXFalso`), no
+  `RepositorioXHttp` contra una red real — este proyecto no mockea `package:http`. La plantilla de
+  "crear/editar/eliminar dispara la acción y refresca la lista" de punta a punta no tiene .txt propio
+  porque varía demasiado entre formularios; `COMO_AGREGAR_FEATURE.md` señala el patrón de F9.31 como
+  referencia para escribirlo a mano.
 
-- [ ] **F8.9** 🔒 Escribir `docs/COMO_AGREGAR_FEATURE.md`: los pasos en orden, qué registrar en el router,
+- [x] **F8.9** 🔒 Escribir `docs/COMO_AGREGAR_FEATURE.md`: los pasos en orden, qué registrar en el router,
   en los destinos de navegación y en los barrels.
   **Toca:** `docs/COMO_AGREGAR_FEATURE.md` (nuevo).
   **Hecho:** alguien que no escribió este código puede seguirlo sin preguntar.
+  **Nota:** este proyecto no tiene un barrel por feature (cada archivo se importa directo) — el
+  documento lo aclara en vez de inventar uno; el único barrel real es `lib/shared/shared.dart`.
 
-- [ ] **F8.10** 🔓 Checklist de "feature terminada" al final de ese documento.
+- [x] **F8.10** 🔓 Checklist de "feature terminada" al final de ese documento.
   **Toca:** `docs/COMO_AGREGAR_FEATURE.md`.
   **Hecho:** cubre dominio, datos, presentación, ruta, destino y tests de comportamiento.
 
-- [ ] **F8.11** 🔓 **Validar la plantilla usándola**: generar una feature descartable siguiendo solo
+- [x] **F8.11** 🔓 **Validar la plantilla usándola**: generar una feature descartable siguiendo solo
   el documento, sin mirar el código existente.
   **Toca:** rama temporal.
   **Hecho:** compila y corre. Todo lo que haya que improvisar se corrige en el documento antes de cerrar la fase.
   *Es el único paso que prueba de verdad que la plantilla sirve.*
+  **Encontrado por esta validación:** las plantillas nombraban la interfaz/implementación/provider
+  del repositorio con `Repositorio<Entidad>` en vez de `Repositorio<Feature>` (debía ser plural —
+  `RepositorioClientes`, no `RepositorioCliente`, siguiendo el patrón real de las 3 features
+  existentes). Corregido en `dominio/repositorio.dart.txt`, `datos/repositorio_http.dart.txt`,
+  `presentacion/proveedores/proveedores.dart.txt` y las 3 plantillas de test. Se armó una feature
+  descartable completa ("Turnos", sección de nivel superior) copiando solo los templates +
+  `COMO_AGREGAR_FEATURE.md`, registrada en `rutas.dart`/`router.dart`/`destinos.dart`/`dobles.dart`:
+  `flutter analyze` limpio, 7 tests nuevos en verde, y `flutter build web --release` sin errores.
+  También quedó documentado (no "corregido", porque no tiene arreglo posible) que
+  `flutter analyze` puede pedir reordenar imports (`directives_ordering`) según en qué letra caiga
+  el nombre real de la entidad — el orden fijo de la plantilla no puede acertar para cualquier nombre.
 
-- [ ] **F8.12** ✅ **Cierre de fase:** documento validado, rama de prueba descartada.
+- [x] **F8.12** ✅ **Cierre de fase:** documento validado, rama de prueba descartada.
+  **Verificado:** rama `f8-validacion-temporal` (la "Turnos" de F8.11) borrada sin mergear;
+  `flutter analyze` y `flutter test` en la rama real de la fase vuelven a la línea de base de F7
+  (73 tests, cero issues) — nada de la feature descartable quedó pegado.
 
 ---
 

@@ -1,0 +1,69 @@
+// Copiar a: lib/features/<feature>/presentacion/pantallas/pantalla_<feature>.dart
+//
+// Cubre carga (VistaAsync -> loading), error (VistaAsync -> VistaError con
+// reintentar) y vacio (VistaVacia) desde el arranque: no hay que acordarse de
+// ninguno de los tres a mano.
+//
+// Las rutas literales ('/<feature>/nuevo', etc.) son ilustrativas — las
+// reales viven como constantes en core/routing/rutas.dart (ver paso 5 de
+// COMO_AGREGAR_FEATURE.md).
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../shared/shared.dart';
+import '../../dominio/<entidad>.dart';
+import '../proveedores/<feature>_proveedores.dart';
+
+class Pantalla<Feature> extends ConsumerWidget {
+  const Pantalla<Feature>({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final <feature> = ref.watch(<feature>Provider);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('<Feature>'),
+        actions: [
+          IconButton(
+            tooltip: 'Actualizar',
+            icon: const Icon(Icons.refresh),
+            onPressed: () => ref.invalidate(<feature>Provider),
+          ),
+        ],
+      ),
+      body: VistaAsync<List<<Entidad>>>(
+        valor: <feature>,
+        alReintentar: () => ref.invalidate(<feature>Provider),
+        enDatos: (lista) {
+          if (lista.isEmpty) {
+            return const VistaVacia(
+              icono: Icons.inbox_outlined,
+              titulo: 'Todavia no hay <feature>',
+            );
+          }
+          return ListView.separated(
+            itemCount: lista.length,
+            separatorBuilder: (_, _) => const Divider(height: 1),
+            itemBuilder: (_, indice) {
+              final <entidad> = lista[indice];
+              return FilaLista(
+                titulo: <entidad>.nombre,
+                descripcion: <entidad>.descripcion,
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/<feature>/${<entidad>.id}/editar', extra: <entidad>),
+              );
+            },
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.push('/<feature>/nuevo'),
+        icon: const Icon(Icons.add),
+        label: const Text('Nuevo <entidad>'),
+      ),
+    );
+  }
+}

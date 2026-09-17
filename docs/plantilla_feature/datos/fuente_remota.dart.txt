@@ -1,0 +1,68 @@
+// Copiar a: lib/features/<feature>/datos/fuente_remota_<feature>.dart
+//
+// Unico lugar que arma URLs y llama a `package:http` directo. `ejecutar`,
+// `construirUri`, `decodificar` y `cabecerasJson` vienen de
+// core/red/cliente_http.dart: `ejecutar` convierte errores de red/socket en
+// ExcepcionConexion, `decodificar` convierte respuestas 4xx/5xx en
+// ExcepcionApi. Ninguna de las dos hay que relanzarla a mano.
+//
+// Si la lista necesita filtros (como clienteId en vehiculos, o nombre/activo
+// en clientes), van como parametros nombrados opcionales de `listar` y se
+// agregan al mapa de `parametros` solo si no son null.
+
+import 'dart:convert';
+
+import 'package:http/http.dart' as http;
+
+import '../../../core/red/cliente_http.dart';
+import '<entidad>_dto.dart';
+
+class FuenteRemota<Feature> {
+  static const String _ruta = '/api/<feature>';
+
+  Future<List<<Entidad>Dto>> listar() {
+    return ejecutar(() async {
+      final respuesta = await http.get(construirUri(_ruta));
+      final lista = decodificar(respuesta) as List<dynamic>;
+      return lista
+          .map((json) => <Entidad>Dto.desdeJson(json as Map<String, dynamic>))
+          .toList();
+    });
+  }
+
+  Future<<Entidad>Dto> obtener(int id) {
+    return ejecutar(() async {
+      final respuesta = await http.get(construirUri('$_ruta/$id'));
+      return <Entidad>Dto.desdeJson(decodificar(respuesta) as Map<String, dynamic>);
+    });
+  }
+
+  Future<<Entidad>Dto> crear(<Entidad>Dto <entidad>) {
+    return ejecutar(() async {
+      final respuesta = await http.post(
+        construirUri(_ruta),
+        headers: cabecerasJson,
+        body: jsonEncode(<entidad>.aJson()),
+      );
+      return <Entidad>Dto.desdeJson(decodificar(respuesta) as Map<String, dynamic>);
+    });
+  }
+
+  Future<<Entidad>Dto> reemplazar(int id, <Entidad>Dto <entidad>) {
+    return ejecutar(() async {
+      final respuesta = await http.put(
+        construirUri('$_ruta/$id'),
+        headers: cabecerasJson,
+        body: jsonEncode(<entidad>.aJson()),
+      );
+      return <Entidad>Dto.desdeJson(decodificar(respuesta) as Map<String, dynamic>);
+    });
+  }
+
+  Future<void> eliminar(int id) {
+    return ejecutar(() async {
+      final respuesta = await http.delete(construirUri('$_ruta/$id'));
+      decodificar(respuesta);
+    });
+  }
+}

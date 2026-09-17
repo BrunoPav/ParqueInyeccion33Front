@@ -1,0 +1,43 @@
+// Copiar a: test/features/<feature>/repositorio_<feature>_test.dart
+//
+// Este proyecto no mockea `package:http`: lo que se prueba acá es el doble de
+// prueba (Repositorio<Feature>Falso en test/ayudas/dobles.dart), no
+// Repositorio<Feature>Http contra una red real. Antes de copiar esto hay que
+// haber agregado esa clase a dobles.dart (paso 6 de COMO_AGREGAR_FEATURE.md).
+//
+// Por qué importa probar el doble y no solo confiar en que "es obvio": en
+// F6 quedó un `obtener()` que tiraba UnimplementedError sin condición en
+// todos los dobles, y no se notó hasta que un test de router necesitó
+// resolver un id que no existía. Sin este test, un doble roto se nota recién
+// cuando falla un test de otra cosa.
+
+import 'package:flutter_test/flutter_test.dart';
+
+import '../../ayudas/dobles.dart';
+
+void main() {
+  group('Repositorio<Feature>Falso', () {
+    test('listar devuelve la lista fija', () async {
+      final repositorio = Repositorio<Feature>Falso();
+
+      final lista = await repositorio.listar();
+
+      expect(lista, isNotEmpty);
+    });
+
+    test('obtener con un id existente devuelve esa entidad', () async {
+      final repositorio = Repositorio<Feature>Falso();
+      final primera = (await repositorio.listar()).first;
+
+      final resultado = await repositorio.obtener(primera.id!);
+
+      expect(resultado.id, primera.id);
+    });
+
+    test('obtener con un id inexistente rechaza en vez de devolver cualquier cosa', () async {
+      final repositorio = Repositorio<Feature>Falso();
+
+      expect(() => repositorio.obtener(999999), throwsA(anything));
+    });
+  });
+}

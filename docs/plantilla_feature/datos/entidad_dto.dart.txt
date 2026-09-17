@@ -1,0 +1,48 @@
+// Copiar a: lib/features/<feature>/datos/<entidad>_dto.dart
+//
+// El DTO es el unico lugar que sabe convertir hacia y desde JSON. La entidad
+// de dominio (dominio/<entidad>.dart) no tiene idea de que esto existe.
+
+import '../dominio/<entidad>.dart';
+
+class <Entidad>Dto {
+  final int? id;
+  final String nombre;
+  final String? descripcion;
+  final bool activo;
+
+  const <Entidad>Dto({
+    this.id,
+    required this.nombre,
+    this.descripcion,
+    this.activo = true,
+  });
+
+  factory <Entidad>Dto.desdeJson(Map<String, dynamic> json) => <Entidad>Dto(
+        id: json['id'] as int?,
+        nombre: json['nombre'] as String,
+        descripcion: json['descripcion'] as String?,
+        activo: json['activo'] as bool? ?? true,
+      );
+
+  factory <Entidad>Dto.desdeDominio(<Entidad> <entidad>) => <Entidad>Dto(
+        id: <entidad>.id,
+        nombre: <entidad>.nombre,
+        descripcion: <entidad>.descripcion,
+        activo: <entidad>.activo,
+      );
+
+  // Solo los campos que la API espera al crear/actualizar — el id va en la
+  // URL, no en el cuerpo.
+  Map<String, dynamic> aJson() => {
+        'nombre': nombre,
+        'descripcion': descripcion,
+      };
+
+  <Entidad> aDominio() => <Entidad>(
+        id: id,
+        nombre: nombre,
+        descripcion: descripcion,
+        activo: activo,
+      );
+}
