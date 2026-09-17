@@ -1,0 +1,30 @@
+// Copiar a: lib/features/<feature>/dominio/<entidad>.dart
+//
+// Reemplazar <Entidad> por el nombre de la entidad en PascalCase (ej: Turno)
+// y <entidad> por su nombre en camelCase (ej: turno). Los campos de ejemplo
+// (nombre, descripcion, activo) son ilustrativos: la entidad real tiene los
+// campos que corresponda.
+//
+// Sin imports de `dart:convert` ni de paquetes de red acá: la entidad de
+// dominio no sabe serializarse a si misma, eso es trabajo del DTO en datos/.
+
+class <Entidad> {
+  final int? id;
+  final String nombre;
+  final String? descripcion;
+  final bool activo;
+
+  const <Entidad>({
+    this.id,
+    required this.nombre,
+    this.descripcion,
+    this.activo = true,
+  });
+
+  <Entidad> copiarCon({String? nombre, String? descripcion, bool? activo}) => <Entidad>(
+        id: id,
+        nombre: nombre ?? this.nombre,
+        descripcion: descripcion ?? this.descripcion,
+        activo: activo ?? this.activo,
+      );
+}

@@ -1,0 +1,47 @@
+// Copiar a: test/features/<feature>/<feature>_proveedores_test.dart
+//
+// `retry: (_, _) => null` en el ProviderContainer: sin esto, un
+// FutureProvider que rechaza reintenta solo hasta 10 veces con backoff
+// exponencial antes de asentarse en AsyncError (Riverpod 3), y un test que
+// espera el error se cuelga en vez de fallar rápido. main.dart y
+// bombear_pantalla.dart ya lo desactivan para la app real; en un test con
+// ProviderContainer crudo como este hay que repetirlo.
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:taller_mecanico_frontend/features/<feature>/presentacion/proveedores/<feature>_proveedores.dart';
+
+import '../../ayudas/dobles.dart';
+
+void main() {
+  test('<feature>Provider expone lo que devuelve el repositorio', () async {
+    final contenedor = ProviderContainer(
+      retry: (_, _) => null,
+      overrides: [
+        repositorio<Feature>Provider.overrideWithValue(Repositorio<Feature>Falso()),
+      ],
+    );
+    addTearDown(contenedor.dispose);
+
+    final lista = await contenedor.read(<feature>Provider.future);
+
+    expect(lista, isNotEmpty);
+  });
+
+  test('<entidad>PorIdProvider resuelve la entidad pedida, no la primera de la lista', () async {
+    final contenedor = ProviderContainer(
+      retry: (_, _) => null,
+      overrides: [
+        repositorio<Feature>Provider.overrideWithValue(Repositorio<Feature>Falso()),
+      ],
+    );
+    addTearDown(contenedor.dispose);
+
+    final lista = await contenedor.read(<feature>Provider.future);
+    final segunda = lista[1];
+
+    final resultado = await contenedor.read(<entidad>PorIdProvider(segunda.id!).future);
+
+    expect(resultado.id, segunda.id);
+  });
+}

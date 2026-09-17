@@ -1,0 +1,42 @@
+// Copiar a: lib/features/<feature>/datos/repositorio_<feature>_http.dart
+//
+// Implementa Repositorio<Feature> (dominio/repositorio_<feature>.dart)
+// convirtiendo DTO <-> dominio alrededor de cada llamada a la fuente remota.
+// Es la unica pieza que conoce las dos capas a la vez.
+
+import '../dominio/<entidad>.dart';
+import '../dominio/repositorio_<feature>.dart';
+import '<entidad>_dto.dart';
+import 'fuente_remota_<feature>.dart';
+
+class Repositorio<Feature>Http implements Repositorio<Feature> {
+  final FuenteRemota<Feature> _fuente;
+
+  const Repositorio<Feature>Http(this._fuente);
+
+  @override
+  Future<List<<Entidad>>> listar() async {
+    final dtos = await _fuente.listar();
+    return dtos.map((dto) => dto.aDominio()).toList();
+  }
+
+  @override
+  Future<<Entidad>> obtener(int id) async {
+    return (await _fuente.obtener(id)).aDominio();
+  }
+
+  @override
+  Future<<Entidad>> crear(<Entidad> <entidad>) async {
+    final creado = await _fuente.crear(<Entidad>Dto.desdeDominio(<entidad>));
+    return creado.aDominio();
+  }
+
+  @override
+  Future<<Entidad>> reemplazar(int id, <Entidad> <entidad>) async {
+    final actualizado = await _fuente.reemplazar(id, <Entidad>Dto.desdeDominio(<entidad>));
+    return actualizado.aDominio();
+  }
+
+  @override
+  Future<void> eliminar(int id) => _fuente.eliminar(id);
+}

@@ -1,0 +1,28 @@
+// Copiar a: lib/features/<feature>/presentacion/proveedores/<feature>_proveedores.dart
+//
+// `ref.watch(repositorio<Feature>Provider)`, no `ref.read` — con `ref.read`
+// el provider no se reconstruye si el repositorio cambia (por ejemplo, un
+// override en un test), que fue exactamente el bug corregido en F5.10.
+//
+// Si la pantalla de listado necesita filtro (busqueda, activos/inactivos),
+// agregar un FiltroX = (campo1: tipo, campo2: tipo) como en clientes y volver
+// a <feature>Provider un FutureProvider.family<List<<Entidad>>, FiltroX>.
+
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../datos/fuente_remota_<feature>.dart';
+import '../../datos/repositorio_<feature>_http.dart';
+import '../../dominio/<entidad>.dart';
+import '../../dominio/repositorio_<feature>.dart';
+
+final repositorio<Feature>Provider = Provider<Repositorio<Feature>>((ref) {
+  return Repositorio<Feature>Http(FuenteRemota<Feature>());
+});
+
+final <feature>Provider = FutureProvider<List<<Entidad>>>((ref) {
+  return ref.watch(repositorio<Feature>Provider).listar();
+});
+
+final <entidad>PorIdProvider = FutureProvider.family<<Entidad>, int>((ref, id) {
+  return ref.watch(repositorio<Feature>Provider).obtener(id);
+});

@@ -1,0 +1,18 @@
+// Copiar a: lib/features/<feature>/dominio/repositorio_<feature>.dart
+//
+// La interfaz que implementa datos/repositorio_<feature>_http.dart y que
+// mockean los dobles de test (RepositorioXFalso/RepositorioXVacio en
+// test/ayudas/dobles.dart). Nada de esto sabe que existe HTTP.
+//
+// Si la entidad necesita baja logica en vez de borrado (como Cliente, con
+// cambiarEstado en vez de eliminar), reemplazar el ultimo metodo por ese.
+
+import '<entidad>.dart';
+
+abstract class Repositorio<Feature> {
+  Future<List<<Entidad>>> listar();
+  Future<<Entidad>> obtener(int id);
+  Future<<Entidad>> crear(<Entidad> <entidad>);
+  Future<<Entidad>> reemplazar(int id, <Entidad> <entidad>);
+  Future<void> eliminar(int id);
+}

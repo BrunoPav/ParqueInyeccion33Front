@@ -1,0 +1,43 @@
+// Copiar a: test/features/<feature>/pantalla_<feature>_test.dart
+//
+// Tests de comportamiento, no golden tests (ver la convención del roadmap:
+// F4/F8/F9/F10 sacaron los golden tests del proyecto por incompatibilidad de
+// renderizado entre Windows y Linux en CI). Lo que se prueba es que la
+// pantalla reacciona bien a los datos y a las acciones, no su apariencia
+// pixel a pixel.
+
+import 'package:flutter_test/flutter_test.dart';
+import 'package:taller_mecanico_frontend/features/<feature>/presentacion/pantallas/pantalla_<feature>.dart';
+import 'package:taller_mecanico_frontend/features/<feature>/presentacion/proveedores/<feature>_proveedores.dart';
+
+import '../../ayudas/bombear_pantalla.dart';
+import '../../ayudas/dobles.dart';
+
+void main() {
+  testWidgets('la pantalla de <feature> muestra lo que devuelve el repositorio', (tester) async {
+    await bombearPantalla(
+      tester,
+      const Pantalla<Feature>(),
+      overrides: [repositorio<Feature>Provider.overrideWithValue(Repositorio<Feature>Falso())],
+    );
+
+    await tester.pump();
+    await tester.pump();
+
+    final primera = (await Repositorio<Feature>Falso().listar()).first;
+    expect(find.text(primera.nombre), findsOneWidget);
+  });
+
+  testWidgets('muestra un mensaje cuando no hay <feature>', (tester) async {
+    await bombearPantalla(
+      tester,
+      const Pantalla<Feature>(),
+      overrides: [repositorio<Feature>Provider.overrideWithValue(Repositorio<Feature>Vacio())],
+    );
+
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.text('Todavia no hay <feature>'), findsOneWidget);
+  });
+}
