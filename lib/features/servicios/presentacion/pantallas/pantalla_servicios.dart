@@ -145,7 +145,17 @@ class _ContenidoServicios extends ConsumerWidget {
     return Scaffold(
       appBar: BarraSuperior(
         titulo: vehiculo.descripcionCorta,
-        subtitulo: 'Historial de ${vehiculo.patente}',
+        subtituloWidget: Text.rich(
+          TextSpan(
+            children: [
+              const TextSpan(text: 'Historial de '),
+              TextSpan(
+                text: vehiculo.patente.toUpperCase(),
+                style: Tipografia.labelMono,
+              ),
+            ],
+          ),
+        ),
       ),
       body: context.esCompacto
           ? _historialServicios(context, ref, servicios)

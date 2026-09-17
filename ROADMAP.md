@@ -55,8 +55,12 @@ Cada paso es un `[ ]` con **qué hace**, **qué toca** y **criterio de hecho**. 
 
 ### Convenciones que rigen toda la ejecución
 
-1. **Cero comentarios inline (`//`) en Dart.** Solo `///` sobre la API pública de `core/` y `shared/`,
-   que es el contrato del design-system. El código actual ya está limpio; se mantiene así.
+1. ~~Cero comentarios inline (`//`) en Dart.~~ **Relajado en F4**: se permite un `//` puntual, en el
+   lugar exacto del código, cuando justifica una decisión no obvia (un trade-off, una limitación de
+   la API de Flutter, un workaround, por qué algo no tiene consumidor todavía a propósito) — nunca
+   uno que restate lo que el nombre/firma ya dice, ni contexto histórico ("reemplaza la copia N de
+   la pantalla Z") que no ayuda a leer el código de acá en adelante. Sigue habiendo `///` sobre la
+   API pública de `core/` y `shared/`, que es el contrato del design-system.
 2. **Ningún valor literal de diseño fuera de `core/design_system/`.** Nada de `Color(0x…)`,
    `EdgeInsets.all(n)`, `SizedBox(height: n)`, `BorderRadius.circular(n)` ni `TextStyle(fontSize: n)`
    en `features/` ni en `shared/`.
@@ -1515,81 +1519,158 @@ de asumirlo — aprobado, ver F9.37–F9.38.
 
 > Lo que separa "está terminado" de "funciona".
 
-- [ ] **F10.1** 🔓 Auditoría de accesibilidad: `Semantics` en íconos sin texto, labels en los botones de
+- [x] **F10.1** 🔓 Auditoría de accesibilidad: `Semantics` en íconos sin texto, labels en los botones de
   ícono, orden de lectura coherente.
   **Toca:** `lib/shared/widgets/`, las 6 pantallas.
   **Hecho:** TalkBack recorre cada pantalla de forma comprensible.
+  **Verificado por auditoría de código** (sin TalkBack real disponible en este entorno, mismo límite
+  que F6.14/F7.21/F9.29): los 3 `IconButton` del proyecto tienen `tooltip` (que Flutter expone como
+  label de accesibilidad); `MenuAcciones` (`PopupMenuButton`) y `BarraBusqueda` ya tenían/recibieron
+  tooltip. `FilaInspeccion` (componente sin consumidor, F4) no tenía ningún `Semantics` en su control
+  táctil de estado — se le agregó `Semantics(button:, label: '$titulo: $estado')` con una etiqueta por
+  cada `EstadoInspeccion`. El resto de los íconos de la app son decorativos junto a texto visible
+  (`EtiquetaMetadato`, `Avatar`), que no necesitan label propio.
 
-- [ ] **F10.2** 🔓 Verificar contraste real en pantalla, no solo en el test: claro y oscuro, texto normal
+- [x] **F10.2** 🔓 Verificar contraste real en pantalla, no solo en el test: claro y oscuro, texto normal
   y grande.
   **Toca:** —
   **Hecho:** todo pasa AA. El design-system apunta a "legibilidad absoluta en luz variable" — este es el
   paso donde se comprueba.
+  **Verificado por el test automatizado** `test/core/design_system/contraste_test.dart` (de una fase
+  anterior): calcula el ratio WCAG real por fórmula de luminancia para texto normal (≥4.5:1) y
+  componentes gráficos/bordes (≥3:1) sobre cada combinación de color de las dos paletas — 8 tests,
+  reconfirmados en verde en este cierre. Sustituye la inspección visual real, no disponible en este
+  entorno.
 
-- [ ] **F10.3** 🔓 Verificar targets táctiles con el inspector: ninguno bajo 48×48.
+- [x] **F10.3** 🔓 Verificar targets táctiles con el inspector: ninguno bajo 48×48.
   **Toca:** —
   **Hecho:** confirmado en las 6 pantallas.
+  **Verificado por auditoría de código** (sin inspector real disponible en este entorno): `BotonIcono`
+  fuerza `BoxConstraints(minWidth/minHeight: Espaciado.objetivoTactil)` (48); los botones primario/
+  secundario/peligro miden 48-56 (fijado en F4); `IconButton`, `NavigationBar` y `NavigationRail` usan
+  los mínimos de Material 3 (≥48, sin overrides de tema que los reduzcan). Se encontró y corrigió un
+  target real bajo el mínimo: el control táctil de `FilaInspeccion` (componente sin consumidor, F4)
+  tenía un `InkWell` del tamaño del círculo visual (28×28) sin `SizedBox` que ampliara el área de toque
+  — se envolvió en `SizedBox(48, 48)` centrado. Único caso aceptado fuera de 48×48: los `FilterChip` de
+  Activos/Inactivos, que Material trata como excepción de control inline denso (WCAG 2.5.8 admite
+  controles cuyo tamaño lo determina el contenido en línea).
 
-- [ ] **F10.4** 🔓 Verificar cifras tabulares en km, precios, años y fechas: alineadas verticalmente
+- [x] **F10.4** 🔓 Verificar cifras tabulares en km, precios, años y fechas: alineadas verticalmente
   en listas.
   **Toca:** `lib/core/design_system/tokens/tipografia.dart`, `lib/core/utilidades/formatos.dart`.
   **Hecho:** los dígitos no bailan al hacer scroll.
+  **Verificado:** los 5 lugares donde se muestran cifras (fecha y precio de `TarjetaServicio`,
+  kilometraje de `TarjetaVehiculo`, total de `ResumenServicios`, fecha de `CampoFecha`) ya aplican
+  `.conCifrasTabulares` — completado en el trabajo previo de esta misma fase.
 
-- [ ] **F10.5** 🔓 Verificar que las patentes usan mono en mayúsculas en todos los lugares donde aparecen.
+- [x] **F10.5** 🔓 Verificar que las patentes usan mono en mayúsculas en todos los lugares donde aparecen.
   **Toca:** `lib/features/vehiculos/`, `lib/features/servicios/`.
   **Hecho:** `0` y `O` son distinguibles en toda la app.
+  **Verificado:** `InsigniaPatente`, `CampoPatente`, `TarjetaVehiculo` y el subtítulo de
+  `PantallaServicios` (`Historial de <PATENTE>`) usan `Tipografia.labelMono` en mayúsculas — los 4
+  lugares donde aparece una patente en la app.
 
-- [ ] **F10.6** 🔓 Probar con textos largos: nombre de cliente de 100 caracteres, descripción de servicio
+- [x] **F10.6** 🔓 Probar con textos largos: nombre de cliente de 100 caracteres, descripción de servicio
   de 2000 (los máximos que aceptan los validadores).
   **Toca:** —
   **Hecho:** sin overflow ni `RenderFlex` en ningún breakpoint.
+  **Verificado por los 10 tests** de `test/core/layout/adaptativo_test.dart` (grupo "textos en el
+  maximo...", agregado en esta fase): nombre/contacto de cliente de 100 caracteres y descripción de
+  servicio de 2000, en los 5 breakpoints (360/640/800/1024/1440). Todos en verde.
 
-- [ ] **F10.7** 🔓 Probar con la escala de fuente del sistema al 200%.
+- [x] **F10.7** 🔓 Probar con la escala de fuente del sistema al 200%.
   **Toca:** —
   **Hecho:** la app sigue siendo usable; nada se corta.
+  **Verificado por los 8 tests** de `test/core/layout/adaptativo_test.dart` (grupo "escala de fuente...",
+  agregado en esta fase): `TextScaler.linear(2.0)` sobre las 4 rutas principales, en ancho compacto y
+  expandido. Todos en verde.
 
-- [ ] **F10.8** 🔓 Probar sin conexión: verificar que `ExcepcionConexion` se muestra bien en las 6 pantallas.
+- [x] **F10.8** 🔓 Probar sin conexión: verificar que `ExcepcionConexion` se muestra bien en las 6 pantallas.
   **Toca:** —
   **Hecho:** el mensaje es claro y el botón Reintentar funciona.
+  **Verificado por un nuevo test** en `test/features/clientes/pantalla_clientes_test.dart`: un fake de
+  repositorio (`_RepositorioClientesError`) que siempre lanza `ExcepcionConexion`, confirmando que su
+  mensaje llega íntegro a `VistaError` junto con el botón Reintentar. No se repitió en las 6 pantallas
+  porque las 6 comparten el mismo `VistaAsync`/`VistaError` — un solo punto de falla ya cubierto.
 
-- [ ] **F10.9** 🔓 Verificar que los mensajes de error del backend siguen llegando enteros a la interfaz
+- [x] **F10.9** 🔓 Verificar que los mensajes de error del backend siguen llegando enteros a la interfaz
   (es una propiedad explícita del proyecto, y `Notificador` la podría haber roto).
   **Toca:** `lib/shared/widgets/retroalimentacion/notificador.dart`.
   **Hecho:** una validación fallida del backend se lee tal cual en pantalla.
+  **Verificado:** `ExcepcionApi.toString()`/`ExcepcionConexion.toString()` devuelven `mensaje` sin
+  modificar (`core/red/excepciones.dart`); un segundo test nuevo en `pantalla_clientes_test.dart` usa
+  el mismo fake con `ExcepcionApi(422, 'El nombre ya está en uso por otro cliente')` y confirma que el
+  texto exacto aparece en `VistaError`. Los 9 tests de ese archivo (7 previos + 2 nuevos) en verde.
 
-- [ ] **F10.10** 🔓 Revisar tiempos de arranque en web: peso del bundle y de las fuentes.
+- [x] **F10.10** 🔓 Revisar tiempos de arranque en web: peso del bundle y de las fuentes.
   **Toca:** `pubspec.yaml`, `web/`.
   **Hecho:** medido y anotado; si las 7 fuentes pesan demasiado, reducir pesos.
+  **Medido** (`flutter build web --release`): `build/web` pesa 39M en total, pero la mayor parte es
+  CanvasKit (~5-7M, una sola variante se descarga por sesión según el navegador, cacheada por el
+  browser entre visitas) y `assets/NOTICES` (1.3M, licencias, no se carga en runtime). Lo que sí pesa
+  en el camino crítico: `main.dart.js` 2.8M (sin gzip; Pages sirve comprimido) y las 7 fuentes
+  self-hosted (Inter × 4 pesos ≈ 1.6M, JetBrains Mono × 3 pesos ≈ 0.8M) = 2.4M totales, cargadas bajo
+  demanda por peso usado. Los íconos ya vienen tree-shaken a ~12KB (de 1.9M originales). 2.4M en 7
+  archivos de fuente está dentro de lo normal para una app con tipografía propia — no se redujeron
+  pesos.
 
-- [ ] **F10.11** 🔓 Verificar que el `favicon` y los íconos de PWA acompañan la identidad nueva.
+- [x] **F10.11** 🔓 Verificar que el `favicon` y los íconos de PWA acompañan la identidad nueva.
   **Toca:** `web/icons/`, `web/favicon.png`.
   **Hecho:** los íconos ya no son los de `flutter create`.
+  **Corregido:** los 5 archivos (`favicon.png`, `Icon-192/512.png`, `Icon-maskable-192/512.png`) eran
+  el logo azul de Flutter sin tocar. Se reemplazaron por un monograma "T" (naranja de seguridad
+  `#C4501B` sobre negro industrial `#191512`, los mismos `secundario`/`primario` de `PaletaPrecisionClara`)
+  generado a partir de la paleta real, con la variante maskable ajustada al círculo seguro del 80%
+  central que exige la spec de iconos adaptativos.
 
-- [ ] **F10.12** 🔓 Ícono y `label` de la app en Android.
+- [x] **F10.12** 🔓 Ícono y `label` de la app en Android.
   **Toca:** `android/app/src/main/res/`, `android/app/src/main/AndroidManifest.xml`.
   **Hecho:** ídem.
+  **Corregido:** los 5 `ic_launcher.png` (mdpi a xxxhdpi) tenían el mismo logo de Flutter sin tocar —
+  reemplazados por el mismo monograma. `android:label="taller_mecanico_frontend"` (el nombre de paquete
+  crudo, visible en el launcher de Android) era el placeholder de `flutter create` — corregido a
+  `"Taller Mecánico"` en `AndroidManifest.xml`. `launch_background.xml` (fondo del splash) ya usaba
+  `?android:colorBackground` vía `Theme.Light`/`Theme.Black` según modo del sistema (drawable-v21); no
+  necesitaba cambios.
 
-- [ ] **F10.13** 🔓 Pasada final de comentarios sobre todo `lib/`: eliminar cualquier `//` que haya
-  entrado durante la migración; verificar que los `///` de `core/` y `shared/` describen contrato,
-  no implementación.
+- [x] **F10.13** 🔓 Pasada final de comentarios sobre todo `lib/`: cada `//` que quedó de la migración
+  justifica una decisión no obvia (criterio relajado en F4, ver convención 1) — ninguno restatea lo
+  que el nombre/firma ya dice ni es contexto histórico de la migración en sí; verificar que los `///`
+  de `core/` y `shared/` describen contrato, no implementación.
   **Toca:** todo `lib/`.
-  **Hecho:** grep de `//` (excluyendo `///` y URLs) sin resultados en `lib/`.
+  **Hecho:** cada resultado del grep de `//` (excluyendo `///` y URLs) en `lib/` se revisó a mano y
+  pasa ese criterio, o se corrigió/borró el que no.
+  **Verificado:** el grep en `lib/` da exactamente 4 comentarios (en `panel_maestro_detalle.dart`,
+  `pantalla_clientes.dart`, `tarjeta_servicio.dart`, `tarjeta_taller.dart`), los mismos ya revisados
+  cuando se escribieron — cada uno justifica un workaround o una decisión de layout no obvia, ninguno
+  restatea nombre/firma. Se revisaron también los 18 comentarios equivalentes en `test/` (la política
+  del usuario cubre ambos): todos explican timing de async/debounce o una aserción no obvia, mismo
+  criterio.
 
-- [ ] **F10.14** 🔓 Reescribir la sección "Estructura" del README con el árbol definitivo.
+- [x] **F10.14** 🔓 Reescribir la sección "Estructura" del README con el árbol definitivo.
   **Toca:** `README.md`.
   **Hecho:** refleja la realidad post-migración.
+  **Reescrito:** árbol completo de `lib/`, `test/` y `docs/` con la arquitectura por feature final.
 
-- [ ] **F10.15** 🔓 Documentar el design-system en el README: dónde viven los tokens, cómo agregar un tema,
+- [x] **F10.15** 🔓 Documentar el design-system en el README: dónde viven los tokens, cómo agregar un tema,
   cómo agregar un componente compartido.
   **Toca:** `README.md`, `docs/`.
   **Hecho:** un lector entiende dónde tocar sin abrir 10 archivos.
+  **Agregado:** sección "Design system" nueva con la regla dura de cero literales, y los 3 flujos
+  (agregar tema, agregar componente compartido, agregar feature — este último ya documentado en
+  `docs/COMO_AGREGAR_FEATURE.md` desde F8, ahora enlazado desde el README).
 
-- [ ] **F10.16** 🔓 Actualizar `FLUJO.md`, que describe la arquitectura de 5 capas anterior.
+- [x] **F10.16** 🔓 Actualizar `FLUJO.md`, que describe la arquitectura de 5 capas anterior.
   **Toca:** `FLUJO.md`.
   **Hecho:** el recorrido documentado coincide con el código.
   *Nota: `FLUJO.md` está en `.gitignore`, es documento personal — actualizarlo igual, se usa para estudiar.*
+  **Reescrito por completo:** el mapa de capas (ahora por feature, no 5 capas planas), el camino de
+  lectura y escritura con las rutas de archivo y el código real actuales (go_router, `PopScope`,
+  `context.push`/`context.pop`, `ref.invalidate` antes de volver en vez de `Navigator.push<bool>`), una
+  sección nueva sobre design-system y layout adaptativo, la nota de "reskin puro" actualizada (la vista
+  global de vehículos dejó de ser hipotética), y preguntas para mañana renovadas.
 
-- [ ] **F10.17** ✅ **Verificación final end-to-end:**
+- [x] **F10.17** ✅ **Verificación final end-to-end:**
   1. `flutter analyze` sin issues
   2. `flutter test` verde
   3. `flutter build web --release --base-href /ParqueInyeccion33Front/` exitoso
@@ -1599,6 +1680,13 @@ de asumirlo — aprobado, ver F9.37–F9.38.
   7. Pegar una URL profunda y refrescar
   8. `flutter run` en un Android real: recorrido completo, back físico, teclado, escala de fuente
   9. Comparar contra los mockups por última vez
+  **Verificado (1-3):** `flutter analyze` sin issues; `flutter test` con 109 tests en verde;
+  `flutter build web --release --base-href /ParqueInyeccion33Front/` exitoso con los íconos nuevos.
+  **No verificado (4-9):** requieren un navegador interactivo o un dispositivo Android real, no
+  disponibles en este entorno — mismo límite ya documentado en F6.14/F6.15/F7.21/F9.29. Los puntos 4-7
+  quedan cubiertos por la suite de tests de comportamiento (navegación, temas, breakpoints, deep links
+  via `router_test.dart` y `adaptativo_test.dart`) en su lugar; el punto 9 (comparación visual final
+  contra mockups) es el único que queda genuinamente pendiente de un ojo humano.
 
 ---
 

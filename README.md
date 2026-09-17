@@ -25,10 +25,66 @@ física en vehículos y servicios, igual que la API).
 
 ## Estructura
 
-El proyecto está en medio de una migración a design-system + arquitectura por feature
-(`dominio/datos/presentacion`), documentada paso a paso en [ROADMAP.md](ROADMAP.md). La estructura
-detallada de este README se actualiza en la fase de pulido (F10) del roadmap, cuando la migración
-termina; hasta entonces, ROADMAP.md es la referencia viva de qué existe y qué está en camino.
+```
+lib/
+├── main.dart
+├── app/                        MaterialApp.router + tema + ThemeMode
+├── core/
+│   ├── config/                 entorno (URL de la API, etc.)
+│   ├── design_system/
+│   │   ├── tokens/              paleta · tipografia · espaciado · radios · elevacion · duraciones · dimensiones
+│   │   ├── extensiones/         ThemeExtension (ColoresEstado, EspaciadoTema, ElevacionTema) + ContextoTema
+│   │   ├── temas/                tema_precision (claro/oscuro) · catalogo_temas · esquemas_color · temas/componentes/
+│   │   └── design_system.dart    barrel — todo lo de arriba se importa desde acá
+│   ├── layout/                  puntos_corte · ContextoLayout · AndamioAdaptativo · PanelMaestroDetalle · GrillaAdaptativa
+│   ├── routing/                 rutas · destinos · router (GoRouter) · resolver_por_id
+│   ├── red/                     cliente_http · excepciones (ExcepcionApi, ExcepcionConexion)
+│   └── utilidades/               formatos · validadores
+├── shared/
+│   ├── widgets/                  botones/ · entradas/ · superficies/ · retroalimentacion/ · indicadores/ · navegacion/
+│   ├── dialogos/                 dialogoConfirmacion()
+│   └── shared.dart               barrel
+└── features/{clientes,vehiculos,servicios,ajustes}/
+    ├── dominio/                  entidad + interfaz RepositorioX
+    ├── datos/                    DTO · fuente remota · implementación HTTP del repositorio
+    └── presentacion/
+        ├── proveedores/          providers de Riverpod de la feature
+        ├── pantallas/
+        └── widgets/
+
+test/
+├── ayudas/                      bombear_pantalla · dobles (fakes compartidos de repositorio)
+├── core/                        design_system, layout, routing
+└── features/                    un archivo de test por pantalla/formulario, con fakes propios cuando
+                                  el comportamiento a probar lo requiere (ver dobles en cada archivo)
+
+docs/
+├── plantilla_feature/            esqueleto copiable de una feature nueva (dominio/datos/presentacion)
+└── COMO_AGREGAR_FEATURE.md       guía paso a paso para usar la plantilla
+```
+
+La reestructura a features y el design-system tokenizado están completos — el detalle de cómo se llegó
+hasta acá, fase por fase, queda documentado en [ROADMAP.md](ROADMAP.md).
+
+## Design system
+
+Regla dura, verificada a mano en cada fase: ninguna pantalla ni widget de `features/` instancia un
+`Color`, un tamaño ni un radio directo. Todo sale de un token en `core/design_system/tokens/` o de una
+`ThemeExtension` expuesta vía `context.colores` / `context.espaciado` / `context.estados` /
+`context.elevacion` / `context.textos` (`ContextoTema`, en
+[contexto_tema.dart](lib/core/design_system/extensiones/contexto_tema.dart)).
+
+- **Agregar/tocar un tema:** los colores de marca viven en `core/design_system/tokens/paleta.dart`
+  (clases `Paleta` → `PaletaPrecisionClara` / `PaletaPrecisionOscura`). `temas/tema_precision.dart`
+  arma el `ThemeData` (claro y oscuro) a partir de una `Paleta`; `temas/catalogo_temas.dart` es el
+  `Map<IdTema, ThemeData Function(Brightness)>` que alimenta el selector de tema de Ajustes. Un tema
+  nuevo es: una clase `Paleta` nueva + una entrada en el catálogo.
+- **Agregar un componente compartido:** vive en `shared/widgets/<categoría>/`, se construye solo con
+  tokens (nunca con literales), y se exporta desde `shared/shared.dart`. `core/design_system/galeria_tokens.dart`
+  es una pantalla de referencia visual de los tokens y componentes base — útil para ver el catálogo
+  completo sin recorrer las 6 pantallas reales.
+- **Agregar una feature nueva:** seguir `docs/COMO_AGREGAR_FEATURE.md`, que usa el esqueleto de
+  `docs/plantilla_feature/` como punto de partida para las 3 capas (`dominio/datos/presentacion`).
 
 ## Correr el proyecto
 

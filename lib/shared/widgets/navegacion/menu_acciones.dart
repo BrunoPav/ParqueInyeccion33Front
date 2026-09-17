@@ -19,6 +19,7 @@ class MenuAcciones<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<T>(
+      tooltip: 'Más acciones',
       onSelected: onSeleccionar,
       itemBuilder: (contextoMenu) => [
         for (final accion in acciones)

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:taller_mecanico_frontend/core/red/excepciones.dart';
 import 'package:taller_mecanico_frontend/core/routing/router.dart';
 import 'package:taller_mecanico_frontend/features/clientes/dominio/cliente.dart';
 import 'package:taller_mecanico_frontend/features/clientes/dominio/repositorio_clientes.dart';
@@ -74,6 +75,32 @@ class _RepositorioClientesFallaUnaVez implements RepositorioClientes {
     await Future<void>.delayed(const Duration(milliseconds: 10));
     if (_intentos == 1) throw Exception('sin conexion');
     return const [Cliente(id: 1, nombre: 'Ana Gomez')];
+  }
+
+  @override
+  Future<Cliente> obtener(int id) async => throw UnimplementedError();
+
+  @override
+  Future<Cliente> crear(Cliente cliente) async => throw UnimplementedError();
+
+  @override
+  Future<Cliente> reemplazar(int id, Cliente cliente) async => throw UnimplementedError();
+
+  @override
+  Future<Cliente> cambiarEstado(int id, bool activo) async => throw UnimplementedError();
+}
+
+/// Siempre falla, con la excepción real de red/API del proyecto — para
+/// confirmar que su mensaje llega entero a `VistaError` (F10.8, F10.9).
+class _RepositorioClientesError implements RepositorioClientes {
+  final Object error;
+
+  _RepositorioClientesError(this.error);
+
+  @override
+  Future<List<Cliente>> listar({String? nombre, bool activo = true}) async {
+    await Future<void>.delayed(const Duration(milliseconds: 10));
+    throw error;
   }
 
   @override
@@ -208,5 +235,42 @@ void main() {
 
     expect(find.text('Reintentar'), findsNothing);
     expect(find.text('Ana Gomez'), findsOneWidget);
+  });
+
+  testWidgets('sin conexion: el mensaje de ExcepcionConexion llega entero a VistaError', (
+    tester,
+  ) async {
+    await bombearPantalla(
+      tester,
+      const PantallaClientes(),
+      overrides: [
+        repositorioClientesProvider.overrideWithValue(
+          _RepositorioClientesError(const ExcepcionConexion('No se pudo conectar con el servidor')),
+        ),
+      ],
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 20));
+
+    expect(find.text('No se pudo conectar con el servidor'), findsOneWidget);
+    expect(find.text('Reintentar'), findsOneWidget);
+  });
+
+  testWidgets('el mensaje de un error de API del backend llega entero a VistaError (F10.9)', (
+    tester,
+  ) async {
+    await bombearPantalla(
+      tester,
+      const PantallaClientes(),
+      overrides: [
+        repositorioClientesProvider.overrideWithValue(
+          _RepositorioClientesError(const ExcepcionApi(422, 'El nombre ya está en uso por otro cliente')),
+        ),
+      ],
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 20));
+
+    expect(find.text('El nombre ya está en uso por otro cliente'), findsOneWidget);
   });
 }

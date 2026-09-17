@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/design_system/tokens/tipografia.dart';
 import '../../../core/utilidades/formatos.dart';
 
 class CampoFecha extends StatelessWidget {
@@ -38,7 +39,7 @@ class CampoFecha extends StatelessWidget {
           labelText: etiqueta,
           suffixIcon: const Icon(Icons.calendar_today),
         ),
-        child: Text(Formatos.fecha(valor)),
+        child: Text(Formatos.fecha(valor), style: const TextStyle().conCifrasTabulares),
       ),
     );
   }

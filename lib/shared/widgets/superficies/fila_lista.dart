@@ -10,6 +10,7 @@ class FilaLista extends StatelessWidget {
   final Widget? leading;
   final Widget? filaSuperior;
   final String titulo;
+  final bool tituloNumerico;
   final String? descripcion;
   final Widget? filaInferior;
   final Widget? trailing;
@@ -20,6 +21,7 @@ class FilaLista extends StatelessWidget {
     this.leading,
     this.filaSuperior,
     required this.titulo,
+    this.tituloNumerico = false,
     this.descripcion,
     this.filaInferior,
     this.trailing,
@@ -42,7 +44,12 @@ class FilaLista extends StatelessWidget {
                   filaSuperior!,
                   SizedBox(height: context.espaciado.xxs),
                 ],
-                Text(titulo, style: context.textos.titleMedium),
+                Text(
+                  titulo,
+                  style: tituloNumerico
+                      ? context.textos.titleMedium?.conCifrasTabulares
+                      : context.textos.titleMedium,
+                ),
                 if (descripcion != null) ...[
                   SizedBox(height: context.espaciado.xxs),
                   Text(
