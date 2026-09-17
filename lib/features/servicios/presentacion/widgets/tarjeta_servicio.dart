@@ -21,6 +21,7 @@ class TarjetaServicio extends StatelessWidget {
     return FilaLista(
       leading: const Avatar(icono: Icons.build_outlined),
       titulo: Formatos.fecha(servicio.fecha),
+      tituloNumerico: true,
       descripcion: servicio.descripcion,
       // El precio va en la fila inferior, no al lado del menú: un `Row` con
       // ambos ahí se queda sin ancho en el panel de detalle angosto del

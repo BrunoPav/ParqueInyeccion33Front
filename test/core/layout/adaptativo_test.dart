@@ -1,23 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:riverpod/misc.dart' show Override;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taller_mecanico_frontend/core/design_system/design_system.dart';
 import 'package:taller_mecanico_frontend/core/layout/puntos_corte.dart';
 import 'package:taller_mecanico_frontend/core/routing/router.dart';
 import 'package:taller_mecanico_frontend/features/ajustes/datos/preferencias.dart';
+import 'package:taller_mecanico_frontend/features/clientes/dominio/cliente.dart';
+import 'package:taller_mecanico_frontend/features/clientes/dominio/repositorio_clientes.dart';
 import 'package:taller_mecanico_frontend/features/clientes/presentacion/proveedores/clientes_proveedores.dart';
+import 'package:taller_mecanico_frontend/features/servicios/dominio/repositorio_servicios.dart';
+import 'package:taller_mecanico_frontend/features/servicios/dominio/servicio.dart';
 import 'package:taller_mecanico_frontend/features/servicios/presentacion/proveedores/servicios_proveedores.dart';
 import 'package:taller_mecanico_frontend/features/vehiculos/presentacion/proveedores/vehiculos_proveedores.dart';
 
 import '../../ayudas/dobles.dart';
 
+/// Nombre en el máximo que acepta `Validadores.largoMaximo` (F10.6).
+class _RepositorioClientesNombreLargo implements RepositorioClientes {
+  @override
+  Future<List<Cliente>> listar({String? nombre, bool activo = true}) async {
+    return [Cliente(id: 1, nombre: 'N' * 100, contacto: 'C' * 100)];
+  }
+
+  @override
+  Future<Cliente> obtener(int id) async => (await listar()).first;
+
+  @override
+  Future<Cliente> crear(Cliente cliente) async => throw UnimplementedError();
+
+  @override
+  Future<Cliente> reemplazar(int id, Cliente cliente) async => throw UnimplementedError();
+
+  @override
+  Future<Cliente> cambiarEstado(int id, bool activo) async => throw UnimplementedError();
+}
+
+/// Descripción en el máximo que acepta `Validadores.largoMaximo` (F10.6).
+class _RepositorioServiciosDescripcionLarga implements RepositorioServicios {
+  @override
+  Future<List<Servicio>> listar({int? vehiculoId}) async {
+    return [
+      Servicio(
+        id: 1,
+        fecha: DateTime(2025),
+        descripcion: 'D' * 2000,
+        precio: 9999999.99,
+        vehiculoId: 1,
+      ),
+    ];
+  }
+
+  @override
+  Future<Servicio> obtener(int id) async => (await listar()).first;
+
+  @override
+  Future<Servicio> crear(Servicio servicio) async => throw UnimplementedError();
+
+  @override
+  Future<Servicio> reemplazar(int id, Servicio servicio) async => throw UnimplementedError();
+
+  @override
+  Future<void> eliminar(int id) async => throw UnimplementedError();
+}
+
 Future<void> _navegarA(
   WidgetTester tester,
   String ruta, {
   required double ancho,
-  List<Override> overrides = const [],
+  RepositorioClientes? repositorioClientes,
+  RepositorioServicios? repositorioServicios,
+  double? escalaFuente,
 }) async {
   tester.view.physicalSize = Size(ancho, 900);
   tester.view.devicePixelRatio = 1.0;
@@ -30,11 +83,14 @@ Future<void> _navegarA(
   final container = ProviderContainer(
     retry: (_, _) => null,
     overrides: [
-      repositorioClientesProvider.overrideWithValue(RepositorioClientesFalso()),
+      repositorioClientesProvider.overrideWithValue(
+        repositorioClientes ?? RepositorioClientesFalso(),
+      ),
       repositorioVehiculosProvider.overrideWithValue(RepositorioVehiculosFalso()),
-      repositorioServiciosProvider.overrideWithValue(RepositorioServiciosFalso()),
+      repositorioServiciosProvider.overrideWithValue(
+        repositorioServicios ?? RepositorioServiciosFalso(),
+      ),
       preferenciasProvider.overrideWithValue(preferencias),
-      ...overrides,
     ],
   );
   addTearDown(container.dispose);
@@ -48,6 +104,14 @@ Future<void> _navegarA(
       child: MaterialApp.router(
         theme: temaPrecision(const PaletaPrecisionClara(), Brightness.light),
         routerConfig: router,
+        builder: escalaFuente == null
+            ? null
+            : (context, child) => MediaQuery(
+                  data: MediaQuery.of(context).copyWith(
+                    textScaler: TextScaler.linear(escalaFuente),
+                  ),
+                  child: child!,
+                ),
       ),
     ),
   );
@@ -155,5 +219,45 @@ void main() {
       expect(find.text('Toyota Hilux (2020)'), findsNWidgets(2));
       expect(find.text('2 servicios'), findsOneWidget);
     });
+  });
+
+  group('textos en el maximo que aceptan los validadores, sin overflow (F10.6)', () {
+    for (final ancho in [360.0, 640.0, 800.0, 1024.0, 1440.0]) {
+      testWidgets('nombre de cliente de 100 caracteres a $ancho de ancho', (tester) async {
+        await _navegarA(
+          tester,
+          '/clientes',
+          ancho: ancho,
+          repositorioClientes: _RepositorioClientesNombreLargo(),
+        );
+        expect(tester.takeException(), isNull);
+      });
+
+      testWidgets('descripcion de servicio de 2000 caracteres a $ancho de ancho', (tester) async {
+        await _navegarA(
+          tester,
+          '/clientes/1/vehiculos/1/servicios',
+          ancho: ancho,
+          repositorioServicios: _RepositorioServiciosDescripcionLarga(),
+        );
+        expect(tester.takeException(), isNull);
+      });
+    }
+  });
+
+  group('escala de fuente del sistema al 200% (F10.7)', () {
+    for (final ancho in [360.0, 1280.0]) {
+      for (final ruta in [
+        '/clientes',
+        '/clientes/1/vehiculos',
+        '/clientes/1/vehiculos/1/servicios',
+        '/clientes/nuevo',
+      ]) {
+        testWidgets('$ruta a $ancho de ancho no tira overflow', (tester) async {
+          await _navegarA(tester, ruta, ancho: ancho, escalaFuente: 2.0);
+          expect(tester.takeException(), isNull);
+        });
+      }
+    }
   });
 }

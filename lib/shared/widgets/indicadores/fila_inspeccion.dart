@@ -41,6 +41,15 @@ class FilaInspeccion extends StatelessWidget {
     return valores[(estado.index + 1) % valores.length];
   }
 
+  String get _etiquetaEstado {
+    return switch (estado) {
+      EstadoInspeccion.sinMarcar => 'sin marcar',
+      EstadoInspeccion.aprobado => 'aprobado',
+      EstadoInspeccion.atencion => 'requiere atención',
+      EstadoInspeccion.falla => 'falla',
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final color = _color(context);
@@ -58,24 +67,34 @@ class FilaInspeccion extends StatelessWidget {
           ),
           Padding(
             padding: EdgeInsets.only(right: context.espaciado.md),
-            child: InkWell(
-              onTap: onCambiar == null ? null : () => onCambiar!(_siguiente),
-              customBorder: const CircleBorder(),
-              child: Container(
-                width: Dimensiones.controlInspeccion,
-                height: Dimensiones.controlInspeccion,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: relleno ? Colors.transparent : color,
-                  border: Border.all(color: color, width: 2),
-                ),
-                child: _icono == null
-                    ? null
-                    : Icon(
-                        _icono,
-                        size: Dimensiones.iconoControlInspeccion,
-                        color: context.colores.surface,
+            child: Semantics(
+              button: onCambiar != null,
+              label: '$titulo: $_etiquetaEstado',
+              child: SizedBox(
+                width: Espaciado.objetivoTactil,
+                height: Espaciado.objetivoTactil,
+                child: InkWell(
+                  onTap: onCambiar == null ? null : () => onCambiar!(_siguiente),
+                  customBorder: const CircleBorder(),
+                  child: Center(
+                    child: Container(
+                      width: Dimensiones.controlInspeccion,
+                      height: Dimensiones.controlInspeccion,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: relleno ? Colors.transparent : color,
+                        border: Border.all(color: color, width: 2),
                       ),
+                      child: _icono == null
+                          ? null
+                          : Icon(
+                              _icono,
+                              size: Dimensiones.iconoControlInspeccion,
+                              color: context.colores.surface,
+                            ),
+                    ),
+                  ),
+                ),
               ),
             ),
           ),

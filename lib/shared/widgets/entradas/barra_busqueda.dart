@@ -54,7 +54,11 @@ class _BarraBusquedaState extends State<BarraBusqueda> {
         prefixIcon: const Icon(Icons.search),
         suffixIcon: _controlador.text.isEmpty
             ? null
-            : IconButton(icon: const Icon(Icons.clear), onPressed: _limpiar),
+            : IconButton(
+                icon: const Icon(Icons.clear),
+                tooltip: 'Limpiar búsqueda',
+                onPressed: _limpiar,
+              ),
       ),
       onChanged: _alCambiar,
     );
