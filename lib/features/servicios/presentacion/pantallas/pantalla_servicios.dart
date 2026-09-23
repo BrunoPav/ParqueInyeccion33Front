@@ -6,6 +6,7 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/layout/contenedor_contenido.dart';
 import '../../../../core/layout/contexto_layout.dart';
 import '../../../../core/layout/panel_maestro_detalle.dart';
+import '../../../../core/red/excepciones.dart';
 import '../../../../core/routing/rutas.dart';
 import '../../../../shared/shared.dart';
 import '../../../vehiculos/dominio/vehiculo.dart';
@@ -65,7 +66,7 @@ class _ContenidoServicios extends ConsumerWidget {
       ref.invalidate(serviciosPorVehiculoProvider(vehiculo.id!));
     } catch (error) {
       if (!context.mounted) return;
-      Notificador.error(context, error.toString());
+      Notificador.error(context, mensajeDeError(error));
     }
   }
 

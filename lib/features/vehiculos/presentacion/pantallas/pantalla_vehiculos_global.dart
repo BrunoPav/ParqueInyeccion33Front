@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/layout/contenedor_contenido.dart';
+import '../../../../core/red/excepciones.dart';
 import '../../../../core/routing/rutas.dart';
 import '../../../../shared/shared.dart';
 import '../../dominio/vehiculo.dart';
@@ -41,7 +42,7 @@ class _PantallaVehiculosGlobalState extends ConsumerState<PantallaVehiculosGloba
       if (_patente.isNotEmpty) ref.invalidate(vehiculoPorPatenteProvider(_patente));
     } catch (error) {
       if (!mounted) return;
-      Notificador.error(context, error.toString());
+      Notificador.error(context, mensajeDeError(error));
     }
   }
 

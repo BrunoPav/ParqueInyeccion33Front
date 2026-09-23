@@ -12,6 +12,7 @@ import '../../features/servicios/dominio/servicio.dart';
 import '../../features/servicios/presentacion/pantallas/formulario_servicio.dart';
 import '../../features/servicios/presentacion/pantallas/pantalla_servicios.dart';
 import '../../features/servicios/presentacion/proveedores/servicios_proveedores.dart';
+import '../../features/sesion/presentacion/pantallas/pantalla_login.dart';
 import '../../features/vehiculos/dominio/vehiculo.dart';
 import '../../features/vehiculos/presentacion/pantallas/formulario_vehiculo.dart';
 import '../../features/vehiculos/presentacion/pantallas/pantalla_vehiculos.dart';
@@ -93,6 +94,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             pageBuilder: (context, state) => _pagina(const PantallaAjustes()),
           ),
         ],
+      ),
+      GoRoute(
+        path: Rutas.login,
+        pageBuilder: (context, state) => _pagina(const PantallaLogin()),
       ),
       GoRoute(
         path: Rutas.clienteNuevo,

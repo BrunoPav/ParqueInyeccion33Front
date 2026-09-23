@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:go_router/go_router.dart';
+
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/layout/contenedor_contenido.dart';
+import '../../../../core/routing/rutas.dart';
+import '../../../../shared/shared.dart';
+import '../../../sesion/presentacion/proveedores/sesion_proveedores.dart';
 import '../proveedores/tema_proveedores.dart';
 
 class PantallaAjustes extends ConsumerWidget {
@@ -76,9 +81,62 @@ class PantallaAjustes extends ConsumerWidget {
                 ],
               ),
             ),
+            const Divider(height: 1),
+            Padding(
+              padding: EdgeInsets.only(top: context.espaciado.md, bottom: context.espaciado.xs),
+              child: Text('Sesión', style: context.textos.titleMedium),
+            ),
+            const _SeccionSesion(),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _SeccionSesion extends ConsumerWidget {
+  const _SeccionSesion();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final sesion = ref.watch(sesionProvider);
+
+    if (sesion == null) {
+      return ListTile(
+        leading: const Icon(Icons.login),
+        title: const Text('Iniciar sesión'),
+        subtitle: const Text('Necesario para crear o editar registros'),
+        onTap: () => context.go(Rutas.login),
+      );
+    }
+
+    return Column(
+      children: [
+        ListTile(
+          leading: const Icon(Icons.person_outline),
+          title: Text(sesion.nombreUsuario),
+          subtitle: Text(
+            sesion.puedeBorrar
+                ? 'Administrador — puede crear, editar y borrar'
+                : 'Demostración — puede crear y editar, no borrar',
+          ),
+        ),
+        ListTile(
+          leading: const Icon(Icons.logout),
+          title: const Text('Cerrar sesión'),
+          onTap: () async {
+            final confirmado = await dialogoConfirmacion(
+              context,
+              titulo: 'Cerrar sesión',
+              cuerpo: 'Vas a volver al modo de solo lectura.',
+              etiquetaConfirmar: 'Cerrar sesión',
+            );
+            if (confirmado) {
+              await ref.read(sesionProvider.notifier).cerrarSesion();
+            }
+          },
+        ),
+      ],
     );
   }
 }

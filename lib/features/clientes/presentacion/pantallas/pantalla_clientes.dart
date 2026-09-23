@@ -6,6 +6,7 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/layout/contenedor_contenido.dart';
 import '../../../../core/layout/contexto_layout.dart';
 import '../../../../core/layout/panel_maestro_detalle.dart';
+import '../../../../core/red/excepciones.dart';
 import '../../../../core/routing/rutas.dart';
 import '../../../../shared/shared.dart';
 import '../../dominio/cliente.dart';
@@ -32,7 +33,7 @@ class _PantallaClientesState extends ConsumerState<PantallaClientes> {
       ref.invalidate(clientesProvider);
     } catch (error) {
       if (!mounted) return;
-      Notificador.error(context, error.toString());
+      Notificador.error(context, mensajeDeError(error));
     }
   }
 

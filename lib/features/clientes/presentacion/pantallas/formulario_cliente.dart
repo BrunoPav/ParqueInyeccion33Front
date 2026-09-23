@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/layout/contexto_layout.dart';
+import '../../../../core/red/excepciones.dart';
 import '../../../../core/utilidades/validadores.dart';
 import '../../../../shared/shared.dart';
 import '../../dominio/cliente.dart';
@@ -82,7 +83,7 @@ class _FormularioClienteState extends ConsumerState<FormularioCliente> {
     } catch (error) {
       if (!mounted) return;
       setState(() => _guardando = false);
-      Notificador.error(context, error.toString());
+      Notificador.error(context, mensajeDeError(error));
     }
   }
 

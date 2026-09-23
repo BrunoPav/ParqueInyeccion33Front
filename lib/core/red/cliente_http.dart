@@ -6,8 +6,13 @@ import 'package:http/http.dart' as http;
 import '../config/entorno.dart';
 import 'excepciones.dart';
 
-const Map<String, String> cabecerasJson = {
+String? _token;
+
+void establecerToken(String? token) => _token = token;
+
+Map<String, String> get cabecerasJson => {
   'Content-Type': 'application/json; charset=utf-8',
+  if (_token != null) 'Authorization': 'Bearer $_token',
 };
 
 Uri construirUri(String ruta, [Map<String, String>? parametros]) {

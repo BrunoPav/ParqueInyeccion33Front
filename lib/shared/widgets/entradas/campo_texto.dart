@@ -12,6 +12,7 @@ class CampoTexto extends StatelessWidget {
   final bool autofocus;
   final VoidCallback? onTap;
   final Widget? sufijo;
+  final bool ocultarTexto;
 
   const CampoTexto({
     super.key,
@@ -26,6 +27,7 @@ class CampoTexto extends StatelessWidget {
     this.autofocus = false,
     this.onTap,
     this.sufijo,
+    this.ocultarTexto = false,
   });
 
   @override
@@ -42,7 +44,8 @@ class CampoTexto extends StatelessWidget {
         suffixIcon: sufijo,
         alignLabelWithHint: maxLineas > 1,
       ),
-      maxLines: maxLineas,
+      obscureText: ocultarTexto,
+      maxLines: ocultarTexto ? 1 : maxLineas,
       textCapitalization: capitalizacion,
       validator: validador,
     );
