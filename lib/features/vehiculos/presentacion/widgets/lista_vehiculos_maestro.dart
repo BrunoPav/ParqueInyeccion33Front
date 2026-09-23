@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/design_system.dart';
-import '../../../../core/red/excepciones.dart';
 import '../../../../core/routing/rutas.dart';
 import '../../../../shared/shared.dart';
 import '../../dominio/vehiculo.dart';
@@ -40,7 +39,7 @@ class ListaVehiculosMaestro extends ConsumerWidget {
       ref.invalidate(vehiculosPorClienteProvider(clienteId));
     } catch (error) {
       if (!context.mounted) return;
-      Notificador.error(context, mensajeDeError(error));
+      Notificador.errorDeApi(context, error);
     }
   }
 

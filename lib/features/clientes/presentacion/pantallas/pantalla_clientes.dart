@@ -6,8 +6,8 @@ import '../../../../core/design_system/design_system.dart';
 import '../../../../core/layout/contenedor_contenido.dart';
 import '../../../../core/layout/contexto_layout.dart';
 import '../../../../core/layout/panel_maestro_detalle.dart';
-import '../../../../core/red/excepciones.dart';
 import '../../../../core/routing/rutas.dart';
+import '../../../../features/sesion/presentacion/widgets/accion_sesion.dart';
 import '../../../../shared/shared.dart';
 import '../../dominio/cliente.dart';
 import '../../dominio/repositorio_clientes.dart';
@@ -33,7 +33,7 @@ class _PantallaClientesState extends ConsumerState<PantallaClientes> {
       ref.invalidate(clientesProvider);
     } catch (error) {
       if (!mounted) return;
-      Notificador.error(context, mensajeDeError(error));
+      Notificador.errorDeApi(context, error);
     }
   }
 
@@ -159,6 +159,7 @@ class _PantallaClientesState extends ConsumerState<PantallaClientes> {
             icon: const Icon(Icons.refresh),
             onPressed: () => ref.invalidate(clientesProvider),
           ),
+          const AccionSesion(),
         ],
       ),
       body: esCompacto

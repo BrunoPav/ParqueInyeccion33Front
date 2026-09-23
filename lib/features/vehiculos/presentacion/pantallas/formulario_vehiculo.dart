@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/design_system/design_system.dart';
 import '../../../../core/layout/contexto_layout.dart';
-import '../../../../core/red/excepciones.dart';
 import '../../../../core/utilidades/validadores.dart';
 import '../../../../shared/shared.dart';
 import '../../dominio/vehiculo.dart';
@@ -101,7 +100,7 @@ class _FormularioVehiculoState extends ConsumerState<FormularioVehiculo> {
     } catch (error) {
       if (!mounted) return;
       setState(() => _guardando = false);
-      Notificador.error(context, mensajeDeError(error));
+      Notificador.errorDeApi(context, error);
     }
   }
 
