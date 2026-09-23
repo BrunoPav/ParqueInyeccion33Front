@@ -16,6 +16,19 @@ Clientes  →  Vehículos del cliente  →  Historial de servicios del vehículo
 Cubre las tres entidades por completo: listar, crear, editar, y dar de baja (lógica en clientes,
 física en vehículos y servicios, igual que la API).
 
+## Credenciales de demostración
+
+La API tiene **lecturas públicas y escrituras autenticadas**: se puede navegar todo sin credenciales, y
+para crear o editar hace falta iniciar sesión. Estas son públicas a propósito:
+
+```
+usuario:     demo
+contraseña:  demo1234
+```
+
+Ese usuario puede crear y editar, pero no borrar — el borrado requiere rol `ADMIN`, cuya contraseña vive
+solo en el servidor.
+
 ## Stack
 
 - **Flutter 3.41** / Dart 3.11
