@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod/misc.dart' show Override;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:taller_mecanico_frontend/core/design_system/design_system.dart';
+import 'package:taller_mecanico_frontend/features/ajustes/datos/preferencias.dart';
 
 /// Monta una sola pantalla dentro de un [ProviderScope] y un [MaterialApp],
 /// sin depender de `AplicacionTaller` ni de `main.dart`.
@@ -22,7 +24,7 @@ Future<void> bombearPantalla(
   List<Override> overrides = const [],
   ThemeData? tema,
   GoRouter? enrutador,
-}) {
+}) async {
   assert(
     (pantalla == null) != (enrutador == null),
     'bombearPantalla necesita pantalla O enrutador, no los dos ni ninguno.',
@@ -30,9 +32,18 @@ Future<void> bombearPantalla(
 
   final temaResuelto = tema ?? temaPrecision(const PaletaPrecisionClara(), Brightness.light);
 
+  // preferenciasProvider explota si no se sobrescribe, y desde que la barra de
+  // navegacion lee la sesion lo necesita cualquier pantalla, no solo Ajustes.
+  // Va primero para que un override del test lo pise si hace falta.
+  SharedPreferences.setMockInitialValues({});
+  final preferencias = await SharedPreferences.getInstance();
+
   return tester.pumpWidget(
     ProviderScope(
-      overrides: overrides,
+      overrides: [
+        preferenciasProvider.overrideWithValue(preferencias),
+        ...overrides,
+      ],
       retry: (_, _) => null,
       child: enrutador != null
           ? MaterialApp.router(theme: temaResuelto, routerConfig: enrutador)
