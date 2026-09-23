@@ -93,11 +93,11 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: Rutas.ajustes,
             pageBuilder: (context, state) => _pagina(const PantallaAjustes()),
           ),
+          GoRoute(
+            path: Rutas.login,
+            pageBuilder: (context, state) => _pagina(const PantallaLogin()),
+          ),
         ],
-      ),
-      GoRoute(
-        path: Rutas.login,
-        pageBuilder: (context, state) => _pagina(const PantallaLogin()),
       ),
       GoRoute(
         path: Rutas.clienteNuevo,

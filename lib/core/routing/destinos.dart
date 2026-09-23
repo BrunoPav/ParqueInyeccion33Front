@@ -38,3 +38,17 @@ const destinosNavegacion = [
     etiqueta: 'Ajustes',
   ),
 ];
+
+const _destinoLogin = DestinoNavegacion(
+  ruta: Rutas.login,
+  icono: Icons.login,
+  iconoSeleccionado: Icons.login,
+  etiqueta: 'Iniciar sesión',
+);
+
+/// Sin sesión se suma el acceso al login. Con sesión no hace falta: Ajustes ya
+/// muestra quién entró y permite cerrar sesión, y un destino que lleve al mismo
+/// lugar sería ruido.
+List<DestinoNavegacion> destinosPara({required bool haySesion}) {
+  return haySesion ? destinosNavegacion : [...destinosNavegacion, _destinoLogin];
+}

@@ -13,13 +13,9 @@ class AccionSesion extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final sesion = ref.watch(sesionProvider);
 
-    if (sesion == null) {
-      return TextButton.icon(
-        onPressed: () => context.go(Rutas.login),
-        icon: const Icon(Icons.login, size: 18),
-        label: const Text('Iniciar sesión'),
-      );
-    }
+    // Sin sesión no muestra nada: el acceso al login vive en la navegación
+    // principal, al lado de Ajustes. Repetirlo acá sería ruido.
+    if (sesion == null) return const SizedBox.shrink();
 
     return IconButton(
       tooltip: '${sesion.nombreUsuario} — ir a Ajustes',
